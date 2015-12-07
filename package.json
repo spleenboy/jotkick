@@ -14,6 +14,7 @@
   "scripts": {
     "test": "xo",
     "start": "webpack --progress --colors && electron .",
+    "watch": "webpack --progress --colors --watch",
     "build": "webpack --progress --colors && electron-packager . $npm_package_productName --out=dist --ignore='^/dist$' --prune --asar --all --version=$npm_package_electronVersion"
   },
   "files": [
@@ -47,7 +48,10 @@
     "marked": "^0.3.5",
     "babel-preset-es2015": "^6.3.13",
     "babel-polyfill": "^6.3.14",
-    "expose-loader": "^0.7.1"
+    "expose-loader": "^0.7.1",
+    "baobab": "^2.1.2",
+    "baobab-react": "^1.0.0",
+    "moment": "^2.10.6"
   },
   "xo": {
     "esnext": true,

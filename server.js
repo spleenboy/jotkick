@@ -9,7 +9,7 @@ var server = new WebpackDevServer(webpack(config), {
     stats: {colors: true},
 });
 
-server.listen(3000, 'localhost', function(err) {
+server.listen(config.output.port, config.output.domain, function(err) {
     if (err) {
         console.error("Error listening", err);
     }
