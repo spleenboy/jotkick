@@ -1,4 +1,4 @@
-import {activeIndex as activeBookIndex} from './books';
+import {activeIndex as activeBookIndex, select as selectBook} from './books';
 
 export function active(tree) {
     return tree.get('books', activeBookIndex(tree), 'notes', activeIndex(tree));

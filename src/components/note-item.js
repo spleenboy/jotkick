@@ -11,16 +11,22 @@ export default class NoteItem extends Component {
 
     render() {
         const note = this.props.note;
-        return <Paper style={{width: '100%'}}>
-                    <NoteBar
-                        note={note}
-                        onNoteSelect={this.handleNoteSelect.bind(this)}
-                    />
-                    <Editor
-                        active={note.active}
-                        initialValue={note.content}
-                        onChange={this.props.onChange.bind(this, 'content')}
-                    />
-               </Paper>
+        return <div className="row">
+                   <div className="col-xs-12">
+                       <div className="box">
+                           <Paper style={{width: '100%'}}>
+                                <NoteBar
+                                    note={note}
+                                    onNoteSelect={this.handleNoteSelect.bind(this)}
+                                />
+                                <Editor
+                                    active={note.active}
+                                    initialValue={note.content}
+                                    onChange={this.props.onChange.bind(this, 'content')}
+                                />
+                           </Paper>
+                       </div>
+                   </div>
+               </div>
     }
 };

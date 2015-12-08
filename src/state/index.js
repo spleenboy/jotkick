@@ -1,7 +1,7 @@
 import Baobab from 'baobab';
-import State from './model';
+import * as tree from './actions/tree';
 
 const Tree = new Baobab();
-Tree.set(State());
+tree.populate(Tree);
 
 export default Tree;

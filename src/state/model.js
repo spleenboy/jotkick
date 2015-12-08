@@ -46,7 +46,7 @@ export function Note(name = null) {
 /**
  * An entire state tree. Includes all data needed for this app.
 **/
-export default function State() {
+export function Tree() {
     return {
         settings: Settings(),
         books: [Book()]

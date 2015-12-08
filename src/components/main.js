@@ -2,17 +2,17 @@ import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
 import actions from '../state/actions/';
 
+import Header from './header';
 import NoteItem from './note-item';
 
 class Main extends Component {
     render() {
         const note = this.props.actions.activeNote();
         const containerStyle = {
-            display: 'flex',
-            padding: 5,
             overflow: 'auto',
         };
         return <div style={containerStyle}>
+                   <Header />
                    <NoteItem
                        note={note}
                        onNoteSelect={this.props.actions.selectNote.bind(this)}

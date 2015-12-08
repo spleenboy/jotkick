@@ -44,7 +44,6 @@ export default class Editor extends Component {
 
     render() {
         const containerStyle = {
-            flex: 1,
             margin: 10,
         };
         this.toggleEditor();
