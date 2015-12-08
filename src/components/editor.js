@@ -2,7 +2,6 @@ import React, {Component, PropTypes} from 'react';
 import Catdown from 'catdown';
 
 import '../themes/editor/default.css';
-import Paper from 'material-ui/lib/paper';
 
 export default class Editor extends Component {
     constructor(props) {
@@ -28,7 +27,15 @@ export default class Editor extends Component {
             editor.set(this.props.initialValue);
         }
         editor.on('change', this.handleTextChange.bind(this));
+        this.toggleEditor();
         this.setState({editor});
+    }
+
+    toggleEditor() {
+        if (!this.state.editor) {
+            return;
+        }
+        this.state.editor.$editor.style.display = this.props.active ? 'block' : 'none';
     }
 
     componentWillUnmount() {
@@ -40,18 +47,14 @@ export default class Editor extends Component {
             flex: 1,
             margin: 10,
         };
-        const editorDisplay = this.props.active ? 'block' : 'none';
-        const previewDisplay = this.props.active ? 'none' : 'block';
-        return <Paper zDepth={2} style={containerStyle}>
-                    <textarea
-                        ref="editor"
-                        style={{display: editorDisplay}}
-                    />
-                    <div
-                        ref="preview"
-                        style={{display: previewDisplay}}
-                    />
-               </Paper>
+        this.toggleEditor();
+        return <div style={containerStyle}>
+                   <textarea ref="editor" style={{display: 'none'}} />
+                   <div
+                       ref="preview"
+                       style={{display: this.props.active ? 'none' : 'block'}}
+                   />
+               </div>
     }
 };
 

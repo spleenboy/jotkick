@@ -2,13 +2,9 @@ import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
 import actions from '../state/actions/';
 
-import Editor from './editor';
+import NoteItem from './note-item';
 
 class Main extends Component {
-    handleEditorChange(value) {
-        this.props.actions.updateNote('value', value);
-    }
-
     render() {
         const note = this.props.actions.activeNote();
         const containerStyle = {
@@ -17,10 +13,10 @@ class Main extends Component {
             overflow: 'auto',
         };
         return <div style={containerStyle}>
-                   <Editor
-                       active={true}
-                       initialValue={note.value}
-                       onChange={this.handleEditorChange.bind(this)}
+                   <NoteItem
+                       note={note}
+                       onNoteSelect={this.props.actions.selectNote.bind(this)}
+                       onChange={this.props.actions.updateNote.bind(this)}
                    />
                </div>
     }
