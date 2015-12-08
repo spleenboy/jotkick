@@ -14,7 +14,6 @@
   "scripts": {
     "test": "xo",
     "start": "webpack --progress --colors && electron .",
-    "watch": "webpack --progress --colors --watch",
     "build": "webpack --progress --colors && electron-packager . $npm_package_productName --out=dist --ignore='^/dist$' --prune --asar --all --version=$npm_package_electronVersion"
   },
   "files": [
@@ -51,7 +50,8 @@
     "expose-loader": "^0.7.1",
     "baobab": "^2.1.2",
     "baobab-react": "^1.0.0",
-    "moment": "^2.10.6"
+    "moment": "^2.10.6",
+    "catdown": "^1.1.0"
   },
   "xo": {
     "esnext": true,

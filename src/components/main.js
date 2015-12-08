@@ -1,6 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
-import actions from './state/actions/';
+import actions from '../state/actions/';
 
 import Editor from './editor';
 
@@ -11,7 +11,18 @@ class Main extends Component {
 
     render() {
         const note = this.props.actions.activeNote();
-        return <Editor defaultValue={note.value} onChange={this.handleEditorChange.bind(this)}/>
+        const containerStyle = {
+            display: 'flex',
+            padding: 5,
+            overflow: 'auto',
+        };
+        return <div style={containerStyle}>
+                   <Editor
+                       active={true}
+                       initialValue={note.value}
+                       onChange={this.handleEditorChange.bind(this)}
+                   />
+               </div>
     }
 }
 
@@ -29,5 +40,6 @@ export default branch(Main, {
         selectNote: actions.notes.select,
         updateNote: actions.notes.update,
         activeNote: actions.notes.active,
+        updateSetting: actions.settings.update,
     }
 });

@@ -6,6 +6,7 @@ import moment from 'moment';
 export function Settings() {
     return {
         theme: "index",
+        fontSize: 100,
         basePath: null,
         dateDisplayFormat: "YYYY-MM-DD",
     };

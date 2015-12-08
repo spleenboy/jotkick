@@ -1,9 +1,9 @@
 var path = require('path');
 var webpack = require('webpack');
+var babelfill = require('babel-polyfill');
 
 module.exports = {
     entry: [
-        'babel-polyfill',
         './src/app.js'
     ],
     output: {
@@ -30,7 +30,7 @@ module.exports = {
             },
             {
                 test: /\.css?$/,
-                loader: 'style|css'
+                loader: 'style!css'
             }
         ]
     },
