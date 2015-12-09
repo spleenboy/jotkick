@@ -1,4 +1,4 @@
-import moment from 'moment';
+import uuid from 'uuid';
 
 /**
  * Stores all of the app-wide preferences for someone.
@@ -16,12 +16,13 @@ export function Settings() {
  * This is a top-level container for a collection of notes.¬
  * The name is used for directory management and as an id.
 **/
-export function Book(name = "Home") {
+export function Book(name = null) {
     return {
+        id: uuid(),
         name: name ,
         title: name,
         active: false,
-        notes: [Note()],
+        notes: [],
     };
 };
 
@@ -32,6 +33,7 @@ export function Book(name = "Home") {
 **/
 export function Note(name = null) {
     return {
+        id: uuid(),
         name: name,
         title: name,
         pinned: false,
@@ -49,6 +51,6 @@ export function Note(name = null) {
 export function Tree() {
     return {
         settings: Settings(),
-        books: [Book()]
+        books: [],
     };
 };

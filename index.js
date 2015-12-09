@@ -1,6 +1,8 @@
 'use strict';
 const electron = require('electron');
+const dialog = require('dialog');
 const app = electron.app;
+const ipc = electron.ipcMain;
 
 // report crashes to the Electron project
 require('crash-reporter').start();
@@ -12,35 +14,43 @@ require('electron-debug')();
 let mainWindow;
 
 function onClosed() {
-	// dereference the window
-	// for multiple windows store them in an array
-	mainWindow = null;
+    // dereference the window
+    // for multiple windows store them in an array
+    mainWindow = null;
 }
 
 function createMainWindow() {
-	const win = new electron.BrowserWindow({
-		width: 600,
-		height: 400
-	});
+    const win = new electron.BrowserWindow({
+        width: 600,
+        height: 400
+    });
 
-	win.loadURL(`file://${__dirname}/index.html`);
-	win.on('closed', onClosed);
+    win.loadURL(`file://${__dirname}/index.html`);
+    win.on('closed', onClosed);
 
-	return win;
+    return win;
 }
 
 app.on('window-all-closed', () => {
-	if (process.platform !== 'darwin') {
-		app.quit();
-	}
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
 
 app.on('activate-with-no-open-windows', () => {
-	if (!mainWindow) {
-		mainWindow = createMainWindow();
-	}
+    if (!mainWindow) {
+        mainWindow = createMainWindow();
+    }
 });
 
 app.on('ready', () => {
-	mainWindow = createMainWindow();
+    mainWindow = createMainWindow();
+
+    ipc.on('open-dialog', function(event, arg) {
+        const dirPath = dialog.showOpenDialog(
+            mainWindow,
+            {properties: ['openDirectory']}
+        );
+        event.sender.send('open-dialog-reply', dirPath);
+    });
 });

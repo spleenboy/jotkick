@@ -11,6 +11,12 @@ export default class Editor extends Component {
         };
     }
 
+    handleTextFocus() {
+        if (this.props.onFocus) {
+            this.props.onFocus(this);
+        }
+    }
+
     handleTextChange() {
        let value = this.state.editor.value();
        this.props.onChange(value);
@@ -47,7 +53,7 @@ export default class Editor extends Component {
             margin: 10,
         };
         this.toggleEditor();
-        return <div style={containerStyle}>
+        return <div style={containerStyle} onTouchTap={this.handleTextFocus.bind(this)}>
                    <textarea ref="editor" style={{display: 'none'}} />
                    <div
                        ref="preview"

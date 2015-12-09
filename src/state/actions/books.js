@@ -1,24 +1,30 @@
-export function active(tree) {
-    return tree.get('books', activeIndex(tree));
+import slug from 'slug';
+import * as Model from '../model';
+
+function active(tree) {
+    return tree.get('books', {active: true});
 };
 
-export function activeIndex(tree) {
-    const index = tree.get('books').findIndex(b => b.active);
-    return Math.max(0, index);
-};
-
-export function select(tree, index = 0) {
+export function select(tree, book) {
     const books = tree.select('books');
-    books.forEach((book, i) => {
-        books.set([i, 'active'], i === index);
+    books.forEach((b, i) => {
+        books.set([i, 'active'], b.name === book.name);
     });
 };
 
-export function update(tree, key, value) {
-    const bookIndex = activeBookIndex(tree);
-    tree.set(['books', bookIndex, key], value);
+export function setTitle(tree, book, title) {
+    const cursor = tree.select('books', {id: book.id});
+    cursor.set('title', title);
+    cursor.set('name', slug(title));
 };
 
-export function add(tree, book) {
-    tree.push('books', book);
+export function create(tree) {
+    const book = Model.Book();
+    const books = tree.select('books');
+    books.get().forEach((b, i) => {
+        books.set([i, 'active'], false);
+    });
+    book.active = true;
+    books.push(book);
+    return book;
 };

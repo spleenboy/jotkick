@@ -1,17 +1,9 @@
 import * as Model from '../model';
+import {create as createBook} from './books';
+import {create as createNote} from './notes';
 
-export function populate(tree) {
-    let root = Model.Tree();
-    let activeBookIndex = root.books.findIndex(b => b.active);
-    if (activeBookIndex < 0) {
-        activeBookIndex = 0;
-        root.books[0].active = true;
-    }
-    let book = root.books[activeBookIndex];
-    let activeNoteIndex = book.notes.findIndex(n => n.active);
-    if (activeNoteIndex < 0) {
-        book.notes[0].active = true;
-    }
-    tree.set(root);
-    return root;
+export function init(tree) {
+    tree.set(Model.Tree());
+    const book = createBook(tree);
+    const note = createNote(tree, book);
 }
