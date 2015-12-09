@@ -1,3 +1,5 @@
+import slug from 'slug';
+import moment from 'moment';
 import uuid from 'uuid';
 
 /**
@@ -19,8 +21,8 @@ export function Settings() {
 export function Book(name = null) {
     return {
         id: uuid(),
-        name: name ,
-        title: name,
+        name: 'home',
+        title: 'Home',
         active: false,
         notes: [],
     };
@@ -31,11 +33,14 @@ export function Book(name = null) {
  * The "name" is used for file management and as an id. 
  * The "title" is used for display.
 **/
-export function Note(name = null) {
+export function Note(title = null) {
+    const now = moment();
+    title = title || now.format('YYYY-MM-DD');
+    name  = slug(title);
     return {
         id: uuid(),
         name: name,
-        title: name,
+        title: title,
         pinned: false,
         pinOrder: 0,
         active: false,

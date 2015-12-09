@@ -1,28 +1,20 @@
 import React, {PropTypes, Component} from 'react';
+import {branch} from 'baobab-react/higher-order';
 
 import Header from './header';
 import NotesPage from './notes-page';
 import SettingsPage from './settings-page';
 
-export default class Main extends Component {
+class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            renderer: this.renderHome.bind(this)
+            page: 'home',
         };
     }
 
     handlePageChange(page) {
-        var renderer;
-        switch (page) {
-            case 'settings':
-                renderer = this.renderSettings.bind(this);
-                break;
-            default:
-                renderer = this.renderHome.bind(this);
-                break;
-        }
-        this.setState({renderer});
+        this.setState({page});
     }
 
     renderHome() {
@@ -34,9 +26,26 @@ export default class Main extends Component {
     }
 
     render() {
+        var page;
+        switch (this.state.page) {
+            case 'settings':
+                page = this.renderSettings();
+                break;
+            default:
+                page = this.renderHome();
+                break;
+        }
         return <div>
-                   <Header onPageChange={this.handlePageChange.bind(this)} />
-                   {this.state.renderer()}
+                   <Header
+                       page={this.state.page}
+                       books={this.props.books}
+                       onPageChange={this.handlePageChange.bind(this)}
+                   />
+                   {page}
                </div>
     }
 }
+
+export default branch(Main, {
+    cursors: {books: ['books']}
+});
