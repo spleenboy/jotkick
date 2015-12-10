@@ -21,11 +21,15 @@ class SettingsPage extends Component {
     }
 
     render() {
+        const current = this.props.settings.basePath
+                        ? <p>Your current home is <em>{this.props.settings.basePath}</em>. If you change your home directory, your current notes may disappear.</p>
+                        : <p>Let's get started! I need a home. This is where all files will be saved.</p>
         return <div style={{padding: 10}}>
-                   {this.props.settings.basePath}
+                   {current}
                    <RaisedButton
-                       label="Choose a Home Folder"
+                       label={this.props.settings.basePath ? 'Choose a New Home' : 'Find a Home'}
                        labelPosition="after"
+                       primary={true}
                        tooltip="Choose a Home"
                        onTouchTap={this.handleFileSelect.bind(this)}
                    >
@@ -37,7 +41,7 @@ class SettingsPage extends Component {
 
 SettingsPage.PropTypes = {
     settings: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired,
+    onPageChange: PropTypes.func.isRequired,
 };
 
 export default branch(SettingsPage, {

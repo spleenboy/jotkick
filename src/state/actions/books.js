@@ -7,7 +7,7 @@ function active(tree) {
 
 export function select(tree, book) {
     const books = tree.select('books');
-    books.forEach((b, i) => {
+    books.get().forEach((b, i) => {
         books.set([i, 'active'], b.name === book.name);
     });
 };

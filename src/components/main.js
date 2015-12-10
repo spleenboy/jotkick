@@ -1,7 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
 
-import Header from './header';
 import NotesPage from './notes-page';
 import SettingsPage from './settings-page';
 
@@ -17,35 +16,19 @@ class Main extends Component {
         this.setState({page});
     }
 
-    renderHome() {
-        return <NotesPage/>
-    }
-
-    renderSettings() {
-        return <SettingsPage/>
-    }
-
     render() {
+        const ready = !!this.props.baseUrl;
         var page;
-        switch (this.state.page) {
-            case 'settings':
-                page = this.renderSettings();
-                break;
-            default:
-                page = this.renderHome();
-                break;
+        if (!ready || this.state.page === 'settings') {
+            return <SettingsPage onPageChange={this.handlePageChange.bind(this)}/>
         }
-        return <div>
-                   <Header
-                       page={this.state.page}
-                       books={this.props.books}
-                       onPageChange={this.handlePageChange.bind(this)}
-                   />
-                   {page}
-               </div>
+
+        return <NotesPage onPageChange={this.handlePageChange.bind(this)}/>
     }
 }
 
 export default branch(Main, {
-    cursors: {books: ['books']}
+    cursors: {
+        baseUrl: ['settings', 'baseUrl'],
+    }
 });

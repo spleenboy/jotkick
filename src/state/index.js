@@ -1,7 +1,10 @@
 import Baobab from 'baobab';
-import * as tree from './actions/tree';
+import * as Model from './model';
+import {init} from './actions/tree';
 
-const Tree = new Baobab();
-tree.init(Tree);
+const tree = new Baobab();
+tree.set(Model.Tree());
+tree.commit();
+init(tree);
 
-export default Tree;
+export default tree;
