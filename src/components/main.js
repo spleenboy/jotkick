@@ -17,7 +17,7 @@ class Main extends Component {
     }
 
     render() {
-        const ready = !!this.props.baseUrl;
+        const ready = this.props.books;
         var page;
         if (!ready || this.state.page === 'settings') {
             return <SettingsPage onPageChange={this.handlePageChange.bind(this)}/>
@@ -29,6 +29,6 @@ class Main extends Component {
 
 export default branch(Main, {
     cursors: {
-        baseUrl: ['settings', 'baseUrl'],
+        books: ['books', 'length'],
     }
 });

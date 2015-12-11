@@ -1,19 +1,24 @@
-import fs from 'fs';
+const fs = window.require('fs');
 import path from 'path';
 import {EventEmitter} from 'events';
 
 export default class FileWalker extends EventEmitter {
     constructor(baseDir) {
-        this.baseDir = baseDir;
-        this.emits   = ['error', 'file', 'dir'];
         super();
+        this.baseDir = baseDir;
+        this.depth   = 0;
+        this.emits   = ['error', 'file', 'dir'];
     }
 
     run(read = false) {
         this.walk(this.baseDir, read);
     }
 
-    walk(dir = this.baseDir, read = false) {
+    walk(dir = this.baseDir, read = false, depth = 0) {
+        if (this.depth && depth > this.depth) {
+            return;
+        }
+
         fs.readdir(dir, (err, filenames) => {
             if (err) {
                 this.emit('error', err);
@@ -25,7 +30,7 @@ export default class FileWalker extends EventEmitter {
                 file.on('ready', (f) => {
                     if (f.stats.isDirectory) {
                         this.emit('dir', f);
-                        this.walk(fullpath, read);
+                        this.walk(fullpath, read, depth + 1);
                     } else if (f.stats.isFile) {
                         this.emit('file', f);
                     }

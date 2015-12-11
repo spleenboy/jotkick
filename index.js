@@ -47,10 +47,10 @@ app.on('ready', () => {
     mainWindow = createMainWindow();
 
     ipc.on('open-dialog', function(event, arg) {
-        const dirPath = dialog.showOpenDialog(
+        const dirPaths = dialog.showOpenDialog(
             mainWindow,
             {properties: ['openDirectory']}
         );
-        event.sender.send('open-dialog-reply', dirPath);
+        event.sender.send('open-dialog-reply', dirPaths);
     });
 });

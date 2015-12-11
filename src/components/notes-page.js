@@ -6,6 +6,11 @@ import actions from '../state/actions/';
 class NotesPage extends Component {
     render() {
         const book = this.props.books.find(b => b.active) || this.props.books[0];
+
+        if (!book) {
+            return null;
+        }
+
         const note = book.notes.find(n => n.active) || book.notes[0];
         return <div className="notes-page">
                    <NoteItem

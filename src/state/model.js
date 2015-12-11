@@ -30,7 +30,6 @@ export function Book(name = null) {
 
 /**
  * Belongs to a Book, used to store content in individual files.
- * The "name" is used for file management and as an id. 
  * The "title" is used for display.
 **/
 export function Note(title = null) {
@@ -38,15 +37,17 @@ export function Note(title = null) {
     title = title || now.format('YYYY-MM-DD');
     name  = slug(title);
     return {
-        id: uuid(),
-        name: name,
-        title: title,
-        pinned: false,
-        pinOrder: 0,
-        active: false,
-        created: new Date(),
-        modified: null,
-        content: "",
+        file: null,
+        data: {
+            id: uuid(),
+            title: title,
+            active: false,
+            pinned: false,
+            pinOrder: 0,
+            created: new Date(),
+            modified: null,
+        },
+        content: '',
     };
 };
 

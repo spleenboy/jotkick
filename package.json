@@ -58,7 +58,9 @@
     "url-loader": "^0.5.7",
     "slug": "^0.9.1",
     "uuid": "^2.0.1",
-    "react-sticker": "^1.0.4"
+    "react-sticker": "^1.0.4",
+    "gray-matter": "^2.0.2",
+    "path-parse": "^1.0.5"
   },
   "xo": {
     "esnext": true,
