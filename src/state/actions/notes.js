@@ -29,10 +29,9 @@ export function select(tree, book, note) {
     queue(save, tree, book, note);
 };
 
-export function pin(tree, book, note, order = 0) {
+export function pin(tree, book, note) {
     const cursor = find(tree, book, note).select('data');
     cursor.set('pinned', true);
-    cursor.set('pinOrder', order);
 
     queue(save, tree, book, note);
 };
@@ -40,7 +39,6 @@ export function pin(tree, book, note, order = 0) {
 export function unpin(tree, book, note) {
     const cursor = find(tree, book, note).select('data');
     cursor.set('pinned', false);
-    cursor.set('pinOrder', 0);
 
     queue(save, tree, book, note);
 }
@@ -48,7 +46,6 @@ export function unpin(tree, book, note) {
 export function setTitle(tree, book, note, title) {
     const cursor = find(tree, book, note).select('data');
     cursor.set('title', title);
-    cursor.set('modified', new Date());
 
     queue(save, tree, book, note);
 };
@@ -56,7 +53,6 @@ export function setTitle(tree, book, note, title) {
 export function setContent(tree, book, note, content) {
     const cursor = find(tree, book, note);
     cursor.set('content', content);
-    cursor.set(['data', 'modified'], new Date());
 
     queue(save, tree, book, note);
 }

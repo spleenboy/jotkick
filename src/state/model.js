@@ -44,9 +44,7 @@ export function Note(title = null) {
             title: title,
             active: false,
             pinned: false,
-            pinOrder: 0,
             created: new Date(),
-            modified: null,
         },
         content: '',
     };

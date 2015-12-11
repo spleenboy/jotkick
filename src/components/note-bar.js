@@ -22,12 +22,19 @@ export default class NoteBar extends Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.note.data.title !== this.refs.noteTitle.getValue()) {
+            this.refs.noteTitle.setValue(nextProps.note.data.title);
+        }
+    }
+
     render() {
         const note = this.props.note;
         const pinAct   = note.data.pinned ? 'Unpin' : 'Pin';
         const pinClass = note.data.pinned ? 'fa fa-flag' : 'fa fa-flag-o';
         return <Toolbar style={{marginBottom: 20}}>
                    <TextField
+                       ref="noteTitle"
                        hintText="Give me a good name"
                        defaultValue={note.data.title}
                        onFocus={this.props.onSelect.bind(this, note)}

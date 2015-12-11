@@ -12,16 +12,17 @@ export default class Editor extends Component {
         };
     }
 
+
     handleTextFocus() {
-        if (this.props.onFocus) {
-            this.props.onFocus(this);
-        }
+        this.props.onFocus && this.props.onFocus(this);
     }
+
 
     handleTextChange() {
        let value = this.state.editor.value();
        this.props.onChange(value);
     }
+
 
     componentDidMount() {
         let editor = new Catdown({
@@ -36,32 +37,44 @@ export default class Editor extends Component {
         this.setState({editor});
     }
 
+
     componentWillUnmount() {
         this.setState({editor: null});
     }
+
+    componentWillReceiveProps(nextProps) {
+        // Handle a wholesale switch of the content of this editor
+        if (nextProps.initialValue !== this.state.editor.value()) {
+            this.state.editor.set(nextProps.initialValue);
+        }
+    }
+
 
     render() {
         const containerStyle = {
             margin: 10,
         };
 
-        const editing = this.props.active ? 'block' : 'none';
+        const editStyle = {
+            width      : '100%',
+            visibility : this.props.active ? 'visible' : 'hidden',
+            position   : this.props.active ? 'static'  : 'absolute',
+        };
 
         let viewing;
         if (!this.props.active) {
             const markup = () => {
                 return {__html: marked(this.props.initialValue)};
             }
-            viewing = <div ref="viewing" style={{display: viewing}}>
+            viewing = <div ref="viewing" style={{width: '100%'}}>
                           <div dangerouslySetInnerHTML={markup()}/>
                       </div>
         } else {
             viewing = null;
         }
 
-
         return <div style={containerStyle} onTouchTap={this.handleTextFocus.bind(this)}>
-                   <div ref="editing" style={{display: editing}}>
+                   <div ref="editing" style={editStyle}>
                        <textarea ref="editor" />
                    </div>
                    {viewing}
