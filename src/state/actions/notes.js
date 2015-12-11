@@ -8,7 +8,7 @@ import * as Model from '../model';
 import File from '../../storage/file';
 
 export const DATE_FORMAT = 'YYYY-MM-DD';
-export const DEFAULT_DEBOUNCE = 2000;
+export const DEFAULT_DEBOUNCE = 1000;
 
 export function find(tree, book, note) {
     return tree.select('books', {id: book.id}, 'notes', {id: note.id});
@@ -25,36 +25,26 @@ export function select(tree, book, note) {
         const active = notes.select(i, 'data', 'active');
         active.set(n.id === note.id);
     });
-
-    queue(save, tree, book, note);
 };
 
 export function pin(tree, book, note) {
     const cursor = find(tree, book, note).select('data');
     cursor.set('pinned', true);
-
-    queue(save, tree, book, note);
 };
 
 export function unpin(tree, book, note) {
     const cursor = find(tree, book, note).select('data');
     cursor.set('pinned', false);
-
-    queue(save, tree, book, note);
 }
 
 export function setTitle(tree, book, note, title) {
     const cursor = find(tree, book, note).select('data');
     cursor.set('title', title);
-
-    queue(save, tree, book, note);
 };
 
 export function setContent(tree, book, note, content) {
     const cursor = find(tree, book, note);
     cursor.set('content', content);
-
-    queue(save, tree, book, note);
 }
 
 export function remove(tree, book, note) {
@@ -87,16 +77,18 @@ export function create(tree, book) {
 };
 
 
-function queue(action, tree, ...args) {
+export function queueSave(tree, book, note, lastpath = null) {
     const delay = tree.get('settings', 'debounce') || DEFAULT_DEBOUNCE;
     const method = () => {
-        action.apply(this, [tree, ...args]);
+        save(tree, book.id, note.id, lastpath);
     }
     debounce(method, delay)();
-}
+};
 
 
-export function save(tree, book, note, lastpath = null) {
+export function save(tree, bookId, noteId, lastpath = null) {
+    const book = tree.select('books', {id: bookId});
+    const note = book.get('notes', {id: noteId});
     const body = matter.stringify(note.content, note.data);
     const basePath = tree.get('settings', 'basePath');
     let fullpath;

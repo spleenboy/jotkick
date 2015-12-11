@@ -15,6 +15,7 @@ export default class Editor extends Component {
 
     handleTextFocus() {
         this.props.onFocus && this.props.onFocus(this);
+        this.state.editor.focus();
     }
 
 
@@ -45,7 +46,7 @@ export default class Editor extends Component {
     componentWillReceiveProps(nextProps) {
         // Handle a wholesale switch of the content of this editor
         if (nextProps.initialValue !== this.state.editor.value()) {
-            this.state.editor.set(nextProps.initialValue);
+            //this.state.editor.set(nextProps.initialValue);
         }
     }
 
