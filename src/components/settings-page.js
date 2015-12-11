@@ -5,6 +5,9 @@ import actions from '../state/actions/';
 import TextField from 'material-ui/lib/text-field';
 import RaisedButton from 'material-ui/lib/raised-button';
 import FontIcon from 'material-ui/lib/font-icon';
+import List from 'material-ui/lib/lists/list';
+import ListItem from 'material-ui/lib/lists/list-item';
+
 import * as Grid from './grid';
 
 const ipc = window.require('ipc');
@@ -17,6 +20,11 @@ class SettingsPage extends Component {
                 this.props.actions.updateSetting("basePath", dirPaths[0]);
             }
         });
+    }
+
+    handleBookSelect(book) {
+        this.props.actions.selectBook(book);
+        this.props.onPageChange('book');
     }
 
     handleFileSelect() {
@@ -49,8 +57,13 @@ class SettingsPage extends Component {
             booksMessage = <p>Add another book.</p>
         }
 
-        booksList = this.props.books.map(b => {
-            return <li>{b.name}</li>
+        booksList = this.props.books.map((b, i) => {
+            return <ListItem
+                       key={i}
+                       leftIcon={<FontIcon className="fa fa-book"/>}
+                       primaryText={b.name}
+                       onTouchTap={this.handleBookSelect.bind(this, b)}
+                   />
         });
 
         return <div style={{padding: 10}}>
@@ -82,7 +95,7 @@ class SettingsPage extends Component {
                         </RaisedButton>
                    </Grid.Row>
                    <Grid.Row>
-                       <ul>{booksList}</ul>
+                       <List>{booksList}</List>
                    </Grid.Row>
                </div>
     }
@@ -100,6 +113,7 @@ export default branch(SettingsPage, {
     },
     actions: {
         updateSetting: actions.settings.update,
-        createBook: actions.books.create
+        createBook: actions.books.create,
+        selectBook: actions.books.select,
     }
 });

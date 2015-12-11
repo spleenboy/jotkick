@@ -21,28 +21,27 @@ export function select(tree, book, note) {
 };
 
 export function pin(tree, book, note, order = 0) {
-    const cursor = find(tree, book, note);
+    const cursor = find(tree, book, note).select('data');
     cursor.set('pinned', true);
     cursor.set('pinOrder', order);
 };
 
 export function unpin(tree, book, note) {
-    const cursor = find(tree, book, note);
+    const cursor = find(tree, book, note).select('data');
     cursor.set('pinned', false);
     cursor.set('pinOrder', 0);
 }
 
 export function setTitle(tree, book, note, title) {
-    const cursor = find(tree, book, note);
+    const cursor = find(tree, book, note).select('data');
     cursor.set('title', title);
-    cursor.set('name', slug(title));
     cursor.set('modified', new Date());
 };
 
 export function setContent(tree, book, note, content) {
     const cursor = find(tree, book, note);
     cursor.set('content', content);
-    cursor.set('modified', new Date());
+    cursor.set(['data', 'modified'], new Date());
 }
 
 export function create(tree, book) {

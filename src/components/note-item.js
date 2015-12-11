@@ -7,6 +7,9 @@ import Editor from './editor';
 export default class NoteItem extends Component {
     render() {
         const note = this.props.note;
+        if (!note) {
+            return null;
+        }
         return <div className="row">
                    <div className="col-xs-12">
                        <div className="box">

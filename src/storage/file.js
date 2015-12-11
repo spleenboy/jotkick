@@ -76,7 +76,7 @@ export default class File extends EventEmitter {
                 return;
             }
 
-            fs.readFile(this.path.full, (err, data) => {
+            fs.readFile(this.path.full, {encoding: 'utf-8'}, (err, data) => {
                 if (err) {
                     this.emit('error', err, this);
                     return;
