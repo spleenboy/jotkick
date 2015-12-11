@@ -93,9 +93,13 @@ export function loadNotes(tree, book, callback = null) {
     baseDir = path.join(baseDir, book.name);
 
     const walker = new FileWalker(baseDir);
+    const isNote = (file) => file.path.ext === '.md';
 
     walker.on('file', (file) => {
-        let note = matter(file.content, 'content');
+        if (!isNote(file)) {
+            return;
+        }
+        let note = matter(file.content || "");
         if (note) {
             note.id   = uuid();
             note.file = file;
@@ -110,5 +114,5 @@ export function loadNotes(tree, book, callback = null) {
 
     if (callback) walker.on('done', callback);
 
-    walker.run((file) => file.path.ext === '.md');
+    walker.run(isNote);
 };

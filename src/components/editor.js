@@ -46,19 +46,25 @@ export default class Editor extends Component {
         };
 
         const editing = this.props.active ? 'block' : 'none';
-        const viewing = this.props.active ? 'none'  : 'block';
 
-        const markup = () => {
-            return {__html: marked(this.props.initialValue)};
+        let viewing;
+        if (!this.props.active) {
+            const markup = () => {
+                return {__html: marked(this.props.initialValue)};
+            }
+            viewing = <div ref="viewing" style={{display: viewing}}>
+                          <div dangerouslySetInnerHTML={markup()}/>
+                      </div>
+        } else {
+            viewing = null;
         }
+
 
         return <div style={containerStyle} onTouchTap={this.handleTextFocus.bind(this)}>
                    <div ref="editing" style={{display: editing}}>
                        <textarea ref="editor" />
                    </div>
-                   <div ref="viewing" style={{display: viewing}}>
-                       <div dangerouslySetInnerHTML={markup()}/>
-                   </div>
+                   {viewing}
                </div>
     }
 };

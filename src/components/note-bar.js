@@ -29,7 +29,7 @@ export default class NoteBar extends Component {
         return <Toolbar style={{marginBottom: 20}}>
                    <TextField
                        hintText="Give me a good name"
-                       value={note.data.title}
+                       defaultValue={note.data.title}
                        onFocus={this.props.onSelect.bind(this, note)}
                        onChange={this.handleTitleChange.bind(this)}
                    />
