@@ -6,7 +6,7 @@ import * as Model from '../model';
 import FileWalker from '../../storage/file-walker';
 import File from '../../storage/file';
 
-export function select(tree, book) {
+export function select(tree, book, callback = null) {
     const books = tree.select('books');
     books.get().forEach((b, i) => {
         var bookCursor = books.select(i);
@@ -18,7 +18,8 @@ export function select(tree, book) {
             bookCursor.set('notes', []);
         }
     });
-    loadNotes(tree, book);
+    tree.set(['settings', 'lastBook'], book.name);
+    loadNotes(tree, book, callback);
 };
 
 export function setTitle(tree, book, title) {
@@ -60,21 +61,24 @@ export function create(tree, name) {
 /**
  * Scans the basePath for directories
 **/
-export function loadBooks(tree) {
+export function loadBooks(tree, callback = null) {
     const basePath = tree.get('settings', 'basePath');
     const books = tree.select('books');
 
     const walker = new FileWalker(basePath);
-    walker.depth = 1;
+
+    walker.depth = 0;
     walker.on('dir', (dir) => {
         if (books.get({name: dir.path.name})) {
             // Skip existing book
             return;
         }
         const found = Model.Book();
-        found.name  = dir.path.name;
+        found.name = dir.path.name;
         books.push(found);
     });
+
+    if (callback) walker.on('done', callback);
     walker.run();
 }
 
@@ -82,7 +86,7 @@ export function loadBooks(tree) {
 /**
  * Loads up the notes for the book
 **/
-export function loadNotes(tree, book) {
+export function loadNotes(tree, book, callback = null) {
     const cursor = tree.select('books', {id: book.id});
     let baseDir = tree.get('settings', 'basePath');
     baseDir = path.join(baseDir, book.name);
@@ -99,5 +103,7 @@ export function loadNotes(tree, book) {
         }
     });
 
-    walker.run(true);
+    if (callback) walker.on('done', callback);
+
+    walker.run((file) => file.path.ext === '.md');
 };

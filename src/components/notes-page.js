@@ -1,6 +1,7 @@
 import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
-import NoteItem from './note-item';
+
+import NoteList from './note-list';
 import actions from '../state/actions/';
 
 class NotesPage extends Component {
@@ -11,15 +12,31 @@ class NotesPage extends Component {
             return null;
         }
 
-        const note = book.notes.find(n => n.active) || book.notes[0];
+        let notes = book.notes.concat();
+        notes.sort((a, b) => {
+            if (a.data.pinned && !b.data.pinned) {
+                return -1;
+            }
+            if (b.data.pinned && !a.data.pinned) {
+                return 1;
+            }
+            if (a.data.pinned && b.data.pinned) {
+                return b.data.pinOrder - a.data.pinOrder;
+            }
+            if (a.data.created > b.data.created) {
+                return -1;
+            }
+            if (a.data.created < b.data.created) {
+                return 1;
+            }
+            return 0;
+        });
+
         return <div className="notes-page">
-                   <NoteItem
-                       note={note}
-                       onSelect={this.props.actions.selectNote.bind(this, book, note)}
-                       onTitleChange={this.props.actions.setNoteTitle.bind(this, book, note)}
-                       onPin={this.props.actions.pinNote.bind(this, book, note)}
-                       onUnpin={this.props.actions.unpinNote.bind(this, book, note)}
-                       onContentChange={this.props.actions.setNoteContent.bind(this, book, note)}
+                   <NoteList
+                       book={book}
+                       notes={notes}
+                       actions={this.props.actions}
                    />
                </div>
     }

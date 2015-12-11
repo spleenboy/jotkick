@@ -1,5 +1,5 @@
 import * as Model from '../model';
-import {create as createBook, loadBooks} from './books';
+import {create as createBook, loadBooks, select as selectBook} from './books';
 import {create as createNote} from './notes';
 
 import LocalStorage from '../../storage/local';
@@ -7,11 +7,23 @@ import LocalStorage from '../../storage/local';
 const storage = new LocalStorage();
 
 export function init(tree) {
-    updateFromStorage(tree, 'settings')
-    .then((data) => {
-        loadBooks(tree);
+    const whenReady = () => {
         tree.commit();
         addEventHandlers(tree);
+    }
+
+    updateFromStorage(tree, 'settings')
+    .then((data) => {
+        loadBooks(tree, () => {
+
+            const found = tree.get('books', {name: data.lastBook});
+
+            if (found) {
+                selectBook(tree, found, whenReady);
+            } else {
+                whenReady();
+            }
+        });
     });
 }
 
@@ -19,6 +31,7 @@ export function init(tree) {
 export function updateFromStorage(tree, key) {
     return storage.getItem(key).then((data) => {
         if (data) tree.set(key, data);
+        return data;
     });
 }
 

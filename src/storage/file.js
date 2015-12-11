@@ -58,7 +58,7 @@ export default class File extends EventEmitter {
         });
     }
 
-    load(read) {
+    load(read = false) {
         fs.stat(this.path.full, (err, stats) => {
             if (err) {
                 this.emit('error', err, this);
@@ -71,7 +71,12 @@ export default class File extends EventEmitter {
             this.stats.isFile = stats.isFile();
             this.stats.isDirectory = stats.isDirectory();
 
-            if (!read || !this.stats.isFile) {
+            if (!this.stats.isFile || read === false) {
+                this.emit('ready');
+                return;
+            }
+
+            if (typeof read === 'function' && !read(this)) {
                 this.emit('ready');
                 return;
             }
@@ -83,6 +88,7 @@ export default class File extends EventEmitter {
                 }
                 this.content = data;
                 this.emit('ready');
+                return;
             });
         });
     }

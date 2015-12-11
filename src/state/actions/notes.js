@@ -1,6 +1,7 @@
 import * as Model from '../model';
 import moment from 'moment';
 import slug from 'slug';
+import matter from 'gray-matter';
 
 export const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -44,13 +45,20 @@ export function setContent(tree, book, note, content) {
     cursor.set(['data', 'modified'], new Date());
 }
 
+export function remove(tree, book, note) {
+    const notes = tree.select('books', {id: book.id}, 'notes');
+    const noteIndex  = notes.get().findIndex((n) => n.id === note.id);
+    if (noteIndex >= 0) {
+        notes.splice(noteIndex, 1);
+    }
+}
+
 export function create(tree, book) {
     const note = Model.Note();
 
-    note.created = new Date();
-    note.title   = moment().format(DATE_FORMAT);
-    note.name    = slug(note.title);
-    note.active  = true;
+    note.data.created = new Date();
+    note.data.title   = moment().format(DATE_FORMAT);
+    note.data.active  = true;
 
     const notes = tree.select('books', {id: book.id}, 'notes');
     notes.get().forEach((n, i) => {

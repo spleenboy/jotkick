@@ -10,6 +10,7 @@ export function Settings() {
         theme: "index",
         fontSize: 100,
         basePath: null,
+        lastBook: null,
         dateDisplayFormat: "YYYY-MM-DD",
     };
 };
