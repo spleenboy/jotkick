@@ -22,7 +22,6 @@ export function Book(name = null) {
     return {
         id: uuid(),
         name: 'home',
-        title: 'Home',
         active: false,
         notes: [],
     };

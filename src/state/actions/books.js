@@ -62,8 +62,20 @@ export function create(tree, name) {
 **/
 export function loadBooks(tree) {
     const basePath = tree.get('settings', 'basePath');
+    const books = tree.select('books');
+
     const walker = new FileWalker(basePath);
     walker.depth = 1;
+    walker.on('dir', (dir) => {
+        if (books.get({name: dir.path.name})) {
+            // Skip existing book
+            return;
+        }
+        const found = Model.Book();
+        found.name  = dir.path.name;
+        books.push(found);
+    });
+    walker.run();
 }
 
 

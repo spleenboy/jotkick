@@ -1,5 +1,5 @@
 import * as Model from '../model';
-import {create as createBook} from './books';
+import {create as createBook, loadBooks} from './books';
 import {create as createNote} from './notes';
 
 import LocalStorage from '../../storage/local';
@@ -9,6 +9,7 @@ const storage = new LocalStorage();
 export function init(tree) {
     updateFromStorage(tree, 'settings')
     .then((data) => {
+        loadBooks(tree);
         tree.commit();
         addEventHandlers(tree);
     });

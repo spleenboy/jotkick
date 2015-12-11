@@ -1,6 +1,7 @@
 const fs = window.require('fs');
 import path from 'path';
 import {EventEmitter} from 'events';
+import File from './file';
 
 export default class FileWalker extends EventEmitter {
     constructor(baseDir) {
@@ -27,12 +28,12 @@ export default class FileWalker extends EventEmitter {
             filenames.forEach(filename => {
                 const fullpath = path.join(dir, filename);
                 const file = new File(fullpath);
-                file.on('ready', (f) => {
-                    if (f.stats.isDirectory) {
-                        this.emit('dir', f);
+                file.on('ready', () => {
+                    if (file.stats.isDirectory) {
+                        this.emit('dir', file);
                         this.walk(fullpath, read, depth + 1);
-                    } else if (f.stats.isFile) {
-                        this.emit('file', f);
+                    } else if (file.stats.isFile) {
+                        this.emit('file', file);
                     }
                 });
                 file.load(read);

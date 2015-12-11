@@ -59,7 +59,7 @@ export default class File extends EventEmitter {
     }
 
     load(read) {
-        fs.stats(this.path.full, (err, stats) => {
+        fs.stat(this.path.full, (err, stats) => {
             if (err) {
                 this.emit('error', err, this);
                 return;
