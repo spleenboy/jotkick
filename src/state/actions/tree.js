@@ -7,10 +7,8 @@ import LocalStorage from '../../storage/local';
 const storage = new LocalStorage();
 
 export function init(tree) {
-    Promise.all([
-        updateFromStorage.bind(this, tree, 'settings'),
-        updateFromStorage.bind(this, tree, 'books')
-    ]).then((collected) => {
+    updateFromStorage(tree, 'settings')
+    .then((data) => {
         tree.commit();
         addEventHandlers(tree);
     });
@@ -18,7 +16,7 @@ export function init(tree) {
 
 
 export function updateFromStorage(tree, key) {
-    return storage.getItem(key, (data) => {
+    return storage.getItem(key).then((data) => {
         if (data) tree.set(key, data);
     });
 }

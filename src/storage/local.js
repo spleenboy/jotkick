@@ -35,9 +35,9 @@ export default class Local {
 
     getItem(key) {
         return this.promise(this.api.getItem, key).
-            then((json) => {
-                return this.deserialize(json);
-            });
+               then((json) => {
+                   return this.deserialize(json);
+               });
     }
 
     setItem(key, value) {
