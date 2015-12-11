@@ -19,6 +19,13 @@ export function active(tree) {
     return tree.get('books', active, 'notes', active);
 };
 
+export function deselect(tree, book) {
+    const notes = tree.select('books', {id: book.id}, 'notes');
+    notes.get().forEach((n, i) => {
+        notes.set([i, 'data', 'active'], false);
+    });
+}
+
 export function select(tree, book, note) {
     const notes = tree.select('books', {id: book.id}, 'notes');
     notes.get().forEach((n, i) => {
@@ -36,7 +43,7 @@ export function pin(tree, book, note) {
 export function unpin(tree, book, note) {
     const cursor = find(tree, book, note).select('data');
     cursor.set('pinned', false);
-    select(tree, book, note);
+    deselect(tree, book);
 }
 
 export function setTitle(tree, book, note, title) {

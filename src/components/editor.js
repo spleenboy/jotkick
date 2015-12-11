@@ -81,7 +81,7 @@ export default class Editor extends Component {
 
         return <div style={containerStyle} onTouchTap={this.handleTextFocus.bind(this)}>
                    <div ref="editing" style={editStyle}>
-                       <textarea ref="editor" value={this.state.content} />
+                       <textarea ref="editor" />
                    </div>
                    {viewing}
                </div>
