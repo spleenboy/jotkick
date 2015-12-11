@@ -7,9 +7,9 @@ export default class NoteList extends Component {
     render() {
         const book = this.props.book;
         const actions = this.props.actions;
-        const noteItems = this.props.notes.map((note) => {
+        const noteItems = this.props.notes.map((note, i) => {
             return <NoteItem
-                       key={note.id}
+                       key={i}
                        note={note}
                        onSelect={actions.selectNote.bind(this, book, note)}
                        onTitleChange={actions.setNoteTitle.bind(this, book, note)}

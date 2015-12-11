@@ -1,7 +1,10 @@
 const fs = window.require('fs');
+const mkdirp = window.require('mkdirp');
 import path from 'path';
 import pathParse from 'path-parse';
 import {EventEmitter} from 'events';
+
+const NOTFOUND = 34;
 
 export default class File extends EventEmitter {
     constructor(fullpath) {
@@ -14,47 +17,53 @@ export default class File extends EventEmitter {
         this.content = null;
     }
 
-    exists() {
+    exists(fullpath = this.path.full) {
         try {
-            fs.accessSync(this.path.full);
+            fs.accessSync(fullpath);
             return true;
-        } catch (e) {
-            return false;
+        } catch (err) {
+            return err.errno === NOTFOUND;
         }
     }
 
-    create() {
+    mkdirs(callback) {
         if (this.exists()) {
-            this.emit('error', new Error("File already exists"));
-            return false;
+            callback();
         }
 
-        if (this.path.ext) {
-            fs.open(this.path.full, 'wx', (err, fd) => {
-                if (err) {
-                    this.emit('error', err);
-                }
-                fs.close(fd);
+        let dirPath = this.path.ext ? this.path.dir : this.path.full;
+        mkdirp(dirPath, (err) => {
+            if (err) {
+                this.emit('error', err);
+            } else {
                 this.emit('created');
-            });
-        } else {
-            fs.mkdir(this.path.full, (err) => {
-                if (err) {
-                    this.emit('error', err);
-                    return;
-                }
-                this.emit('created');
-            });
-        }
+            }
+            callback && callback(err);
+        });
     }
 
-    write(content) {
-        fs.writeFile(this.path.full, content, (err) => {
+    delete() {
+        fs.unlink(this.path.full, (err) => {
             if (err) {
                 this.emit('error', err);
                 return;
             }
-            this.emit('written');
+            this.emit('deleted');
+        });
+    }
+
+    write(content) {
+        this.mkdirs((err) => {
+            if (err) {
+                return;
+            }
+            fs.writeFile(this.path.full, content, (err) => {
+                if (err) {
+                    this.emit('error', err);
+                    return;
+                }
+                this.emit('written');
+            });
         });
     }
 

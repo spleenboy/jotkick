@@ -11,6 +11,7 @@ export function Settings() {
         fontSize: 100,
         basePath: null,
         lastBook: null,
+        debounce: 1000,
         dateDisplayFormat: "YYYY-MM-DD",
     };
 };
@@ -37,9 +38,9 @@ export function Note(title = null) {
     title = title || now.format('YYYY-MM-DD');
     name  = slug(title);
     return {
+        id: uuid(),
         file: null,
         data: {
-            id: uuid(),
             title: title,
             active: false,
             pinned: false,

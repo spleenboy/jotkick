@@ -37,6 +37,9 @@ export function updateFromStorage(tree, key) {
 
 function addEventHandlers(tree) {
     tree.select('settings').on('update', saveSettings);
+    tree.select('notes').on('update', (e) => {
+        console.debug(e.data);
+    });
 }
 
 

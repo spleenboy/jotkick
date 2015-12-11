@@ -15,7 +15,7 @@ export default class NoteBar extends Component {
     }
 
     handlePin(e) {
-        if (this.props.note.pinned) {
+        if (this.props.note.data.pinned) {
             this.props.onUnpin(this.props.note);
         } else {
             this.props.onPin(this.props.note);
@@ -24,12 +24,12 @@ export default class NoteBar extends Component {
 
     render() {
         const note = this.props.note;
-        const pinAct   = note.pinned ? 'Unpin' : 'Pin';
-        const pinClass = note.pinned ? 'fa fa-flag' : 'fa fa-flag-o';
+        const pinAct   = note.data.pinned ? 'Unpin' : 'Pin';
+        const pinClass = note.data.pinned ? 'fa fa-flag' : 'fa fa-flag-o';
         return <Toolbar style={{marginBottom: 20}}>
                    <TextField
                        hintText="Give me a good name"
-                       value={note.title}
+                       value={note.data.title}
                        onFocus={this.props.onSelect.bind(this, note)}
                        onChange={this.handleTitleChange.bind(this)}
                    />

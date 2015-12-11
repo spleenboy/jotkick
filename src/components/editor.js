@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import Catdown from 'catdown';
+import marked from 'marked';
 
 import '../themes/editor/default.css';
 
@@ -25,7 +26,6 @@ export default class Editor extends Component {
     componentDidMount() {
         let editor = new Catdown({
             textarea: this.refs.editor,
-            preview: this.refs.preview,
             viewportMargin: Infinity,
             height: 'auto',
         });
@@ -33,15 +33,7 @@ export default class Editor extends Component {
             editor.set(this.props.initialValue);
         }
         editor.on('change', this.handleTextChange.bind(this));
-        this.toggleEditor();
         this.setState({editor});
-    }
-
-    toggleEditor() {
-        if (!this.state.editor) {
-            return;
-        }
-        this.state.editor.$editor.style.display = this.props.active ? 'block' : 'none';
     }
 
     componentWillUnmount() {
@@ -52,13 +44,21 @@ export default class Editor extends Component {
         const containerStyle = {
             margin: 10,
         };
-        this.toggleEditor();
+
+        const editing = this.props.active ? 'block' : 'none';
+        const viewing = this.props.active ? 'none'  : 'block';
+
+        const markup = () => {
+            return {__html: marked(this.props.initialValue)};
+        }
+
         return <div style={containerStyle} onTouchTap={this.handleTextFocus.bind(this)}>
-                   <textarea ref="editor" style={{display: 'none'}} />
-                   <div
-                       ref="preview"
-                       style={{display: this.props.active ? 'none' : 'block'}}
-                   />
+                   <div ref="editing" style={{display: editing}}>
+                       <textarea ref="editor" />
+                   </div>
+                   <div ref="viewing" style={{display: viewing}}>
+                       <div dangerouslySetInnerHTML={markup()}/>
+                   </div>
                </div>
     }
 };

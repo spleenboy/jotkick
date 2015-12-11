@@ -1,6 +1,7 @@
 import path from 'path';
 import slug from 'slug';
 import matter from 'gray-matter';
+import uuid from 'uuid';
 
 import * as Model from '../model';
 import FileWalker from '../../storage/file-walker';
@@ -40,7 +41,7 @@ export function create(tree, name) {
         attempt++;
     }
 
-    bookDir.create();
+    bookDir.mkdirs();
 
     // Only add the book on success
     bookDir.on('created', () => {
@@ -94,9 +95,13 @@ export function loadNotes(tree, book, callback = null) {
     const walker = new FileWalker(baseDir);
 
     walker.on('file', (file) => {
-        const note = matter(file.content, 'content');
-        note.file  = file;
+        let note = matter(file.content, 'content');
         if (note) {
+            note.id   = uuid();
+            note.file = file;
+            if (!note.data.title) {
+                note.data.title = file.path.name;
+            }
             cursor.push('notes', note);
         } else {
             console.error("Could not parse file", file);

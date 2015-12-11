@@ -21,9 +21,10 @@ export default class NoteItem extends Component {
                             onUnpin={this.props.onUnpin.bind(this)}
                         />
                         <Editor
-                            active={note.active}
+                            active={note.data.active}
                             initialValue={note.content}
                             onChange={this.props.onContentChange.bind(this)}
+                            onFocus={this.props.onSelect.bind(this)}
                         />
                    </Paper>
                </Grid.Row>
