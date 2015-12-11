@@ -30,11 +30,13 @@ export function select(tree, book, note) {
 export function pin(tree, book, note) {
     const cursor = find(tree, book, note).select('data');
     cursor.set('pinned', true);
+    select(tree, book, note);
 };
 
 export function unpin(tree, book, note) {
     const cursor = find(tree, book, note).select('data');
     cursor.set('pinned', false);
+    select(tree, book, note);
 }
 
 export function setTitle(tree, book, note, title) {

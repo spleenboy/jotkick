@@ -9,6 +9,7 @@ export default class Editor extends Component {
         super(props);
         this.state = {
             editor: null,
+            content: '',
         };
     }
 
@@ -20,8 +21,9 @@ export default class Editor extends Component {
 
 
     handleTextChange() {
-       let value = this.state.editor.value();
-       this.props.onChange(value);
+        let value = this.state.editor.value();
+        this.props.onChange(value);
+        this.setState({content: value});
     }
 
 
@@ -35,7 +37,10 @@ export default class Editor extends Component {
             editor.set(this.props.initialValue);
         }
         editor.on('change', this.handleTextChange.bind(this));
-        this.setState({editor});
+        this.setState({
+            editor,
+            content: this.props.initialValue,
+        });
     }
 
 
@@ -43,10 +48,10 @@ export default class Editor extends Component {
         this.setState({editor: null});
     }
 
-    componentWillReceiveProps(nextProps) {
-        // Handle a wholesale switch of the content of this editor
-        if (nextProps.initialValue !== this.state.editor.value()) {
-            //this.state.editor.set(nextProps.initialValue);
+
+    componentWillReceiveProps(next) {
+        if (next.initialValue !== this.state.content) {
+            this.setState({content: next.initialValue});
         }
     }
 
@@ -65,7 +70,7 @@ export default class Editor extends Component {
         let viewing;
         if (!this.props.active) {
             const markup = () => {
-                return {__html: marked(this.props.initialValue)};
+                return {__html: marked(this.state.content)};
             }
             viewing = <div ref="viewing" style={{width: '100%'}}>
                           <div dangerouslySetInnerHTML={markup()}/>
@@ -76,7 +81,7 @@ export default class Editor extends Component {
 
         return <div style={containerStyle} onTouchTap={this.handleTextFocus.bind(this)}>
                    <div ref="editing" style={editStyle}>
-                       <textarea ref="editor" />
+                       <textarea ref="editor" value={this.state.content} />
                    </div>
                    {viewing}
                </div>
