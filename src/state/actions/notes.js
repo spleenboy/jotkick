@@ -118,15 +118,15 @@ export function save(tree, bookId, noteId, lastpath = null) {
     }
 
     const file = new File(fullpath);
-    file.write(body, (err) => {
-        if (!err && lastpath && lastpath !== fullpath) {
+    file.write(body);
+    file.on('written', () => {
+        if (lastpath && lastpath !== fullpath) {
             const old = new File(lastpath);
             old.delete();
         }
-        if (err) {
-            console.error("Error writing note to file", note, err);
-        } else {
-            console.debug("Updated", fullpath);
-        }
+        console.debug("Updated", fullpath);
+    });
+    file.on('error', (err) => {
+        console.error("Error writing note to file", note, err);
     });
 };

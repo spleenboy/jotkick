@@ -24,10 +24,10 @@ class NotesPage extends Component {
             if (a.data.pinned && b.data.pinned) {
                 return b.data.pinOrder - a.data.pinOrder;
             }
-            if (a.data.created > b.data.created) {
+            if (a.data.created < b.data.created) {
                 return -1;
             }
-            if (a.data.created < b.data.created) {
+            if (a.data.created > b.data.created) {
                 return 1;
             }
             return 0;
