@@ -7,6 +7,7 @@ import debounce from 'debounce';
 import * as Model from '../model';
 import File from '../../storage/file';
 
+export const EXTENSION = '.md';
 export const DATE_FORMAT = 'YYYY-MM-DD';
 export const DEFAULT_DEBOUNCE = 1000;
 
@@ -98,20 +99,21 @@ export function queueSave(tree, book, note, lastpath = null) {
 export function save(tree, bookId, noteId, lastpath = null) {
     const book = tree.select('books', {id: bookId});
     const note = book.get('notes', {id: noteId});
+
     const body = matter.stringify(note.content, note.data);
     const basePath = tree.get('settings', 'basePath');
-    let fullpath;
 
+    let fullpath;
     if (note.file) {
         fullpath = note.file.path.full;
     } else {
         const created = moment(note.data.created);
         fullpath = path.join(
                        basePath,
-                       book.name,
+                       book.get('name'),
                        created.format('YYYY'),
                        created.format('MM'),
-                       slug(note.title)
+                       slug(note.data.title) + EXTENSION 
                    );
     }
 
