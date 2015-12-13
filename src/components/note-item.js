@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 
+import Sticky from 'react-stickynode';
 import Paper from 'material-ui/lib/paper';
 import NoteBar from './note-bar';
 import Editor from './editor';
@@ -26,14 +27,16 @@ export default class NoteItem extends Component {
             return null;
         }
         return <Grid.Row>
-                    <NoteBar
-                        note={note}
-                        onSelect={this.props.onSelect.bind(this)}
-                        onTitleChange={this.props.onTitleChange.bind(this)}
-                        onTitleBlur={this.props.onTitleBlur.bind(this)}
-                        onPin={this.props.onPin.bind(this)}
-                        onUnpin={this.props.onUnpin.bind(this)}
-                    />
+                    <Sticky top={0} bottomBoundary={1200}>
+                        <NoteBar
+                            note={note}
+                            onSelect={this.props.onSelect.bind(this)}
+                            onTitleChange={this.props.onTitleChange.bind(this)}
+                            onTitleBlur={this.props.onTitleBlur.bind(this)}
+                            onPin={this.props.onPin.bind(this)}
+                            onUnpin={this.props.onUnpin.bind(this)}
+                        />
+                    </Sticky>
                     <TextEditor
                         active={note.data.active}
                         value={note.content}
