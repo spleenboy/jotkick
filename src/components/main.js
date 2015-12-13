@@ -33,12 +33,21 @@ class Main extends Component {
 
     render() {
         const ready = this.props.books.find(b => b.active);
-        var page;
+        let page;
+
         if (!ready || this.state.page === 'settings') {
-            return <SettingsPage onPageChange={this.handlePageChange.bind(this)}/>
+            page = <SettingsPage onPageChange={this.handlePageChange.bind(this)}/>
+        } else {
+            page = <NotesPage onPageChange={this.handlePageChange.bind(this)}/>
         }
 
-        return <NotesPage onPageChange={this.handlePageChange.bind(this)}/>
+        return <div className="row center-xs">
+                   <div className="col-xs-12 col-sm-10 col-md-8">
+                       <div className="box" style={{minWidth: 600, textAlign: 'left'}}>
+                           {page}
+                       </div>
+                   </div>
+               </div>
     }
 }
 
