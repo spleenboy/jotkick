@@ -7,12 +7,12 @@ import File from './file';
 export default class FileWalker extends EventEmitter {
     constructor(baseDir) {
         super();
-        this.id      = uuid();
+        this.id = uuid();
         this.baseDir = baseDir;
-        this.depth   = Infinity;
-        this.remain  = 0;
-        this.debug   = false;
-        this.emits   = ['error', 'file', 'dir', 'done'];
+        this.depth = Infinity;
+        this.throttle = 10;
+        this.debug = true;
+        this.emits = ['error', 'file', 'dir', 'done'];
     }
 
     log(...args) {
@@ -23,74 +23,62 @@ export default class FileWalker extends EventEmitter {
         this.debug && console.trace.apply(console, [...args, this.id]);
     }
 
-    run(read = false) {
-        this.remain = 0;
+    run(read = false, stop = false) {
+        const dir = new File(this.baseDir);
         this.trace("Starting walk of", this.baseDir);
-        this.walk(this.baseDir, read);
+        this.walk(dir, read, stop);
     }
 
-    walk(dir = this.baseDir, read = false, depth = 0) {
+    walk(dir, read, stop, depth = 0, remain = 0) {
+        const queue = [];
 
-        if (depth > this.depth) {
-            this.remain = 0;
-            this.emit('done');
-            return;
-        }
-
-        fs.readdir(dir, (err, filenames) => {
-
-            if (err) {
-                this.emit('error', err);
-                this.remain--;
-                if (this.remain === 0) {
-                    this.emit('done');
-                }
-                return;
-            }
-
-            this.remain += filenames.length;
-
-            this.log('Directory', dir, 'at depth', depth, 'contains', filenames);
-
-            if (this.remain === 0) {
-                this.emit('done');
-                return;
-            }
-
-            filenames.forEach((filename, i) => {
-                const fullpath = path.join(dir, filename);
-                const file = new File(fullpath);
-
-                this.log('Processing path', i, fullpath);
-
-                file.load(read);
-
-                file.on('error', (err) => {
-                    this.emit('error', err);
-                    this.remain--;
-                    if (this.remain === 0) {
-                        this.emit('done');
-                        return;
-                    }
+        const stopping = (file) => {
+            if (remain === 0 || stop && stop(file)) {
+                queue.forEach(timer => {
+                    clearTimeout(timer);
                 });
+                this.emit('done');
+                return true;
+            }
+            return false;
+        };
 
-                file.on('ready', () => {
+        const processFile = (filename, index) => {
+            const fullpath = path.join(dir.path.full, filename);
+            const file = new File(fullpath);
 
-                    if (file.stats.isDirectory) {
-                        this.emit('dir', file);
-                        this.walk(fullpath, read, depth + 1);
-                    } else if (file.stats.isFile) {
-                        this.emit('file', file);
+            file.load(read);
+
+            file.on('error', (err) => {
+                this.emit('error', err);
+                remain--;
+                stopping();
+            });
+
+            file.on('ready', () => {
+                remain--;
+                if (file.stats.isDirectory) {
+                    this.emit('dir', file);
+                    if (depth + 1 < this.depth) {
+                        this.walk(file, read, stop, depth + 1);
                     }
+                } else if (file.stats.isFile) {
+                    this.emit('file', file);
+                }
+                stopping(file);
+            });
+        };
 
-                    this.remain--;
-                    if (this.remain === 0) {
-                        this.emit('done');
-                    }
-                }); // file.on
+        fs.readdir(dir.path.full, (err, filenames) => {
+            !err || this.emit('error', err);
 
-            }); // filenames.forEach
-
+            let lastStart = 0;
+            remain += filenames.length;
+            filenames.forEach((filename, index) => {
+                let processor = processFile.bind(this, filename, index);
+                queue.push(setTimeout(processor, lastStart));
+                lastStart += this.throttle;
+            });
         }); // fs.readdir
     }
 }

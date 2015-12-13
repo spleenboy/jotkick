@@ -34,10 +34,16 @@ export default class Local {
     }
 
     getItem(key) {
-        return this.promise(this.api.getItem, key).
-               then((json) => {
-                   return this.deserialize(json);
-               });
+        return new Promise((resolve, reject) => {
+            try {
+                const json = this.api.getItem(key)
+                const data = this.deserialize(json);
+                return resolve(data);
+            } catch (e) {
+                console.error("Error getting item", key, e);
+                return reject(e);
+            }
+        });
     }
 
     setItem(key, value) {

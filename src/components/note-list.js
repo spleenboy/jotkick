@@ -42,11 +42,6 @@ export default class NoteList extends Component {
     }
 
 
-    handleTitleBlur(book, note) {
-        this.props.actions.renameNoteFile(book, note);
-    }
-
-
     render() {
         const book = this.props.book;
         const actions = this.props.actions;
@@ -57,7 +52,7 @@ export default class NoteList extends Component {
                        note={note}
                        onSelect={this.props.onSelect.bind(this, book, note)}
                        onTitleChange={this.props.onTitleChange.bind(this, book, note)}
-                       onTitleBlur={this.handleTitleBlur.bind(this, book, note)}
+                       onTitleBlur={this.props.onTitleBlur.bind(this, book, note)}
                        onPin={this.props.onPin.bind(this, book, note)}
                        onUnpin={this.props.onUnpin.bind(this, book, note)}
                        onContentChange={this.props.onContentChange.bind(this, book, note)}

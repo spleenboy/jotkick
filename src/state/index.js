@@ -1,12 +1,18 @@
 import Baobab from 'baobab';
 import * as Model from './model';
-import {init} from './actions/tree';
+import {load as loadTree} from './actions/tree';
 
-const tree = new Baobab(Model.Tree(), {
-    asynchronous: false,
-    immutable: false,
-});
-tree.commit();
-init(tree);
+export default class Tree extends Baobab {
+    constructor(data = null, opts = null) {
+        data = data || Model.Tree();
+        opts = opts || {
+            asynchronous: false,
+            immutable: false,
+        };
+        super(data, opts);
+    }
 
-export default tree;
+    load() {
+        loadTree(this);
+    }
+}

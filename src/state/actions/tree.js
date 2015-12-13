@@ -6,14 +6,16 @@ import LocalStorage from '../../storage/local';
 
 const storage = new LocalStorage();
 
-export function init(tree) {
+export function load(tree) {
     const whenReady = () => {
         tree.commit();
         addEventHandlers(tree);
     }
 
-    updateFromStorage(tree, 'settings')
-    .then((data) => {
+    storage.getItem('settings').then((data) => {
+        if (data) tree.set('settings', data);
+        tree.commit();
+
         loadBooks(tree, () => {
             const found = tree.get('books', {name: data.lastBook});
             if (found) {
@@ -25,13 +27,6 @@ export function init(tree) {
     });
 }
 
-
-export function updateFromStorage(tree, key) {
-    return storage.getItem(key).then((data) => {
-        if (data) tree.set(key, data);
-        return data;
-    });
-}
 
 function addEventHandlers(tree) {
     tree.select('settings').on('update', saveSettings);
@@ -51,6 +46,8 @@ function saveNotes(e) {
     const last    = e.data.previousData;
     const current = e.data.currentData;
     const tree    = e.target.tree;
+
+    if (!current || !tree) return;
 
     function noteChanged(now, then) {
         if (!then) return true;

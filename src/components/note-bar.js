@@ -59,6 +59,7 @@ export default class NoteBar extends Component {
                                ref="noteTitle"
                                hintText="Give me a good name"
                                defaultValue={note.data.title}
+                               inputStyle={{fontSize: '1.2em'}}
                                onFocus={this.props.onSelect.bind(this, note)}
                                onChange={this.handleTitleChange.bind(this)}
                                onBlur={this.handleTitleBlur.bind(this)}

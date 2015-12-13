@@ -32,6 +32,10 @@ class Main extends Component {
     }
 
     render() {
+        const pageStyle = {
+            minWidth: 600,
+            textAlign: 'left'
+        };
         const ready = this.props.books.find(b => b.active);
         let page;
 
@@ -43,7 +47,7 @@ class Main extends Component {
 
         return <div className="row center-xs">
                    <div className="col-xs-12 col-sm-10 col-md-8">
-                       <div className="box" style={{minWidth: 600, textAlign: 'left'}}>
+                       <div className="box" style={pageStyle}>
                            {page}
                        </div>
                    </div>

@@ -67,6 +67,7 @@ export function loadBooks(tree, callback = null) {
     const books = tree.select('books');
 
     const walker = new FileWalker(basePath);
+    walker.id = "loadBooks: " + walker.id;
 
     walker.depth = 0;
     walker.on('dir', (dir) => {
@@ -93,6 +94,8 @@ export function loadNotes(tree, book, callback = null) {
     baseDir = path.join(baseDir, book.name);
 
     const walker = new FileWalker(baseDir);
+    walker.id = "loadNotes: " + walker.id;
+    walker.throttle = 50;
     const isNote = (file) => file.path.ext === '.md';
 
     walker.on('file', (file) => {
