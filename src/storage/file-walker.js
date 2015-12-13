@@ -74,6 +74,8 @@ export default class FileWalker extends EventEmitter {
 
             let lastStart = 0;
             remain += filenames.length;
+
+            filenames.reverse();
             filenames.forEach((filename, index) => {
                 let processor = processFile.bind(this, filename, index);
                 queue.push(setTimeout(processor, lastStart));
