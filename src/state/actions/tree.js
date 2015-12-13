@@ -51,7 +51,7 @@ function saveNotes(e) {
     if (!current || !tree) return;
 
     function noteChanged(now, then) {
-        if (!then) return true;
+        if (!then) return false;
         if (now.content !== then.content) return true;
         for (let key in now.data) {
             if (now.data[key] !== then.data[key]) {

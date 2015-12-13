@@ -40,6 +40,15 @@ class NotesPage extends Component {
     }
 
 
+    handleTitleChange(book, note, value) {
+        if (!value) {
+            return;
+        }
+
+        this.props.actions.setNoteTitle(book, note, value);
+    }
+
+
     render() {
         const book = this.props.books.find(b => b.active) || this.props.books[0];
 
@@ -58,7 +67,7 @@ class NotesPage extends Component {
                    <NoteList
                        book={book}
                        onSelect={this.props.actions.selectNote.bind(this)}
-                       onTitleChange={this.props.actions.setNoteTitle.bind(this)}
+                       onTitleChange={this.handleTitleChange.bind(this)}
                        onTitleBlur={this.props.actions.renameNoteFile.bind(this)}
                        onPin={this.props.actions.pinNote.bind(this)}
                        onUnpin={this.props.actions.unpinNote.bind(this)}
