@@ -73,15 +73,18 @@ export default class NotesHeader extends Component {
                        />
                    </ToolbarGroup>
                    <ToolbarGroup key={2} float="right">
-                       <RaisedButton
-                           primary={true}
-                           label="New Note"
+                       <IconButton
+                           touch={true}
+                           tooltip="Search Notes"
+                       >
+                           <FontIcon className="fa fa-search"/>
+                       </IconButton>
+                       <IconButton
+                           touch={true}
+                           tooltip="Add Note"
                            onTouchTap={this.handleNoteCreate.bind(this)}
                        >
-                           <FontIcon className="fa fa-comment-o" style={{marginRight: 10}} />
-                       </RaisedButton>
-                       <IconButton touch={true}>
-                           <FontIcon className="fa fa-search"/>
+                           <FontIcon className="fa fa-plus-square-o" />
                        </IconButton>
                    </ToolbarGroup>
                </Toolbar>
