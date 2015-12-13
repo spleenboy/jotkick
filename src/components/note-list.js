@@ -5,6 +5,20 @@ import {Row} from './grid';
 
 export default class NoteList extends Component {
 
+    static get propTypes() {
+        const handler = PropTypes.func.isRequired;
+        return {
+            book: PropTypes.object.isRequired,
+            onSelect: handler,
+            onTitleChange: handler,
+            onTitleBlur: handler,
+            onPin: handler,
+            onUnpin: handler,
+            onContentChange: handler,
+            onRemove: handler,
+        };
+    }
+
     sortNotes() {
         let notes = this.props.book.notes.concat();
         return notes.sort((a, b) => {
@@ -41,19 +55,15 @@ export default class NoteList extends Component {
             return <NoteItem
                        key={i}
                        note={note}
-                       onSelect={actions.selectNote.bind(this, book, note)}
-                       onTitleChange={actions.setNoteTitle.bind(this, book, note)}
+                       onSelect={this.props.onSelect.bind(this, book, note)}
+                       onTitleChange={this.props.onTitleChange.bind(this, book, note)}
                        onTitleBlur={this.handleTitleBlur.bind(this, book, note)}
-                       onPin={actions.pinNote.bind(this, book, note)}
-                       onUnpin={actions.unpinNote.bind(this, book, note)}
-                       onContentChange={actions.setNoteContent.bind(this, book, note)}
+                       onPin={this.props.onPin.bind(this, book, note)}
+                       onUnpin={this.props.onUnpin.bind(this, book, note)}
+                       onContentChange={this.props.onContentChange.bind(this, book, note)}
+                       onRemove={this.props.onRemove.bind(this, book, note)}
                    />
         });
         return <Row>{noteItems}</Row>
     }
 }
-
-NoteList.PropTypes = {
-    notes: PropTypes.array.isRequired,
-    actions: PropTypes.array.isRequired,
-};

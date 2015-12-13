@@ -59,22 +59,27 @@ export function setContent(tree, book, note, content) {
 export function remove(tree, book, note) {
     const notes = tree.select('books', {id: book.id}, 'notes');
     const noteIndex  = notes.get().findIndex((n) => n.id === note.id);
+
     if (noteIndex >= 0) {
-        notes.splice(noteIndex, 1);
+        notes.splice([noteIndex, 1]);
     }
+
     if (!note.file) {
         return;
     }
+
     const old = new File(note.file.path.full);
     old.delete();
 }
 
-export function create(tree, book) {
-    const note = Model.Note();
+export function create(tree, book, note = null) {
+    if (!note) {
+        note = Model.Note();
 
-    note.data.created = new Date();
-    note.data.title   = moment().format(DATE_FORMAT);
-    note.data.active  = true;
+        note.data.created = new Date();
+        note.data.title   = moment().format(DATE_FORMAT);
+        note.data.active  = true;
+    }
 
     const notes = tree.select('books', {id: book.id}, 'notes');
     notes.get().forEach((n, i) => {

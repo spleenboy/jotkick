@@ -1,11 +1,45 @@
 import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
 
+import Snackbar from 'material-ui/lib/snackbar';
+
 import NotesHeader from './notes-header';
 import NoteList from './note-list';
 import actions from '../state/actions/';
 
 class NotesPage extends Component {
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            undoDelete: null,
+            message: null,
+        };
+    }
+
+
+    handleRemoveNote(book, note) {
+        this.props.actions.deleteNote(book, note);
+        const undoDelete = () => {
+            this.props.actions.createNote(book, note);
+            this.setState({undoDelete: null});
+            this.refs.deletedNote.dismiss();
+        };
+        this.setState({undoDelete});
+        this.refs.deletedNote.show();
+    }
+
+
+    handleUndoDelete() {
+        this.state.undoDelete();
+        this.setState({undoDelete: null});
+    }
+
+
+    handleUndoDeleteDismiss() {
+        this.setState({undoDelete: null});
+    }
+
+
     render() {
         const book = this.props.books.find(b => b.active) || this.props.books[0];
 
@@ -22,7 +56,20 @@ class NotesPage extends Component {
                    />
                    <NoteList
                        book={book}
-                       actions={this.props.actions}
+                       onSelect={this.props.actions.selectNote.bind(this)}
+                       onTitleChange={this.props.actions.setNoteTitle.bind(this)}
+                       onTitleBlur={this.props.actions.renameNoteFile.bind(this)}
+                       onPin={this.props.actions.pinNote.bind(this)}
+                       onUnpin={this.props.actions.unpinNote.bind(this)}
+                       onContentChange={this.props.actions.setNoteContent.bind(this)}
+                       onRemove={this.handleRemoveNote.bind(this)}
+                   />
+                   <Snackbar
+                       ref="deletedNote"
+                       message="Your note was deleted!"
+                       onDismiss={this.handleUndoDeleteDismiss.bind(this)}
+                       onActionTouchTap={this.handleUndoDelete.bind(this)}
+                       action="Undo"
                    />
                </div>
     }
@@ -44,5 +91,6 @@ export default branch(NotesPage, {
         setNoteTitle: actions.notes.setTitle,
         setNoteContent: actions.notes.setContent,
         calculateNotePath: actions.notes.calculatePath,
+        deleteNote: actions.notes.remove,
     }
 });

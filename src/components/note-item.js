@@ -18,6 +18,7 @@ export default class NoteItem extends Component {
             onPin           : handler,
             onUnpin         : handler,
             onContentChange : handler,
+            onRemove        : handler,
         };
     }
 
@@ -35,6 +36,7 @@ export default class NoteItem extends Component {
                             onTitleBlur={this.props.onTitleBlur.bind(this)}
                             onPin={this.props.onPin.bind(this)}
                             onUnpin={this.props.onUnpin.bind(this)}
+                            onRemove={this.props.onRemove.bind(this)}
                         />
                     </Sticky>
                     <TextEditor

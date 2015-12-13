@@ -19,6 +19,7 @@ export default class NoteBar extends Component {
             onTitleBlur: PropTypes.func.isRequired,
             onPin: PropTypes.func.isRequired,
             onUnpin: PropTypes.func.isRequired,
+            onRemove: PropTypes.func.isRequired,
         };
     }
 
@@ -68,7 +69,7 @@ export default class NoteBar extends Component {
                                <FontIcon className={pinClass}/>
                            </IconButton>
                            {note.content ? 
-                               <IconButton tooltip="Delete Note">
+                               <IconButton tooltip="Delete Note" onTouchTap={this.props.onRemove.bind(this)}>
                                    <FontIcon className="fa fa-trash"/>
                                </IconButton>: ''}
                        </ToolbarGroup>
