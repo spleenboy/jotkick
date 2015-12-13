@@ -6,9 +6,10 @@ import LocalStorage from '../../storage/local';
 
 const storage = new LocalStorage();
 
-export function load(tree) {
+export function load(tree, callback = null) {
     const whenReady = () => {
         tree.commit();
+        callback && callback();
         setTimeout(addEventHandlers.bind(this, tree), 500);
     }
 

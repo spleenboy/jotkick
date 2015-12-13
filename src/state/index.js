@@ -12,7 +12,7 @@ export default class Tree extends Baobab {
         super(data, opts);
     }
 
-    load() {
-        loadTree(this);
+    load(callback = null) {
+        loadTree(this, callback);
     }
 }

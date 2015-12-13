@@ -10,8 +10,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
 const tree = new Tree();
-tree.load();
-
-const RootedApp = root(Main, tree);
-
-ReactDOM.render(<RootedApp/>, document.getElementById('app'));
+tree.load(() => {
+    const RootedApp = root(Main, tree);
+    ReactDOM.render(<RootedApp/>, document.getElementById('app'));
+});
