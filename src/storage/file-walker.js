@@ -30,20 +30,22 @@ export default class FileWalker extends EventEmitter {
     }
 
     walk(dir, read, stop, depth = 0, remain = 0) {
-        const queue = [];
+        let queue = [];
 
         const stopping = (file) => {
-            if (remain === 0 || stop && stop(file)) {
-                queue.forEach(timer => {
-                    clearTimeout(timer);
-                });
+            if (remain === 0 || stop && file && stop(file)) {
                 this.emit('done');
                 return true;
             }
             return false;
         };
 
-        const processFile = (filename, index) => {
+        const next = () => {
+            if (queue.length === 0) {
+                return this.stopping();
+            }
+
+            const filename = queue.shift();
             const fullpath = path.join(dir.path.full, filename);
             const file = new File(fullpath);
 
@@ -57,6 +59,7 @@ export default class FileWalker extends EventEmitter {
 
             file.on('ready', () => {
                 remain--;
+
                 if (file.stats.isDirectory) {
                     this.emit('dir', file);
                     if (depth + 1 < this.depth) {
@@ -65,22 +68,18 @@ export default class FileWalker extends EventEmitter {
                 } else if (file.stats.isFile) {
                     this.emit('file', file);
                 }
-                stopping(file);
+
+                if (!stopping(file)) {
+                    setTimeout(next, this.throttle);
+                }
             });
         };
 
         fs.readdir(dir.path.full, (err, filenames) => {
             !err || this.emit('error', err);
-
-            let lastStart = 0;
             remain += filenames.length;
-
-            filenames.reverse();
-            filenames.forEach((filename, index) => {
-                let processor = processFile.bind(this, filename, index);
-                queue.push(setTimeout(processor, lastStart));
-                lastStart += this.throttle;
-            });
+            queue = filenames;
+            next();
         }); // fs.readdir
     }
 }
