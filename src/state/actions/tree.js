@@ -15,9 +15,7 @@ export function init(tree) {
     updateFromStorage(tree, 'settings')
     .then((data) => {
         loadBooks(tree, () => {
-
             const found = tree.get('books', {name: data.lastBook});
-
             if (found) {
                 selectBook(tree, found, whenReady);
             } else {

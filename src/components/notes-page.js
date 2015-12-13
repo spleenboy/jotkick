@@ -13,26 +13,6 @@ class NotesPage extends Component {
             return null;
         }
 
-        let notes = book.notes.concat();
-        notes.sort((a, b) => {
-            if (a.data.pinned && !b.data.pinned) {
-                return -1;
-            }
-            if (b.data.pinned && !a.data.pinned) {
-                return 1;
-            }
-            if (a.data.pinned && b.data.pinned) {
-                return b.data.pinOrder - a.data.pinOrder;
-            }
-            if (a.data.created < b.data.created) {
-                return -1;
-            }
-            if (a.data.created > b.data.created) {
-                return 1;
-            }
-            return 0;
-        });
-
         return <div className="notes-page">
                    <NotesHeader
                        books={this.props.books}
@@ -42,7 +22,6 @@ class NotesPage extends Component {
                    />
                    <NoteList
                        book={book}
-                       notes={notes}
                        actions={this.props.actions}
                    />
                </div>
@@ -59,9 +38,11 @@ export default branch(NotesPage, {
         setBookTitle: actions.books.setTitle,
         createNote: actions.notes.create,
         selectNote: actions.notes.select,
+        renameNoteFile: actions.notes.renameFile,
         pinNote: actions.notes.pin,
         unpinNote: actions.notes.unpin,
         setNoteTitle: actions.notes.setTitle,
         setNoteContent: actions.notes.setContent,
+        calculateNotePath: actions.notes.calculatePath,
     }
 });

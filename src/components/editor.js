@@ -13,6 +13,14 @@ export default class Editor extends Component {
         };
     }
 
+    static get propTypes() {
+        return {
+            active: PropTypes.bool,
+            value: PropTypes.string,
+            onChange: PropTypes.func.isRequired,
+        };
+    }
+
 
     handleTextFocus() {
         this.props.onFocus && this.props.onFocus(this);
@@ -33,13 +41,13 @@ export default class Editor extends Component {
             viewportMargin: Infinity,
             height: 'auto',
         });
-        if (this.props.initialValue) {
-            editor.set(this.props.initialValue);
+        if (this.props.value) {
+            editor.set(this.props.value);
         }
         editor.on('change', this.handleTextChange.bind(this));
         this.setState({
             editor,
-            content: this.props.initialValue,
+            content: this.props.value,
         });
     }
 
@@ -50,8 +58,8 @@ export default class Editor extends Component {
 
 
     componentWillReceiveProps(next) {
-        if (next.initialValue !== this.state.content) {
-            this.setState({content: next.initialValue});
+        if (next.value !== this.state.content) {
+            this.setState({content: next.value});
         }
     }
 
@@ -86,10 +94,4 @@ export default class Editor extends Component {
                    {viewing}
                </div>
     }
-};
-
-Editor.propTypes = {
-    active: PropTypes.bool,
-    initialValue: PropTypes.string,
-    onChange: PropTypes.func.isRequired,
 };

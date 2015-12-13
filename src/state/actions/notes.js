@@ -2,14 +2,13 @@ import path from 'path';
 import moment from 'moment';
 import slug from 'slug';
 import matter from 'gray-matter';
-import debounce from 'debounce';
 
 import * as Model from '../model';
 import File from '../../storage/file';
 
 export const EXTENSION = '.md';
 export const DATE_FORMAT = 'YYYY-MM-DD';
-export const DEFAULT_DEBOUNCE = 1000;
+export const DEFAULT_THROTTLE = 1000;
 
 export function find(tree, book, note) {
     return tree.select('books', {id: book.id}, 'notes', {id: note.id});
@@ -87,46 +86,87 @@ export function create(tree, book) {
 };
 
 
-export function queueSave(tree, book, note, lastpath = null) {
-    const delay = tree.get('settings', 'debounce') || DEFAULT_DEBOUNCE;
+export function queueSave(tree, book, note) {
+    const throttle = tree.get('settings', 'throttle') || DEFAULT_THROTTLE;
+
+    // Check for an existing request. If one is found, push out the next
+    // save by the throttle value
+    const cursor = find(tree, book, note);
+
     const method = () => {
-        save(tree, book.id, note.id, lastpath);
+        save(tree, book.id, note.id, (err, file) => {
+            cursor.unset('saving');
+        });
     }
-    debounce(method, delay)();
+
+    const saving = cursor.get('saving');
+
+    // Clear out the last one
+    saving && clearTimeout(saving);
+
+    // Queue up the next save
+    cursor.set('saving', setTimeout(method, throttle));
 };
 
 
-export function save(tree, bookId, noteId, lastpath = null) {
+export function calculatePath(tree, book, note) {
+    const baseDir = tree.get('settings', 'basePath');
+    const day = moment(note.data.created || new Date());
+    return path.join(
+                baseDir,
+                book.name,
+                day.format('YYYY'),
+                day.format('MM'),
+                slug(note.data.title) + EXTENSION
+            );
+
+}
+
+
+export function renameFile(tree, book, note, callback = null) {
+    if (!note.file) {
+        console.error("Note does not have existing path");
+        return false;
+    }
+
+    const file = new File(note.file.path.full);
+    const newpath = calculatePath(tree, book, note);
+
+    if (newpath === file.path.full) {
+        return false;
+    }
+
+    file.rename(newpath);
+    file.on('renamed', () => {
+        const cursor = tree.select('books', {id: book.id}, 'notes', {id: note.id});
+        cursor.set('file', file);
+        callback && callback(null, file);
+    });
+};
+
+
+export function save(tree, bookId, noteId, callback = null) {
     const book = tree.select('books', {id: bookId});
     const note = book.get('notes', {id: noteId});
-
     const body = matter.stringify(note.content, note.data);
-    const basePath = tree.get('settings', 'basePath');
 
     let fullpath;
     if (note.file) {
         fullpath = note.file.path.full;
     } else {
-        const created = moment(note.data.created);
-        fullpath = path.join(
-                       basePath,
-                       book.get('name'),
-                       created.format('YYYY'),
-                       created.format('MM'),
-                       slug(note.data.title) + EXTENSION 
-                   );
+        fullpath = calculatePath(tree, book.get(), note);
+        console.debug("No existing file for saving note. Calculating path", fullpath);
     }
 
     const file = new File(fullpath);
     file.write(body);
+
     file.on('written', () => {
-        if (lastpath && lastpath !== fullpath) {
-            const old = new File(lastpath);
-            old.delete();
-        }
-        console.debug("Updated", fullpath);
+        callback && callback(null, file);
     });
+
     file.on('error', (err) => {
         console.error("Error writing note to file", note, err);
+        callback && callback(err, file);
     });
 };

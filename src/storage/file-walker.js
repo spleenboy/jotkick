@@ -11,15 +11,16 @@ export default class FileWalker extends EventEmitter {
         this.baseDir = baseDir;
         this.depth   = Infinity;
         this.remain  = 0;
+        this.debug   = false;
         this.emits   = ['error', 'file', 'dir', 'done'];
     }
 
     log(...args) {
-        console.debug.apply(console, [...args, this.id]);
+        this.debug && console.debug.apply(console, [...args, this.id]);
     }
 
     trace(...args) {
-        console.trace.apply(console, [...args, this.id]);
+        this.debug && console.trace.apply(console, [...args, this.id]);
     }
 
     run(read = false) {

@@ -9,12 +9,15 @@ const NOTFOUND = 34;
 export default class File extends EventEmitter {
     constructor(fullpath) {
         super();
-        this.path = pathParse(fullpath);
-        this.path.full = fullpath;
-
+        this.setPath(fullpath);
         this.loaded = false;
         this.stats = null;
         this.content = null;
+    }
+
+    setPath(fullpath) {
+        this.path = pathParse(fullpath);
+        this.path.full = fullpath;
     }
 
     exists(fullpath = this.path.full) {
@@ -49,6 +52,17 @@ export default class File extends EventEmitter {
                 return;
             }
             this.emit('deleted');
+        });
+    }
+
+    rename(newpath) {
+        fs.rename(this.path.full, newpath, (err) => {
+            if (err) {
+                this.emit('error', err);
+                return;
+            }
+            this.setPath(newpath);
+            this.emit('renamed');
         });
     }
 

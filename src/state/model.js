@@ -1,4 +1,3 @@
-import slug from 'slug';
 import moment from 'moment';
 import uuid from 'uuid';
 
@@ -11,7 +10,7 @@ export function Settings() {
         fontSize: 100,
         basePath: null,
         lastBook: null,
-        debounce: 1000,
+        throttle: null,
         dateDisplayFormat: "YYYY-MM-DD",
     };
 };
@@ -34,9 +33,7 @@ export function Book(name = null) {
  * The "title" is used for display.
 **/
 export function Note(title = null) {
-    const now = moment();
-    title = title || now.format('YYYY-MM-DD');
-    name  = slug(title);
+    title = title || moment().format('YYYY-MM-DD');
     return {
         id: uuid(),
         file: null,
