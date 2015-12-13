@@ -8,7 +8,7 @@ import FontIcon from 'material-ui/lib/font-icon';
 import List from 'material-ui/lib/lists/list';
 import ListItem from 'material-ui/lib/lists/list-item';
 
-import * as Grid from './grid';
+import BookSelect from './book-select';
 
 const ipc = window.require('ipc');
 
@@ -27,34 +27,26 @@ class SettingsPage extends Component {
         this.props.onPageChange('book');
     }
 
-    handleFileSelect() {
-        ipc.send('open-dialog');
+    handleBookCreate(name) {
+        this.props.actions.createBook(name);
+        this.props.onPageChange('book');
     }
 
-    handleAddBook() {
-        const bookName = this.refs.bookName;
-        const name = bookName.getValue();
-        if (name) {
-            this.props.actions.createBook(name);
-            bookName.setValue("");
-            bookName.setErrorText("");
-        } else {
-            bookName.setErrorText("Required");
-        }
+    handleFileSelect() {
+        ipc.send('open-dialog');
     }
 
     render() {
         let startMessage, booksMessage, booksList;
         if (this.props.settings.basePath) {
-            startMessage  = <p>Your current home is <em>{this.props.settings.basePath}</em>. If you change your home directory, your current notes may disappear.</p>
+            startMessage  = <p>Your home is <em>{this.props.settings.basePath}</em>. If you change your home directory, your current notes may disappear.</p>
         } else {
             startMessage = <p>Let's get started! I need a home. This is where all files will be saved.</p>
         }
 
+        booksMessage = <p>Books keep your notes organized. Each book is a top-level folder in your home directory.</p>
         if (!this.props.books.length) {
-            booksMessage = <p>Add your first book.</p>
-        } else {
-            booksMessage = <p>Add another book.</p>
+            booksMessage += <p>Add your first book now!</p>
         }
 
         booksList = this.props.books.map((b, i) => {
@@ -67,36 +59,44 @@ class SettingsPage extends Component {
         });
 
         return <div style={{padding: 10}}>
-                   <Grid.Row>
-                       {startMessage}
-                       <RaisedButton
-                           label={this.props.settings.basePath ? 'Choose a New Home' : 'Find a Home'}
-                           labelPosition="after"
-                           primary={true}
-                           tooltip="Choose a Home"
-                           onTouchTap={this.handleFileSelect.bind(this)}
-                       >
-                           <FontIcon className="fa fa-hdd-o" style={{marginLeft: 10}}/>
-                       </RaisedButton>
-                   </Grid.Row>
-                   <Grid.Row>
-                        {booksMessage}
-                        <TextField
-                            floatingLabelText="Book Name"
-                            ref="bookName"
-                        />
-                        <RaisedButton
-                            label="Add"
-                            labelPosition="after"
-                            tooltip="Add a Book"
-                            onTouchTap={this.handleAddBook.bind(this)}
-                        >
-                            <FontIcon className="fa fa-book" style={{marginLeft: 10}}/>
-                        </RaisedButton>
-                   </Grid.Row>
-                   <Grid.Row>
-                       <List>{booksList}</List>
-                   </Grid.Row>
+                   <div className="row">
+                       <div className="col-xs-12"><div className="box">
+                           <h1>JotKick Settings</h1>
+                       </div></div>
+                   </div>
+                   <hr/>
+                   <div className="row">
+                       <div className="col-xs-6"><div className="box">
+                           <strong>Home Directory</strong>
+                           {startMessage}
+                       </div></div>
+                       <div className="col-xs-6"><div className="box">
+                           <RaisedButton
+                               label={this.props.settings.basePath ? 'Find a New Home' : 'Find a Home'}
+                               labelPosition="after"
+                               primary={true}
+                               tooltip="Choose a Home"
+                               onTouchTap={this.handleFileSelect.bind(this)}
+                           >
+                               <FontIcon className="fa fa-hdd-o" style={{marginLeft: 10}}/>
+                           </RaisedButton>
+                       </div></div>
+                   </div>
+                   <hr/>
+                   <div className="row">
+                       <div className="col-xs-6"><div className="box">
+                           <strong>Books</strong>
+                           {booksMessage}
+                       </div></div>
+                       <div className="col-xs-6"><div className="box">
+                           <BookSelect
+                               books={this.props.books}
+                               onBookCreate={this.handleBookCreate.bind(this)}
+                               onBookChange={this.handleBookSelect.bind(this)}
+                           />
+                       </div></div>
+                   </div>
+                   <hr/>
                </div>
     }
 }

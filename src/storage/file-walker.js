@@ -42,7 +42,7 @@ export default class FileWalker extends EventEmitter {
 
         const next = () => {
             if (queue.length === 0) {
-                return this.stopping();
+                return stopping();
             }
 
             const filename = queue.shift();
