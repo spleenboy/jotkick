@@ -53,6 +53,7 @@ class NotesPage extends Component {
                        onBookCreate={this.props.actions.createBook.bind(this)}
                        onBookChange={this.props.actions.selectBook.bind(this)}
                        onNoteCreate={this.props.actions.createNote.bind(this)}
+                       onPageChange={this.props.onPageChange.bind(this)}
                    />
                    <NoteList
                        book={book}

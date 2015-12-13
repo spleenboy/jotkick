@@ -114,5 +114,7 @@ export function loadNotes(tree, book, callback = null) {
 
     if (callback) walker.on('done', callback);
 
+    cursor.set('notes', []);
+    tree.commit();
     walker.run(isNote);
 };

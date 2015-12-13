@@ -29,6 +29,7 @@ export default class NotesHeader extends Component {
             onBookChange: PropTypes.func.isRequired,
             onBookCreate: PropTypes.func.isRequired,
             onNoteCreate: PropTypes.func.isRequired,
+            onPageChange: PropTypes.func.isRequired,
         };
     }
 
@@ -56,14 +57,22 @@ export default class NotesHeader extends Component {
         bookList.push({payload: 'new', text: <span><FontIcon className="fa fa-plus-square"/> Add a Book</span>});
         
         return <Toolbar style={{backgroundColor: theme.appBar.color}}>
-                   <ToolbarGroup key={0} float="left">
+                    <ToolbarGroup key={0} float="left">
+                       <IconButton
+                           touch={true}
+                           onTouchTap={this.props.onPageChange.bind(this, 'settings')}
+                       >
+                           <FontIcon className="fa fa-cog"/>
+                       </IconButton>
+                   </ToolbarGroup>
+                   <ToolbarGroup key={1} float="left">
                        <DropDownMenu
                            menuItems={bookList}
                            selectedIndex={bookIndex}
                            onChange={this.handleBookChange.bind(this)}
                        />
                    </ToolbarGroup>
-                   <ToolbarGroup key={1} float="right">
+                   <ToolbarGroup key={2} float="right">
                        <RaisedButton
                            primary={true}
                            label="New Note"
