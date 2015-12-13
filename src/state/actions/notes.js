@@ -153,7 +153,7 @@ export function renameFile(tree, book, note, callback = null) {
 export function save(tree, bookId, noteId, callback = null) {
     const book = tree.select('books', {id: bookId});
     const note = book.get('notes', {id: noteId});
-    const body = matter.stringify(note.content, note.data);
+    const body = matter.stringify(note.content, note.data).trim();
 
     let fullpath;
     if (note.file) {

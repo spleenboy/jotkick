@@ -5,6 +5,7 @@ import pathParse from 'path-parse';
 import {EventEmitter} from 'events';
 
 const NOTFOUND = 34;
+const MAX_ATTEMPTS = 25;
 
 export default class File extends EventEmitter {
     constructor(fullpath) {
@@ -56,7 +57,14 @@ export default class File extends EventEmitter {
     }
 
     rename(newpath) {
-        fs.rename(this.path.full, newpath, (err) => {
+        let dest = new File(newpath);
+
+        if (dest.exists()) {
+            this.emit('error', new Error("File exists with name"));
+            return false;
+        }
+
+        fs.rename(this.path.full, dest.path.full, (err) => {
             if (err) {
                 this.emit('error', err);
                 return;

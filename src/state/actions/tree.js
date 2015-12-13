@@ -9,7 +9,7 @@ const storage = new LocalStorage();
 export function load(tree) {
     const whenReady = () => {
         tree.commit();
-        addEventHandlers(tree);
+        setTimeout(addEventHandlers.bind(this, tree), 500);
     }
 
     storage.getItem('settings').then((data) => {
