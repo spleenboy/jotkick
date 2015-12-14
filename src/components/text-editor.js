@@ -22,10 +22,25 @@ export default class Editor extends Component {
     }
 
 
+    focus() {
+        this.refs.editor.scrollIntoView();
+    }
+
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.value !== this.state.value) {
             this.setState({value: nextProps.value});
         }
+    }
+
+
+    componentDidUpdate(prevProps, prevState) {
+        if (!prevProps.active && this.props.active) this.focus();
+    }
+
+
+    componentDidMount() {
+        if (this.props.active) this.focus();
     }
 
 
@@ -56,7 +71,7 @@ export default class Editor extends Component {
             contents = <div dangerouslySetInnerHTML={markup()} />
         }
 
-        return <div style={containerStyle} onTouchTap={this.handleTextFocus.bind(this)}>
+        return <div ref="editor" style={containerStyle} onTouchTap={this.handleTextFocus.bind(this)}>
                    {contents}
                </div>
     }

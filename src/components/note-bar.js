@@ -12,6 +12,19 @@ import FlatButton from 'material-ui/lib/flat-button';
 import FontIcon from 'material-ui/lib/font-icon';
 
 export default class NoteBar extends Component {
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            muiTheme: this.context.muiTheme,
+        }
+    }
+
+    static get contextTypes() {
+        return {
+            muiTheme: PropTypes.object,
+        };
+    }
+
     static get propTypes() {
         return {
             note: PropTypes.object.isRequired,
@@ -47,13 +60,25 @@ export default class NoteBar extends Component {
 
     render() {
         const note = this.props.note;
+        const theme = this.state.muiTheme;
         const pinAct   = note.data.pinned ? 'Unpin' : 'Pin';
         const pinClass = note.data.pinned ? 'fa fa-flag' : 'fa fa-flag-o';
         const saveProgress = note.saving
                              ? <LinearProgress mode="indeterminate" style={{height: 3}} />
                              : <div style={{height: 3}}/>
+        let toolbarStyle;
+        if (note.data.active) {
+            toolbarStyle = {
+                backgroundColor: theme.rawTheme.palette.accent1Color,
+                color: theme.rawTheme.palette.alternateTextColor,
+            };
+        } else {
+            toolbarStyle = {
+                backgroundColor: theme.toolbar.backgroundColor
+            }
+        }
         return <div>
-                   <Toolbar>
+                   <Toolbar style={toolbarStyle}>
                        <ToolbarGroup key={0} float="left">
                            <TextField
                                ref="noteTitle"
