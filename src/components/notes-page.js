@@ -1,6 +1,7 @@
 import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
 
+import fuzzy from 'fuzzy';
 import Snackbar from 'material-ui/lib/snackbar';
 
 import NotesHeader from './notes-header';
@@ -13,6 +14,7 @@ class NotesPage extends Component {
         this.state = {
             undoDelete: null,
             message: null,
+            query: null,
         };
     }
 
@@ -40,12 +42,75 @@ class NotesPage extends Component {
     }
 
 
+    handleSearchNotes(value) {
+        this.setState({query: value});
+    }
+
+
     handleTitleChange(book, note, value) {
         if (!value) {
             return;
         }
 
         this.props.actions.setNoteTitle(book, note, value);
+    }
+
+
+    handleNoteSelect(book, note) {
+        this.setState({query: ''});
+        this.props.actions.selectNote(book, note);
+    }
+
+
+    filteredNotes(book) {
+        let notes = book.notes.concat();
+
+        if (!this.state.query) {
+            notes.forEach((n) => n.search = {});
+            return this.sortNotes(notes);
+        }
+
+        const options = {
+            pre: '**',
+            post: '**',
+            extract: (note) => {
+                return note.content;
+            }
+        };
+        const matches = fuzzy.filter(this.state.query, notes, options);
+        notes = matches.map((m) => {
+            let note = m.original;
+            note.search = {
+                query: this.state.query,
+                score: m.score,
+                content: m.string,
+            };
+            note.data.active = false;
+            return note;
+        });
+        return notes;
+    }
+
+
+    sortNotes(notes) {
+        return notes.sort((a, b) => {
+            if (a.data.pinned && !b.data.pinned) {
+                return -1;
+            }
+            if (b.data.pinned && !a.data.pinned) {
+                return 1;
+            }
+            if (a.data.pinned && b.data.pinned) {
+                return b.data.pinOrder - a.data.pinOrder;
+            }
+            if (a.data.created > b.data.created) {
+                return -1;
+            }
+            if (a.data.created < b.data.created) {
+                return 1;
+            }
+            return 0;
+        });
     }
 
 
@@ -56,6 +121,8 @@ class NotesPage extends Component {
             return null;
         }
 
+        const notes = this.filteredNotes(book);
+
         return <div className="notes-page">
                    <NotesHeader
                        books={this.props.books}
@@ -63,16 +130,17 @@ class NotesPage extends Component {
                        onBookChange={this.props.actions.selectBook.bind(this)}
                        onNoteCreate={this.props.actions.createNote.bind(this)}
                        onPageChange={this.props.onPageChange.bind(this)}
+                       onSearch={this.handleSearchNotes.bind(this)}
                    />
                    <NoteList
-                       book={book}
-                       onSelect={this.props.actions.selectNote.bind(this)}
-                       onTitleChange={this.handleTitleChange.bind(this)}
-                       onTitleBlur={this.props.actions.renameNoteFile.bind(this)}
-                       onPin={this.props.actions.pinNote.bind(this)}
-                       onUnpin={this.props.actions.unpinNote.bind(this)}
-                       onContentChange={this.props.actions.setNoteContent.bind(this)}
-                       onRemove={this.handleRemoveNote.bind(this)}
+                       notes={notes}
+                       onSelect={this.handleNoteSelect.bind(this, book)}
+                       onTitleChange={this.handleTitleChange.bind(this, book)}
+                       onTitleBlur={this.props.actions.renameNoteFile.bind(this, book)}
+                       onPin={this.props.actions.pinNote.bind(this, book)}
+                       onUnpin={this.props.actions.unpinNote.bind(this, book)}
+                       onContentChange={this.props.actions.setNoteContent.bind(this, book)}
+                       onRemove={this.handleRemoveNote.bind(this, book)}
                    />
                    <Snackbar
                        ref="deletedNote"

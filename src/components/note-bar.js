@@ -36,6 +36,10 @@ export default class NoteBar extends Component {
         };
     }
 
+    focus() {
+        this.refs.wrapper.scrollIntoView({behavior: 'smooth'});
+    }
+
     handleTitleBlur(e) {
         this.props.onTitleBlur(e.target.value);
     }
@@ -58,6 +62,10 @@ export default class NoteBar extends Component {
         }
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (!prevProps.note.data.active && this.props.note.data.active) this.focus();
+    }
+
     render() {
         const note = this.props.note;
         const theme = this.state.muiTheme;
@@ -77,7 +85,7 @@ export default class NoteBar extends Component {
                 backgroundColor: theme.toolbar.backgroundColor
             }
         }
-        return <div>
+        return <div ref="wrapper">
                    <Toolbar style={toolbarStyle}>
                        <ToolbarGroup key={0} float="left">
                            <TextField

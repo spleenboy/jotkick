@@ -57,6 +57,10 @@ export default class File extends EventEmitter {
     }
 
     rename(newpath) {
+        if (newpath === this.path.full) {
+            return false;
+        }
+
         let dest = new File(newpath);
 
         if (dest.exists()) {

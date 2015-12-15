@@ -8,7 +8,7 @@ export default class NoteList extends Component {
     static get propTypes() {
         const handler = PropTypes.func.isRequired;
         return {
-            book: PropTypes.object.isRequired,
+            notes: PropTypes.array.isRequired,
             onSelect: handler,
             onTitleChange: handler,
             onTitleBlur: handler,
@@ -19,44 +19,21 @@ export default class NoteList extends Component {
         };
     }
 
-    sortNotes() {
-        let notes = this.props.book.notes.concat();
-        return notes.sort((a, b) => {
-            if (a.data.pinned && !b.data.pinned) {
-                return -1;
-            }
-            if (b.data.pinned && !a.data.pinned) {
-                return 1;
-            }
-            if (a.data.pinned && b.data.pinned) {
-                return b.data.pinOrder - a.data.pinOrder;
-            }
-            if (a.data.created > b.data.created) {
-                return -1;
-            }
-            if (a.data.created < b.data.created) {
-                return 1;
-            }
-            return 0;
-        });
-    }
-
 
     render() {
-        const book = this.props.book;
         const actions = this.props.actions;
-        const notes = this.sortNotes();
+        const notes = this.props.notes;
         const noteItems = notes.map((note, i) => {
             return <NoteItem
                        key={i}
                        note={note}
-                       onSelect={this.props.onSelect.bind(this, book, note)}
-                       onTitleChange={this.props.onTitleChange.bind(this, book, note)}
-                       onTitleBlur={this.props.onTitleBlur.bind(this, book, note)}
-                       onPin={this.props.onPin.bind(this, book, note)}
-                       onUnpin={this.props.onUnpin.bind(this, book, note)}
-                       onContentChange={this.props.onContentChange.bind(this, book, note)}
-                       onRemove={this.props.onRemove.bind(this, book, note)}
+                       onSelect={this.props.onSelect.bind(this, note)}
+                       onTitleChange={this.props.onTitleChange.bind(this, note)}
+                       onTitleBlur={this.props.onTitleBlur.bind(this, note)}
+                       onPin={this.props.onPin.bind(this, note)}
+                       onUnpin={this.props.onUnpin.bind(this, note)}
+                       onContentChange={this.props.onContentChange.bind(this, note)}
+                       onRemove={this.props.onRemove.bind(this, note)}
                    />
         });
         return <Row>{noteItems}</Row>

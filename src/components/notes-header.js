@@ -8,12 +8,15 @@ import ToolbarSeparator from 'material-ui/lib/toolbar/toolbar-separator';
 import ToolbarTitle from 'material-ui/lib/toolbar/toolbar-title';
 
 import BookSelect from './book-select';
+import SearchBar from './search-bar';
 
 export default class NotesHeader extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
             muiTheme: this.context.muiTheme,
+            searching: false,
+            searchOrigin: null,
         };
     }
 
@@ -30,6 +33,7 @@ export default class NotesHeader extends Component {
             onBookCreate: PropTypes.func.isRequired,
             onNoteCreate: PropTypes.func.isRequired,
             onPageChange: PropTypes.func.isRequired,
+            onSearch: PropTypes.func.isRequired,
         };
     }
 
@@ -38,40 +42,71 @@ export default class NotesHeader extends Component {
         this.props.onNoteCreate(book);
     }
 
+    handleSearching(value) {
+        this.props.onSearch(value);
+    }
+
+    handleSearchToggle(e) {
+        this.setState({
+            searching: !this.state.searching,
+            searchOrigin: e.currentTarget,
+        });
+    }
+
+    handleSearchCancel() {
+        this.props.onSearch(null);
+        this.setState({searching: false});
+    }
+
     render() {
         const theme = this.state.muiTheme;
-        
-        return <Toolbar style={{backgroundColor: theme.appBar.color}}>
-                    <ToolbarGroup key={0} float="left">
-                       <IconButton
-                           touch={true}
-                           onTouchTap={this.props.onPageChange.bind(this, 'settings')}
-                       >
-                           <FontIcon className="fa fa-cog"/>
-                       </IconButton>
-                   </ToolbarGroup>
-                   <ToolbarGroup key={1} float="left">
-                       <BookSelect
-                           books={this.props.books}
-                           onBookChange={this.props.onBookChange.bind(this)}
-                           onBookCreate={this.props.onBookCreate.bind(this)}
-                       />
-                   </ToolbarGroup>
-                   <ToolbarGroup key={2} float="right">
-                       <IconButton
-                           touch={true}
-                           tooltip="Search Notes"
-                       >
-                           <FontIcon className="fa fa-search"/>
-                       </IconButton>
-                       <IconButton
-                           touch={true}
-                           tooltip="Add Note"
-                           onTouchTap={this.handleNoteCreate.bind(this)}
-                       >
-                           <FontIcon className="fa fa-plus-square-o" />
-                       </IconButton>
-                   </ToolbarGroup>
-               </Toolbar>
+        let search = null;
+        if (this.state.searching) {
+            search = <SearchBar
+                         active={this.state.searching}
+                         onSearch={this.handleSearching.bind(this)}
+                         onChange={this.handleSearching.bind(this)}
+                         onCancel={this.handleSearchCancel.bind(this)}
+                     />
+        } else {
+            search = <IconButton
+                         ref="searchButton"
+                         touch={true}
+                         tooltip="Search Notes"
+                         onTouchTap={this.handleSearchToggle.bind(this)}
+                     >
+                         <FontIcon className="fa fa-search"/>
+                     </IconButton>
+        }
+
+        return <div>
+                   <Toolbar style={{backgroundColor: theme.appBar.color}}>
+                        <ToolbarGroup key={0} float="left">
+                           <IconButton
+                               touch={true}
+                               onTouchTap={this.props.onPageChange.bind(this, 'settings')}
+                           >
+                               <FontIcon className="fa fa-cog"/>
+                           </IconButton>
+                       </ToolbarGroup>
+                       <ToolbarGroup key={1} float="left">
+                           <BookSelect
+                               books={this.props.books}
+                               onBookChange={this.props.onBookChange.bind(this)}
+                               onBookCreate={this.props.onBookCreate.bind(this)}
+                           />
+                       </ToolbarGroup>
+                       <ToolbarGroup key={2} float="right">
+                           {search}
+                           <IconButton
+                               touch={true}
+                               tooltip="Add Note"
+                               onTouchTap={this.handleNoteCreate.bind(this)}
+                           >
+                               <FontIcon className="fa fa-plus-square-o" />
+                           </IconButton>
+                       </ToolbarGroup>
+                   </Toolbar>
+               </div>
     }
 }

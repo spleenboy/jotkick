@@ -22,25 +22,10 @@ export default class Editor extends Component {
     }
 
 
-    focus() {
-        this.refs.editor.scrollIntoView();
-    }
-
-
     componentWillReceiveProps(nextProps) {
         if (nextProps.value !== this.state.value) {
             this.setState({value: nextProps.value});
         }
-    }
-
-
-    componentDidUpdate(prevProps, prevState) {
-        if (!prevProps.active && this.props.active) this.focus();
-    }
-
-
-    componentDidMount() {
-        if (this.props.active) this.focus();
     }
 
 
