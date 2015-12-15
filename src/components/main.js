@@ -8,8 +8,8 @@ import NotesPage from './notes-page';
 import SettingsPage from './settings-page';
 
 class Main extends Component {
-    constructor(props) {
-        super(props);
+    constructor(props, context) {
+        super(props, context);
         this.state = {
             page: 'home',
         };
@@ -22,8 +22,9 @@ class Main extends Component {
     }
 
     getChildContext() {
+        const theme = Themes[this.props.theme] || Themes.Light;
         return {
-            muiTheme: ThemeManager.getMuiTheme(Themes.Light),
+            muiTheme: ThemeManager.getMuiTheme(theme),
         }
     }
 
@@ -37,6 +38,7 @@ class Main extends Component {
             textAlign: 'left'
         };
         const ready = this.props.books.find(b => b.active);
+        const theme = Themes[this.props.theme] || Themes.Light;
         let page;
 
         if (!ready || this.state.page === 'settings') {
@@ -45,7 +47,7 @@ class Main extends Component {
             page = <NotesPage onPageChange={this.handlePageChange.bind(this)}/>
         }
 
-        return <div className="row center-xs">
+        return <div className="row center-xs" style={{backgroundColor: theme.palette.canvasColor}}>
                    <div className="col-xs-12 col-sm-10 col-md-8">
                        <div className="box" style={pageStyle}>
                            {page}
@@ -58,5 +60,6 @@ class Main extends Component {
 export default branch(Main, {
     cursors: {
         books: ['books'],
+        theme: ['settings', 'theme'],
     }
 });

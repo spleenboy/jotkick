@@ -10,17 +10,39 @@ import List from 'material-ui/lib/lists/list';
 import ListItem from 'material-ui/lib/lists/list-item';
 
 import BookSelect from './book-select';
+import ThemeSelect from './theme-select';
 
 const ipc = window.require('ipc');
 
 
 class SettingsPage extends Component {
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            theme: this.context.muiTheme,
+        };
+    }
+
+    static get contextTypes() {
+        return {
+            muiTheme: PropTypes.object,
+        }
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        this.setState({theme: nextContext.muiTheme});
+    }
+
     componentDidMount() {
         ipc.on('open-dialog-reply', (dirPaths) => {
             if (dirPaths.length) {
                 this.props.actions.updateSetting("basePath", dirPaths[0]);
             }
         });
+    }
+
+    handleFileSelect() {
+        ipc.send('open-dialog');
     }
 
     handleBookSelect(book) {
@@ -33,8 +55,8 @@ class SettingsPage extends Component {
         this.props.onPageChange('book');
     }
 
-    handleFileSelect() {
-        ipc.send('open-dialog');
+    handleThemeChange(theme) {
+        this.props.actions.updateSetting("theme", theme);
     }
 
     handleBackButton() {
@@ -43,6 +65,8 @@ class SettingsPage extends Component {
 
     render() {
         let startMessage, booksMessage, booksList, backButton;
+
+        const colors = this.state.theme.rawTheme.palette;
 
         if (this.props.settings.basePath) {
             startMessage  = <p>Your home is <em>{this.props.settings.basePath}</em>. If you change your home directory, your current notes may disappear.</p>
@@ -69,7 +93,7 @@ class SettingsPage extends Component {
                    />
         });
 
-        return <div style={{padding: 10}}>
+        return <div style={{padding: 10}} style={{color: colors.textColor, minHeight: window.innerHeight}}>
                    <div className="row">
                        <div className="col-xs-1"><div className="box">
                            {backButton}
@@ -107,6 +131,18 @@ class SettingsPage extends Component {
                                books={this.props.books}
                                onBookCreate={this.handleBookCreate.bind(this)}
                                onBookChange={this.handleBookSelect.bind(this)}
+                           />
+                       </div></div>
+                   </div>
+                   <hr/>
+                   <div className="row">
+                       <div className="col-xs-6"><div className="box">
+                           <strong>Theme</strong>
+                       </div></div>
+                       <div className="col-xs-6"><div className="box">
+                           <ThemeSelect
+                               theme={this.props.settings.theme}
+                               onThemeChange={this.handleThemeChange.bind(this)}
                            />
                        </div></div>
                    </div>

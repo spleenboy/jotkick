@@ -6,7 +6,7 @@ import uuid from 'uuid';
 **/
 export function Settings() {
     return {
-        theme: "index",
+        theme: "Light",
         fontSize: 100,
         basePath: null,
         lastBook: null,

@@ -6,8 +6,16 @@ export default class Editor extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            value: this.props.value
+            value: this.props.value,
+            theme: this.context.muiTheme,
         };
+    }
+
+
+    static get contextTypes() {
+        return {
+            muiTheme: PropTypes.object,
+        }
     }
 
 
@@ -22,10 +30,11 @@ export default class Editor extends Component {
     }
 
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps, nextContext) {
         if (nextProps.value !== this.state.value) {
             this.setState({value: nextProps.value});
         }
+        this.setState({theme: nextContext.muiTheme});
     }
 
 
@@ -34,6 +43,7 @@ export default class Editor extends Component {
             margin: 10,
         };
 
+        const textColor = this.state.theme.rawTheme.palette.textColor;
         let contents;
         if (this.props.active) {
             const lines = this.state.value.split('\n');
@@ -53,7 +63,7 @@ export default class Editor extends Component {
                 }
                 return {__html}
             };
-            contents = <div dangerouslySetInnerHTML={markup()} />
+            contents = <div style={{color: textColor}} dangerouslySetInnerHTML={markup()} />
         }
 
         return <div ref="editor" style={containerStyle} onTouchTap={this.handleTextFocus.bind(this)}>
