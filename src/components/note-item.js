@@ -12,6 +12,7 @@ export default class NoteItem extends Component {
         return {
             note            : PropTypes.object.isRequired,
             onSelect        : handler,
+            onDeselect      : handler,
             onTitleChange   : handler,
             onTitleBlur     : handler,
             onPin           : handler,
@@ -32,6 +33,7 @@ export default class NoteItem extends Component {
                     <NoteBar
                         note={note}
                         onSelect={this.props.onSelect.bind(this)}
+                        onDeselect={this.props.onDeselect.bind(this)}
                         onTitleChange={this.props.onTitleChange.bind(this)}
                         onTitleBlur={this.props.onTitleBlur.bind(this)}
                         onPin={this.props.onPin.bind(this)}

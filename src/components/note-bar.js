@@ -30,6 +30,7 @@ export default class NoteBar extends Component {
             note: PropTypes.object.isRequired,
             onTitleChange: PropTypes.func.isRequired,
             onTitleBlur: PropTypes.func.isRequired,
+            onDeselect: PropTypes.func.isRequired,
             onPin: PropTypes.func.isRequired,
             onUnpin: PropTypes.func.isRequired,
             onRemove: PropTypes.func.isRequired,
@@ -46,6 +47,10 @@ export default class NoteBar extends Component {
 
     handleTitleChange(e) {
         this.props.onTitleChange(e.target.value);
+    }
+
+    handleDeselect(e) {
+        this.props.onDeselect();
     }
 
     handlePin(e) {
@@ -99,6 +104,10 @@ export default class NoteBar extends Component {
                            />
                        </ToolbarGroup>
                        <ToolbarGroup key={1} float="right">
+                           {note.data.active ?
+                               <IconButton tooltip="Stop Editing" onTouchTap={this.handleDeselect.bind(this)}>
+                                   <FontIcon className="fa fa-eye"/>
+                               </IconButton> : ''}
                            <IconButton tooltip={`${pinAct} this Note`} onTouchTap={this.handlePin.bind(this)}>
                                <FontIcon className={pinClass}/>
                            </IconButton>

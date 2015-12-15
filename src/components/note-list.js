@@ -10,6 +10,7 @@ export default class NoteList extends Component {
         return {
             notes: PropTypes.array.isRequired,
             onSelect: handler,
+            onDeselect: handler,
             onTitleChange: handler,
             onTitleBlur: handler,
             onPin: handler,
@@ -28,6 +29,7 @@ export default class NoteList extends Component {
                        key={i}
                        note={note}
                        onSelect={this.props.onSelect.bind(this, note)}
+                       onDeselect={this.props.onDeselect.bind(this, note)}
                        onTitleChange={this.props.onTitleChange.bind(this, note)}
                        onTitleBlur={this.props.onTitleBlur.bind(this, note)}
                        onPin={this.props.onPin.bind(this, note)}

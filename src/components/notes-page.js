@@ -62,6 +62,11 @@ class NotesPage extends Component {
     }
 
 
+    handleNoteDeselect(book, note) {
+        this.props.actions.deselectNotes(book);
+    }
+
+
     filteredNotes(book) {
         let notes = book.notes.concat();
 
@@ -136,6 +141,7 @@ class NotesPage extends Component {
                    <NoteList
                        notes={notes}
                        onSelect={this.handleNoteSelect.bind(this, book)}
+                       onDeselect={this.handleNoteDeselect.bind(this, book)}
                        onTitleChange={this.handleTitleChange.bind(this, book)}
                        onTitleBlur={this.props.actions.renameNoteFile.bind(this, book)}
                        onPin={this.props.actions.pinNote.bind(this, book)}
@@ -164,6 +170,7 @@ export default branch(NotesPage, {
         setBookTitle: actions.books.setTitle,
         createNote: actions.notes.create,
         selectNote: actions.notes.select,
+        deselectNotes: actions.notes.deselect,
         renameNoteFile: actions.notes.renameFile,
         pinNote: actions.notes.pin,
         unpinNote: actions.notes.unpin,
