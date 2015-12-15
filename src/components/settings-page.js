@@ -5,6 +5,7 @@ import actions from '../state/actions/';
 import TextField from 'material-ui/lib/text-field';
 import RaisedButton from 'material-ui/lib/raised-button';
 import FontIcon from 'material-ui/lib/font-icon';
+import IconButton from 'material-ui/lib/icon-button';
 import List from 'material-ui/lib/lists/list';
 import ListItem from 'material-ui/lib/lists/list-item';
 
@@ -36,8 +37,13 @@ class SettingsPage extends Component {
         ipc.send('open-dialog');
     }
 
+    handleBackButton() {
+        this.props.onPageChange('book');
+    }
+
     render() {
-        let startMessage, booksMessage, booksList;
+        let startMessage, booksMessage, booksList, backButton;
+
         if (this.props.settings.basePath) {
             startMessage  = <p>Your home is <em>{this.props.settings.basePath}</em>. If you change your home directory, your current notes may disappear.</p>
         } else {
@@ -47,6 +53,11 @@ class SettingsPage extends Component {
         booksMessage = <p>Books keep your notes organized. Each book is a top-level folder in your home directory.</p>
         if (!this.props.books.length) {
             booksMessage += <p>Add your first book now!</p>
+        } else {
+            backButton = <IconButton
+                             iconClassName="fa fa-arrow-left"
+                             onTouchTap={this.handleBackButton.bind(this)}
+                         />
         }
 
         booksList = this.props.books.map((b, i) => {
@@ -60,7 +71,10 @@ class SettingsPage extends Component {
 
         return <div style={{padding: 10}}>
                    <div className="row">
-                       <div className="col-xs-12"><div className="box">
+                       <div className="col-xs-1"><div className="box">
+                           {backButton}
+                       </div></div>
+                       <div className="col-xs-10"><div className="box">
                            <h1>JotKick Settings</h1>
                        </div></div>
                    </div>
