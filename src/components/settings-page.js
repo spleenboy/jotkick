@@ -80,6 +80,8 @@ class SettingsPage extends Component {
         } else {
             backButton = <IconButton
                              iconClassName="fa fa-arrow-left"
+                             tooltip="Back to Your Notes"
+                             tooltipPosition="bottom-center"
                              onTouchTap={this.handleBackButton.bind(this)}
                          />
         }
@@ -99,7 +101,7 @@ class SettingsPage extends Component {
                            {backButton}
                        </div></div>
                        <div className="col-xs-10"><div className="box">
-                           <h1>JotKick Settings</h1>
+                           <h1 style={{textAlign: 'center'}}>JotKick Settings</h1>
                        </div></div>
                    </div>
                    <hr/>

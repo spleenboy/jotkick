@@ -79,18 +79,14 @@ export default class NoteBar extends Component {
         const saveProgress = note.saving
                              ? <LinearProgress mode="indeterminate" style={{height: 3}} />
                              : <div style={{height: 3}}/>
-        let toolbarStyle;
+        let toolbarStyle = {
+            marginTop: 50,
+        };
         if (note.data.active) {
-            toolbarStyle = {
-                marginTop: 20,
-                backgroundColor: theme.rawTheme.palette.accent1Color,
-                color: theme.rawTheme.palette.alternateTextColor,
-            };
+            toolbarStyle.backgroundColor = theme.rawTheme.palette.accent1Color;
+            toolbarStyle.color = theme.rawTheme.palette.alternateTextColor;
         } else {
-            toolbarStyle = {
-                marginTop: 20,
-                backgroundColor: theme.toolbar.backgroundColor
-            }
+            toolbarStyle.backgroundColor = theme.toolbar.backgroundColor;
         }
         return <div ref="wrapper">
                    <Toolbar style={toolbarStyle}>

@@ -88,8 +88,8 @@ export default class NotesHeader extends Component {
         }
 
         return <div>
-                   <h1>JotKick</h1>
-                   <Toolbar style={{backgroundColor: theme.appBar.color, marginTop: 50}}>
+                   <h1 style={{textAlign: 'center', color: theme.rawTheme.palette.textColor}}>JotKick</h1>
+                   <Toolbar style={{backgroundColor: theme.appBar.color, marginTop: 10}}>
                         <ToolbarGroup key={0} float="left">
                            <IconButton
                                touch={true}
