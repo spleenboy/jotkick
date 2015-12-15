@@ -80,6 +80,7 @@ export default class NotesHeader extends Component {
                          ref="searchButton"
                          touch={true}
                          tooltip="Search Notes"
+                         toooltipPosition="top-center"
                          onTouchTap={this.handleSearchToggle.bind(this)}
                      >
                          <FontIcon className="fa fa-search"/>
@@ -87,7 +88,7 @@ export default class NotesHeader extends Component {
         }
 
         return <div>
-                   <Toolbar style={{backgroundColor: theme.appBar.color}}>
+                   <Toolbar style={{backgroundColor: theme.appBar.color, marginTop: 30}}>
                         <ToolbarGroup key={0} float="left">
                            <IconButton
                                touch={true}
@@ -108,6 +109,7 @@ export default class NotesHeader extends Component {
                            <IconButton
                                touch={true}
                                tooltip="Add Note"
+                               toooltipPosition="top-center"
                                onTouchTap={this.handleNoteCreate.bind(this)}
                            >
                                <FontIcon className="fa fa-plus-square-o" />
