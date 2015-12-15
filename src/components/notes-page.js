@@ -56,6 +56,11 @@ class NotesPage extends Component {
     }
 
 
+    handleRenameNoteFile(book, note, value) {
+        this.props.actions.renameNoteFile(book, note);
+    }
+
+
     handleNoteSelect(book, note) {
         this.refs.notesHeader.cancelSearch();
         this.props.actions.selectNote(book, note);
@@ -108,10 +113,12 @@ class NotesPage extends Component {
             if (a.data.pinned && b.data.pinned) {
                 return b.data.pinOrder - a.data.pinOrder;
             }
-            if (a.data.created > b.data.created) {
+            const ac = a.file ? a.file.stats.birthtime : a.data.created;
+            const bc = b.file ? b.file.stats.birthtime : b.data.created;
+            if (ac > bc) {
                 return -1;
             }
-            if (a.data.created < b.data.created) {
+            if (ac < bc) {
                 return 1;
             }
             return 0;
@@ -143,7 +150,7 @@ class NotesPage extends Component {
                        onSelect={this.handleNoteSelect.bind(this, book)}
                        onDeselect={this.handleNoteDeselect.bind(this, book)}
                        onTitleChange={this.handleTitleChange.bind(this, book)}
-                       onTitleBlur={this.props.actions.renameNoteFile.bind(this, book)}
+                       onTitleBlur={this.handleRenameNoteFile.bind(this, book)}
                        onPin={this.props.actions.pinNote.bind(this, book)}
                        onUnpin={this.props.actions.unpinNote.bind(this, book)}
                        onContentChange={this.props.actions.setNoteContent.bind(this, book)}

@@ -35,11 +35,11 @@ export default class BookSelect extends Component {
     }
 
     handleBookChange(event, index, item) {
-        if (item.payload === 'new') {
+        if (item === 'new') {
             this.setState({adding: true});
         } else {
             this.setState({adding: false});
-            this.props.onBookChange(item.payload);
+            this.props.onBookChange(item);
         }
     }
 
