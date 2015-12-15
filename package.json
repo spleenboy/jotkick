@@ -15,7 +15,7 @@
     "test": "xo",
     "start": "webpack && electron .",
     "watch": "webpack --progress --colors --watch",
-    "build": "webpack --progress --colors && electron-packager . $npm_package_productName --out=dist --ignore='^/dist$' --asar --all --version=$npm_package_electronVersion"
+    "build": "webpack --progress --colors && electron-packager . $npm_package_productName --out=dist --ignore='^/dist$' --asar --all --version=$npm_package_electronVersion --overwrite"
   },
   "files": [
     "index.js",
