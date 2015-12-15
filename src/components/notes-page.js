@@ -57,7 +57,7 @@ class NotesPage extends Component {
 
 
     handleNoteSelect(book, note) {
-        this.setState({query: ''});
+        this.refs.notesHeader.cancelSearch();
         this.props.actions.selectNote(book, note);
     }
 
@@ -125,6 +125,7 @@ class NotesPage extends Component {
 
         return <div className="notes-page">
                    <NotesHeader
+                       ref="notesHeader"
                        books={this.props.books}
                        onBookCreate={this.props.actions.createBook.bind(this)}
                        onBookChange={this.props.actions.selectBook.bind(this)}

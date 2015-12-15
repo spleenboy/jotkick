@@ -37,6 +37,12 @@ export default class NotesHeader extends Component {
         };
     }
 
+    cancelSearch() {
+        if (this.refs.searchBar) {
+            this.refs.searchBar.cancel();
+        }
+    }
+
     handleNoteCreate(e) {
         const book = this.props.books.find(b => b.active);
         this.props.onNoteCreate(book);
@@ -63,6 +69,7 @@ export default class NotesHeader extends Component {
         let search = null;
         if (this.state.searching) {
             search = <SearchBar
+                         ref="searchBar"
                          active={this.state.searching}
                          onSearch={this.handleSearching.bind(this)}
                          onChange={this.handleSearching.bind(this)}

@@ -34,6 +34,11 @@ export default class SearchBar extends Component {
 
 
     handleCancel(e) {
+        this.cancel();
+    }
+
+
+    cancel() {
         this.refs.searchField.setErrorText("");
         this.refs.searchField.clearValue();
         this.props.onCancel();
