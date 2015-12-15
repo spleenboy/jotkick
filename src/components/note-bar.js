@@ -82,11 +82,13 @@ export default class NoteBar extends Component {
         let toolbarStyle;
         if (note.data.active) {
             toolbarStyle = {
+                marginTop: 20,
                 backgroundColor: theme.rawTheme.palette.accent1Color,
                 color: theme.rawTheme.palette.alternateTextColor,
             };
         } else {
             toolbarStyle = {
+                marginTop: 20,
                 backgroundColor: theme.toolbar.backgroundColor
             }
         }

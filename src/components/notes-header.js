@@ -88,10 +88,13 @@ export default class NotesHeader extends Component {
         }
 
         return <div>
+                   <h1>JotKick</h1>
                    <Toolbar style={{backgroundColor: theme.appBar.color, marginTop: 50}}>
                         <ToolbarGroup key={0} float="left">
                            <IconButton
                                touch={true}
+                               tooltip="Edit Settings"
+                               tooltipPosition="top-center"
                                onTouchTap={this.props.onPageChange.bind(this, 'settings')}
                            >
                                <FontIcon className="fa fa-cog"/>
