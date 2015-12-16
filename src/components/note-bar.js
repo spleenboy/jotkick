@@ -28,9 +28,10 @@ export default class NoteBar extends Component {
     static get propTypes() {
         return {
             note: PropTypes.object.isRequired,
-            onTitleChange: PropTypes.func.isRequired,
-            onTitleBlur: PropTypes.func.isRequired,
-            onDeselect: PropTypes.func.isRequired,
+            onTitleFocus: PropTypes.func,
+            onTitleChange: PropTypes.func,
+            onTitleBlur: PropTypes.func,
+            onDeselect: PropTypes.func,
             onPin: PropTypes.func.isRequired,
             onUnpin: PropTypes.func.isRequired,
             onRemove: PropTypes.func.isRequired,
@@ -41,16 +42,20 @@ export default class NoteBar extends Component {
         this.refs.wrapper.scrollIntoView({behavior: 'smooth'});
     }
 
+    handleTitleFocus(e) {
+        this.props.onTitleFocus && this.props.onTitleFocus();
+    }
+
     handleTitleBlur(e) {
-        this.props.onTitleBlur(e.target.value);
+        this.props.onTitleBlur && this.props.onTitleBlur(e.target.value);
     }
 
     handleTitleChange(e) {
-        this.props.onTitleChange(e.target.value);
+        this.props.onTitleChange && this.props.onTitleChange(e.target.value);
     }
 
     handleDeselect(e) {
-        this.props.onDeselect();
+        this.props.onDeselect && this.props.onDeselect();
     }
 
     handlePin(e) {
@@ -80,7 +85,7 @@ export default class NoteBar extends Component {
                              ? <LinearProgress mode="indeterminate" style={{height: 3}} />
                              : <div style={{height: 3}}/>
         let toolbarStyle = {
-            marginTop: 50,
+            marginTop: theme.rawTheme.spacing.desktopGutterMore,
         };
         if (note.data.active) {
             toolbarStyle.backgroundColor = theme.rawTheme.palette.accent1Color;
@@ -96,7 +101,7 @@ export default class NoteBar extends Component {
                                hintText="Give me a good name"
                                defaultValue={note.data.title}
                                inputStyle={{fontSize: '1.2em'}}
-                               onFocus={this.props.onSelect.bind(this, note)}
+                               onFocus={this.handleTitleFocus.bind(this)}
                                onChange={this.handleTitleChange.bind(this)}
                                onBlur={this.handleTitleBlur.bind(this)}
                            />
