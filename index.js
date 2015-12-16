@@ -10,10 +10,9 @@ require('crash-reporter').start();
 require('electron-debug')();
 
 const mb = menubar({
-    width: 600,
+    width: 800,
     height: 800,
-    preloadWindow: true,
-    showDockIcon: true
+    preloadWindow: true
 });
 
 mb.on('ready', function() {
