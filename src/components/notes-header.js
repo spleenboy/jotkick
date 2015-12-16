@@ -66,6 +66,7 @@ export default class NotesHeader extends Component {
 
     render() {
         const theme = this.state.muiTheme;
+        const padding = 10;
         let search = null;
         if (this.state.searching) {
             search = <SearchBar
@@ -89,7 +90,7 @@ export default class NotesHeader extends Component {
 
         return <div>
                    <h1 style={{textAlign: 'center', color: theme.rawTheme.palette.textColor}}>JotKick</h1>
-                   <Toolbar style={{backgroundColor: theme.appBar.color, marginTop: 10}}>
+                   <Toolbar style={{backgroundColor: theme.appBar.color, marginTop: padding, marginBottom: padding, height: theme.appBar.height + padding, paddingTop: padding}}>
                         <ToolbarGroup key={0} float="left">
                            <IconButton
                                touch={true}

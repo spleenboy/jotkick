@@ -11,7 +11,14 @@ export default class BookSelect extends Component {
         super(props, context);
         this.state = {
             adding: false,
+            theme: this.context.muiTheme,
         }
+    }
+
+    static get contextTypes() {
+        return {
+            muiTheme: PropTypes.object,
+        };
     }
 
     static get propTypes() {
@@ -22,16 +29,28 @@ export default class BookSelect extends Component {
         };
     }
 
+    clear() {
+        this.setState({adding: false});
+        this.refs.bookName.clearValue();
+    }
+
+    warn() {
+        this.refs.bookName.focus();
+    }
+
     handleBookCreate(event) {
         const name = this.refs.bookName.getValue();
         if (name) {
             this.props.onBookCreate(name);
-            this.setState({adding: false});
-            this.refs.bookName.setValue("");
-            this.refs.bookName.setErrorText("");
+            this.clear();
         } else {
-            this.refs.bookName.setErrorText("Please enter a name");
+            this.warn();
         }
+    }
+
+    handleBookCreateCancel(event) {
+        this.setState({adding: false});
+        this.clear();
     }
 
     handleBookChange(event, index, item) {
@@ -40,6 +59,12 @@ export default class BookSelect extends Component {
         } else {
             this.setState({adding: false});
             this.props.onBookChange(item);
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (!prevState.adding && this.state.adding) {
+            this.refs.bookName.focus();
         }
     }
 
@@ -68,9 +93,15 @@ export default class BookSelect extends Component {
                        <TextField
                            hintText="Enter a Book Name"
                            ref="bookName"
+                           onEnterKeyDown={this.handleBookCreate.bind(this)}
+                       />
+                       <RaisedButton
+                           label="Cancel"
+                           onTouchTap={this.handleBookCreateCancel.bind(this)}
                        />
                        <RaisedButton
                            label="Create Book"
+                           primary={true}
                            onTouchTap={this.handleBookCreate.bind(this)}
                        />
                    </span>
