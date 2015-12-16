@@ -3,6 +3,7 @@ import slug from 'slug';
 import matter from 'gray-matter';
 import uuid from 'uuid';
 
+import * as noteActions from './notes';
 import * as Model from '../model';
 import FileWalker from '../../storage/file-walker';
 import File from '../../storage/file';
@@ -55,6 +56,7 @@ export function create(tree, name) {
 
         book.active = true;
         books.push(book);
+        noteActions.create(tree, book);
     });
 };
 

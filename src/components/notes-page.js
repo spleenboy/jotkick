@@ -6,6 +6,7 @@ import Snackbar from 'material-ui/lib/snackbar';
 
 import NotesHeader from './notes-header';
 import NoteList from './note-list';
+import NoteCreateButton from './note-create-button';
 import actions from '../state/actions/';
 
 class NotesPage extends Component {
@@ -135,7 +136,28 @@ class NotesPage extends Component {
 
         const notes = this.filteredNotes(book);
 
-        return <div className="notes-page">
+        let notesList;
+
+        if (book.notes.length) {
+            notesList = <NoteList
+                            notes={notes}
+                            onSelect={this.handleNoteSelect.bind(this, book)}
+                            onDeselect={this.handleNoteDeselect.bind(this, book)}
+                            onTitleChange={this.handleTitleChange.bind(this, book)}
+                            onTitleBlur={this.handleRenameNoteFile.bind(this, book)}
+                            onPin={this.props.actions.pinNote.bind(this, book)}
+                            onUnpin={this.props.actions.unpinNote.bind(this, book)}
+                            onContentChange={this.props.actions.setNoteContent.bind(this, book)}
+                            onRemove={this.handleRemoveNote.bind(this, book)}
+                        />
+        } else {
+            notesList = <NoteCreateButton
+                            book={book}
+                            onCreate={this.props.actions.createNote.bind(this, book)}
+                        />
+        }
+
+        return <div className="notes-page" style={{minHeight: window.innerHeight}}>
                    <NotesHeader
                        ref="notesHeader"
                        books={this.props.books}
@@ -145,17 +167,7 @@ class NotesPage extends Component {
                        onPageChange={this.props.onPageChange.bind(this)}
                        onSearch={this.handleSearchNotes.bind(this)}
                    />
-                   <NoteList
-                       notes={notes}
-                       onSelect={this.handleNoteSelect.bind(this, book)}
-                       onDeselect={this.handleNoteDeselect.bind(this, book)}
-                       onTitleChange={this.handleTitleChange.bind(this, book)}
-                       onTitleBlur={this.handleRenameNoteFile.bind(this, book)}
-                       onPin={this.props.actions.pinNote.bind(this, book)}
-                       onUnpin={this.props.actions.unpinNote.bind(this, book)}
-                       onContentChange={this.props.actions.setNoteContent.bind(this, book)}
-                       onRemove={this.handleRemoveNote.bind(this, book)}
-                   />
+                   {notesList}
                    <Snackbar
                        ref="deletedNote"
                        message="Your note was deleted!"
