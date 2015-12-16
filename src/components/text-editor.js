@@ -67,7 +67,6 @@ export default class Editor extends Component {
             margin: 10,
         };
 
-        const textColor = this.state.theme.rawTheme.palette.textColor;
         let contents;
         if (this.props.active) {
             const lines = this.state.value.split('\n');
@@ -80,6 +79,10 @@ export default class Editor extends Component {
                            onChange={this.handleTextChange.bind(this)}
                        />
         } else {
+            let style = {
+                color: this.state.theme.rawTheme.palette.textColor,
+                cursor: 'text',
+            };
             const markup = () => {
                 let __html = marked(this.state.value);
                 // Default to an empty line
@@ -88,7 +91,7 @@ export default class Editor extends Component {
                 }
                 return {__html}
             };
-            contents = <div ref="content" style={{color: textColor}} dangerouslySetInnerHTML={markup()} />
+            contents = <div ref="content" style={style} dangerouslySetInnerHTML={markup()} />
         }
 
         return <div ref="editor" style={containerStyle} onTouchTap={this.handleTextFocus.bind(this)}>
