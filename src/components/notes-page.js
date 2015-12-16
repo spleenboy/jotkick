@@ -15,7 +15,6 @@ class NotesPage extends Component {
         this.state = {
             undoDelete: null,
             message: null,
-            query: null,
         };
     }
 
@@ -44,7 +43,7 @@ class NotesPage extends Component {
 
 
     handleSearchNotes(value) {
-        this.setState({query: value});
+        this.props.actions.setQuery(value);
     }
 
 
@@ -76,7 +75,7 @@ class NotesPage extends Component {
     filteredNotes(book) {
         let notes = book.notes.concat();
 
-        if (!this.state.query) {
+        if (!this.props.query) {
             notes.forEach((n) => n.search = {});
             return this.sortNotes(notes);
         }
@@ -88,11 +87,11 @@ class NotesPage extends Component {
                 return note.content;
             }
         };
-        const matches = fuzzy.filter(this.state.query, notes, options);
+        const matches = fuzzy.filter(this.props.query, notes, options);
         notes = matches.map((m) => {
             let note = m.original;
             note.search = {
-                query: this.state.query,
+                query: this.props.query,
                 score: m.score,
                 content: m.string,
             };
@@ -182,6 +181,7 @@ class NotesPage extends Component {
 export default branch(NotesPage, {
     cursors: {
         books: ['books'],
+        query: ['session', 'query'],
     },
     actions: {
         createBook: actions.books.create,
@@ -196,5 +196,6 @@ export default branch(NotesPage, {
         setNoteContent: actions.notes.setContent,
         calculateNotePath: actions.notes.calculatePath,
         deleteNote: actions.notes.remove,
+        setQuery: actions.session.query,
     }
 });

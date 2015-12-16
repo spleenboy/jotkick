@@ -20,6 +20,7 @@ export function Settings() {
 **/
 export function Session() {
     return {
+        query: null,
         errors: [],
         alerts: [],
     };

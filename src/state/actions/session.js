@@ -1,3 +1,7 @@
+export function query(tree, value) {
+    tree.set(['session', 'query'], value);
+};
+
 export function error(tree, err) {
     tree.push(['session', 'errors'], err);
 };
