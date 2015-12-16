@@ -18,6 +18,16 @@ export default class Editor extends Component {
         }
     }
 
+    
+    static get propTypes() {
+        return {
+            active: PropTypes.bool,
+            value: PropTypes.string,
+            onFocus: PropTypes.func,
+            onChange: PropTypes.func,
+        }
+    }
+
 
     handleTextFocus() {
         this.props.onFocus && this.props.onFocus(this);
@@ -25,7 +35,7 @@ export default class Editor extends Component {
 
 
     handleTextChange(e) {
-        this.props.onChange(e.target.value);
+        this.props.onChange && this.props.onChange(e.target.value);
         this.setState({value: e.target.value});
     }
 
@@ -35,6 +45,20 @@ export default class Editor extends Component {
             this.setState({value: nextProps.value});
         }
         this.setState({theme: nextContext.muiTheme});
+    }
+
+
+    componentDidMount() {
+        if (this.props.active) {
+            this.refs.content.focus();
+        }
+    }
+
+
+    componentDidUpdate(prevProps, prevState) {
+        if (!prevProps.active && this.props.active) {
+            this.refs.content.focus();
+        }
     }
 
 
@@ -48,6 +72,7 @@ export default class Editor extends Component {
         if (this.props.active) {
             const lines = this.state.value.split('\n');
             contents = <TextField
+                           ref="content"
                            fullWidth={true}
                            multiLine={true}
                            rows={lines.length}
@@ -63,17 +88,11 @@ export default class Editor extends Component {
                 }
                 return {__html}
             };
-            contents = <div style={{color: textColor}} dangerouslySetInnerHTML={markup()} />
+            contents = <div ref="content" style={{color: textColor}} dangerouslySetInnerHTML={markup()} />
         }
 
         return <div ref="editor" style={containerStyle} onTouchTap={this.handleTextFocus.bind(this)}>
                    {contents}
                </div>
     }
-};
-
-Editor.propTypes = {
-    active: PropTypes.bool,
-    value: PropTypes.string,
-    onChange: PropTypes.func.isRequired,
 };
