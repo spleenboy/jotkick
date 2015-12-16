@@ -186,7 +186,6 @@ export default branch(NotesPage, {
     actions: {
         createBook: actions.books.create,
         selectBook: actions.books.select,
-        setBookTitle: actions.books.setTitle,
         createNote: actions.notes.create,
         selectNote: actions.notes.select,
         deselectNotes: actions.notes.deselect,

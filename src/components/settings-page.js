@@ -9,7 +9,7 @@ import IconButton from 'material-ui/lib/icon-button';
 import List from 'material-ui/lib/lists/list';
 import ListItem from 'material-ui/lib/lists/list-item';
 
-import BookSelect from './book-select';
+import BookEdit from './book-edit';
 import ThemeSelect from './theme-select';
 
 const ipc = window.require('ipc');
@@ -45,19 +45,32 @@ class SettingsPage extends Component {
         ipc.send('open-dialog');
     }
 
+
+    handleBookChange(book) {
+        this.props.actions.selectBook(book);
+    }
+
+
+    handleBookRename(book, name) {
+        this.props.actions.renameBook(book, name);
+    }
+
+
     handleBookSelect(book) {
         this.props.actions.selectBook(book);
         this.props.onPageChange('book');
     }
 
+
     handleBookCreate(name) {
         this.props.actions.createBook(name);
-        this.props.onPageChange('book');
     }
+
 
     handleThemeChange(theme) {
         this.props.actions.updateSetting("theme", theme);
     }
+
 
     handleBackButton() {
         this.props.onPageChange('book');
@@ -106,11 +119,11 @@ class SettingsPage extends Component {
                    </div>
                    <hr/>
                    <div className="row">
-                       <div className="col-xs-6"><div className="box">
+                       <div className="col-xs-4"><div className="box">
                            <strong>Home Directory</strong>
                            {startMessage}
                        </div></div>
-                       <div className="col-xs-6"><div className="box">
+                       <div className="col-xs-8"><div className="box">
                            <RaisedButton
                                label={this.props.settings.basePath ? 'Find a New Home' : 'Find a Home'}
                                labelPosition="after"
@@ -124,24 +137,26 @@ class SettingsPage extends Component {
                    </div>
                    <hr/>
                    <div className="row">
-                       <div className="col-xs-6"><div className="box">
+                       <div className="col-xs-4"><div className="box">
                            <strong>Books</strong>
                            {booksMessage}
                        </div></div>
-                       <div className="col-xs-6"><div className="box">
-                           <BookSelect
+                       <div className="col-xs-8"><div className="box">
+                           <BookEdit
                                books={this.props.books}
                                onBookCreate={this.handleBookCreate.bind(this)}
-                               onBookChange={this.handleBookSelect.bind(this)}
+                               onBookSelect={this.handleBookSelect.bind(this)}
+                               onBookChange={this.handleBookChange.bind(this)}
+                               onBookRename={this.handleBookRename.bind(this)}
                            />
                        </div></div>
                    </div>
                    <hr/>
                    <div className="row">
-                       <div className="col-xs-6"><div className="box">
+                       <div className="col-xs-4"><div className="box">
                            <strong>Theme</strong>
                        </div></div>
-                       <div className="col-xs-6"><div className="box">
+                       <div className="col-xs-8"><div className="box">
                            <ThemeSelect
                                theme={this.props.settings.theme}
                                onThemeChange={this.handleThemeChange.bind(this)}
@@ -167,5 +182,7 @@ export default branch(SettingsPage, {
         updateSetting: actions.settings.update,
         createBook: actions.books.create,
         selectBook: actions.books.select,
+        renameBook: actions.books.rename,
+        removeBook: actions.books.remove,
     }
 });

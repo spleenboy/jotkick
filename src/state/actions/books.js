@@ -24,14 +24,7 @@ export function select(tree, book, callback = null) {
     loadNotes(tree, book, callback);
 };
 
-export function setTitle(tree, book, title) {
-    const cursor = tree.select('books', {id: book.id});
-    cursor.set('title', title);
-    cursor.set('name', slug(title));
-};
-
-export function create(tree, name) {
-    // Create the file directory first
+export function uniqueDir(tree, name) {
     const basePath = tree.get('settings', 'basePath');
 
     let bookDir = new File(path.join(basePath, name));
@@ -42,6 +35,33 @@ export function create(tree, name) {
         attempt++;
     }
 
+    return bookDir;
+}
+
+export function remove(tree, book) {
+    throw new Error('Not Implemented!');
+}
+
+export function rename(tree, book, name) {
+    const basePath = tree.get('settings', 'basePath');
+    const cursor = tree.select('books', {id: book.id});
+
+    const dirNow = new File(path.join(basePath, book.name));
+    const dirNext = uniqueDir(tree, name);
+
+    // Move the directory first, then rename
+    dirNow.rename(dirNext.path.full);
+    dirNow.on('renamed', () => {
+        cursor.set('name', dirNext.path.name);
+    });
+    dirNow.on('error', (err) => {
+        console.error("Error renaming file", err);
+    });
+}
+
+export function create(tree, name) {
+    // Create the file directory first
+    const bookDir = uniqueDir(tree, name);
     bookDir.mkdirs();
 
     // Only add the book on success

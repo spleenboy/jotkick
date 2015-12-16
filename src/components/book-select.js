@@ -26,6 +26,8 @@ export default class BookSelect extends Component {
             books: PropTypes.array.isRequired,
             onBookChange: PropTypes.func.isRequired,
             onBookCreate: PropTypes.func.isRequired,
+            onBookCreating: PropTypes.func,
+            onBookCreateCancel: PropTypes.func,
         };
     }
 
@@ -36,6 +38,11 @@ export default class BookSelect extends Component {
 
     warn() {
         this.refs.bookName.focus();
+    }
+
+    handleBookCreating() {
+        this.props.onBookCreating && this.props.onBookCreating();
+        this.setState({adding: true});
     }
 
     handleBookCreate(event) {
@@ -51,11 +58,12 @@ export default class BookSelect extends Component {
     handleBookCreateCancel(event) {
         this.setState({adding: false});
         this.clear();
+        this.props.onBookCreateCancel && this.props.onBookCreateCancel();
     }
 
     handleBookChange(event, index, item) {
         if (item === 'new') {
-            this.setState({adding: true});
+            this.handleBookCreating();
         } else {
             this.setState({adding: false});
             this.props.onBookChange(item);
@@ -75,13 +83,14 @@ export default class BookSelect extends Component {
             bookMenu,
             bookItems;
 
+        const space = 10;
         books = this.props.books.concat();
         books.sort((a, b) => {a.name < b.name ? -1 : 1});
         bookItems= books.map((b, i) => {
             if (b.active) bookIndex = i;
-            return { payload: b, text: <span><FontIcon className="fa fa-book"/> {b.name}</span> }
+            return { payload: b, text: <span><FontIcon className="fa fa-book" style={{marginRight: space}}/> {b.name}</span> }
         });
-        bookItems.push({payload: 'new', text: <span><FontIcon className="fa fa-plus-square"/> Add a Book</span>});
+        bookItems.push({payload: 'new', text: <span><FontIcon className="fa fa-plus-square" style={{marginRight: space}}/> Add a Book</span>});
         if (this.props.books.length && !this.state.adding) {
             return <DropDownMenu
                        menuItems={bookItems}
