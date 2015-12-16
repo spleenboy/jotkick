@@ -28,8 +28,9 @@
   ],
   "dependencies": {
     "electron-debug": "^0.5.0",
+    "flexboxgrid": "^6.3.0",
     "font-awesome": "^4.5.0",
-    "flexboxgrid": "^6.3.0"
+    "fs-extra": "^0.26.2"
   },
   "devDependencies": {
     "babel-core": "^6.3.13",
@@ -45,20 +46,19 @@
     "electron-prebuilt": "^0.35.0",
     "expose-loader": "^0.7.1",
     "file-loader": "^0.8.5",
-    "style-loader": "^0.13.0",
-    "url-loader": "^0.5.7",
     "font-awesome": "^4.5.0",
     "fuzzy": "^0.1.1",
     "gray-matter": "^2.0.2",
     "marked": "^0.3.5",
     "material-ui": "^0.14.0-rc1",
-    "mkdirp": "^0.5.1",
     "moment": "^2.10.6",
     "path-parse": "^1.0.5",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
     "react-tap-event-plugin": "^0.2.1",
     "slug": "^0.9.1",
+    "style-loader": "^0.13.0",
+    "url-loader": "^0.5.7",
     "uuid": "^2.0.1",
     "webpack": "^1.12.9",
     "xo": "^0.11.1"

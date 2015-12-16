@@ -130,7 +130,7 @@ export default class BookEdit extends Component {
                     label="Yes. Delete it all."
                     ref="deleteButton"
                     primary={true}
-                    onTouchTap={this.handleBookRemove.bind(this)}
+                    onTouchTap={this.handleBookRemove.bind(this, book)}
                 />
             ];
             buttons = <Dialog
@@ -148,7 +148,7 @@ export default class BookEdit extends Component {
                        onBookChange={this.handleBookChange.bind(this)}
                        onBookCreating={this.handleModeChange.bind(this, Mode.creating)}
                        onBookCreateCancel={this.handleModeChange.bind(this, Mode.editing)}
-                   />
+                   /><br/><br/>
                    {buttons}
                </div>
        }

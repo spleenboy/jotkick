@@ -53,6 +53,13 @@ class SettingsPage extends Component {
 
     handleBookRename(book, name) {
         this.props.actions.renameBook(book, name);
+        this.props.actions.alert(`Your book was renamed to ${name}`);
+    }
+
+
+    handleBookRemove(book, name) {
+        this.props.actions.removeBook(book);
+        this.props.actions.alert(`${book.name} has been deleted completely`);
     }
 
 
@@ -148,6 +155,7 @@ class SettingsPage extends Component {
                                onBookSelect={this.handleBookSelect.bind(this)}
                                onBookChange={this.handleBookChange.bind(this)}
                                onBookRename={this.handleBookRename.bind(this)}
+                               onBookRemove={this.handleBookRemove.bind(this)}
                            />
                        </div></div>
                    </div>
@@ -184,5 +192,6 @@ export default branch(SettingsPage, {
         selectBook: actions.books.select,
         renameBook: actions.books.rename,
         removeBook: actions.books.remove,
+        alert: actions.session.alert,
     }
 });

@@ -2,7 +2,7 @@ import moment from 'moment';
 import uuid from 'uuid';
 
 /**
- * Stores all of the app-wide preferences for someone.
+ * Stores all of the persistent app-wide preferences for someone.
 **/
 export function Settings() {
     return {
@@ -14,6 +14,16 @@ export function Settings() {
         dateDisplayFormat: "YYYY-MM-DD",
     };
 };
+
+/**
+ *¬ Stores all session-based data that doesn't need to persist
+**/
+export function Session() {
+    return {
+        errors: [],
+        alerts: [],
+    };
+}
 
 /**
  * This is a top-level container for a collection of notes.¬
@@ -53,6 +63,7 @@ export function Note(title = null) {
 export function Tree() {
     return {
         settings: Settings(),
+        session: Session(),
         books: [],
     };
 };

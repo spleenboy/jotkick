@@ -1,5 +1,4 @@
-const fs = window.require('fs');
-const mkdirp = window.require('mkdirp');
+const fs = window.require('fs-extra');
 import path from 'path';
 import pathParse from 'path-parse';
 import {EventEmitter} from 'events';
@@ -36,7 +35,7 @@ export default class File extends EventEmitter {
         }
 
         let dirPath = this.path.ext ? this.path.dir : this.path.full;
-        mkdirp(dirPath, (err) => {
+        fs.mkdirs(dirPath, (err) => {
             if (err) {
                 this.emit('error', err);
             } else {
@@ -46,14 +45,43 @@ export default class File extends EventEmitter {
         });
     }
 
-    delete() {
-        fs.unlink(this.path.full, (err) => {
+    // Removes this file/directory and any children
+    remove() {
+        fs.remove(this.path.full, (err) => {
             if (err) {
-                this.emit('error', err);
+                this.emit('error', errr);
+            } else {
+                this.emit('removed');
+            }
+        });
+    }
+
+    delete() {
+        const loaded = (err) => {
+            if (err) {
                 return;
             }
-            this.emit('deleted');
-        });
+
+            const done = (err) => {
+                if (err) {
+                    this.emit('error', err);
+                    return;
+                }
+                this.emit('deleted');
+            }
+
+            if (this.stats.isFile) {
+                fs.unlink(this.path.full, done);
+            } else if (this.stats.isDirectory) {
+                fs.rmdir(this.path.full, done);
+            }
+        };
+
+        if (!this.stats) {
+            this.load(false, loaded);
+        } else {
+            loaded(null);
+        }
     }
 
     rename(newpath) {
@@ -93,9 +121,10 @@ export default class File extends EventEmitter {
         });
     }
 
-    load(read = false) {
+    load(read = false, callback = null) {
         fs.stat(this.path.full, (err, stats) => {
             if (err) {
+                callback && callback(err);
                 this.emit('error', err, this);
                 return;
             }
@@ -107,11 +136,13 @@ export default class File extends EventEmitter {
             this.stats.isDirectory = stats.isDirectory();
 
             if (!this.stats.isFile || read === false) {
+                callback && callback(err);
                 this.emit('ready');
                 return;
             }
 
             if (typeof read === 'function' && !read(this)) {
+                callback && callback(err);
                 this.emit('ready');
                 return;
             }
@@ -119,9 +150,11 @@ export default class File extends EventEmitter {
             fs.readFile(this.path.full, {encoding: 'utf-8'}, (err, data) => {
                 if (err) {
                     this.emit('error', err, this);
+                    callback && callback(err);
                     return;
                 }
                 this.content = data;
+                callback && callback(err);
                 this.emit('ready');
                 return;
             });

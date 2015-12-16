@@ -39,7 +39,21 @@ export function uniqueDir(tree, name) {
 }
 
 export function remove(tree, book) {
-    throw new Error('Not Implemented!');
+    const basePath = tree.get('settings', 'basePath');
+    const bookFile = new File(path.join(basePath, book.name));
+
+    bookFile.on('error', (err) => {
+        tree.set(['session', 'error'], err);
+        console.error("Error renaming file", err);
+    });
+
+    bookFile.on('removed', () => {
+        const bookIndex = tree.get('books').findIndex(b => b.id === book.id);
+        if (bookIndex >= 0) {
+            tree.select('books').splice([bookIndex, 1]);
+        }
+    });
+    bookFile.remove();
 }
 
 export function rename(tree, book, name) {
@@ -55,6 +69,7 @@ export function rename(tree, book, name) {
         cursor.set('name', dirNext.path.name);
     });
     dirNow.on('error', (err) => {
+        tree.set(['session', 'error'], err);
         console.error("Error renaming file", err);
     });
 }
