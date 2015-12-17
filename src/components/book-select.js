@@ -1,5 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 
+import Mousetrap from 'mousetrap';
 import RaisedButton from 'material-ui/lib/raised-button';
 import FontIcon from 'material-ui/lib/font-icon';
 import DropDownMenu from 'material-ui/lib/drop-down-menu';
@@ -70,6 +71,16 @@ export default class BookSelect extends Component {
         }
     }
 
+    componentDidMount() {
+        Mousetrap.bind('command+b', () => {
+            if (!this.refs.bookList) return;
+            this.refs.bookList.setState({
+                open: true,
+                anchorEl: this.refs.anchor,
+            });
+        });
+    }
+
     componentDidUpdate(prevProps, prevState) {
         if (!prevState.adding && this.state.adding) {
             this.refs.bookName.focus();
@@ -92,11 +103,14 @@ export default class BookSelect extends Component {
         });
         bookItems.push({payload: 'new', text: <span><FontIcon className="fa fa-plus-square" style={{marginRight: space}}/> Add a Book</span>});
         if (this.props.books.length && !this.state.adding) {
-            return <DropDownMenu
-                       menuItems={bookItems}
-                       selectedIndex={bookIndex}
-                       onChange={this.handleBookChange.bind(this)}
-                   />
+            return <span ref="anchor">
+                       <DropDownMenu
+                           ref="bookList"
+                           menuItems={bookItems}
+                           selectedIndex={bookIndex}
+                           onChange={this.handleBookChange.bind(this)}
+                       />
+                   </span>
         } else {
             return <span>
                        <TextField

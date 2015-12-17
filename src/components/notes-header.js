@@ -1,4 +1,5 @@
 import React, {PropTypes, Component} from 'react';
+import Mousetrap from 'mousetrap';
 
 import IconButton from 'material-ui/lib/icon-button';
 import FontIcon from 'material-ui/lib/font-icon';
@@ -16,7 +17,6 @@ export default class NotesHeader extends Component {
         this.state = {
             muiTheme: this.context.muiTheme,
             searching: false,
-            searchOrigin: null,
         };
     }
 
@@ -52,16 +52,21 @@ export default class NotesHeader extends Component {
         this.props.onSearch(value);
     }
 
+    handleSearchStart() {
+        this.setState({searching: true});
+    }
+
     handleSearchToggle(e) {
-        this.setState({
-            searching: !this.state.searching,
-            searchOrigin: e.currentTarget,
-        });
+        this.setState({searching: !this.state.searching});
     }
 
     handleSearchCancel() {
         this.props.onSearch(null);
         this.setState({searching: false});
+    }
+
+    componentDidMount() {
+        Mousetrap.bind('command+/', this.handleSearchStart.bind(this));
     }
 
     render() {

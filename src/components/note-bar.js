@@ -114,10 +114,9 @@ export default class NoteBar extends Component {
                            <IconButton tooltip={`${pinAct} this Note`} onTouchTap={this.handlePin.bind(this)}>
                                <FontIcon className={pinClass}/>
                            </IconButton>
-                           {note.content ? 
-                               <IconButton tooltip="Delete Note" onTouchTap={this.props.onRemove.bind(this)}>
-                                   <FontIcon className="fa fa-trash"/>
-                               </IconButton>: ''}
+                           <IconButton tooltip="Delete Note" onTouchTap={this.props.onRemove.bind(this)}>
+                               <FontIcon className="fa fa-trash"/>
+                           </IconButton>
                        </ToolbarGroup>
                    </Toolbar>
                    {saveProgress}

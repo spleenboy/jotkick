@@ -1,5 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
+import Mousetrap from 'mousetrap';
 
 import fuzzy from 'fuzzy';
 import Snackbar from 'material-ui/lib/snackbar';
@@ -123,6 +124,32 @@ class NotesPage extends Component {
             }
             return 0;
         });
+    }
+
+
+    // Binds the active book as a first argument to the
+    // specified method and returns it
+    bindBook(method, ...args) {
+        return () => {
+            const book = this.props.books.find(b => b.active);
+            method.apply(this, [book, ...args]);
+        };
+    }
+
+
+    // Binds the active book and note as the first
+    // two arguments to a method. Returns the new method
+    bindBookAndNote(method, ...args) {
+        return () => {
+            const book = this.props.books.find(b => b.active);
+            const note = book && book.notes.find(n => n.active);
+            method.apply(this, [book, note, ...args]);
+        };
+    }
+
+
+    componentDidMount() {
+        Mousetrap.bind('command+n', this.bindBook(this.props.actions.createNote));
     }
 
 
