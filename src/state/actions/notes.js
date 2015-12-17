@@ -129,19 +129,23 @@ export function calculatePath(tree, book, note) {
 
 
 export function renameFile(tree, book, note, callback = null) {
+    // Not saved yet.
     if (!note.file) {
-        console.error("Note does not have existing path");
+        console.debug("Note does not have existing path");
         return false;
     }
 
     const file = new File(note.file.path.full);
-    const newpath = calculatePath(tree, book, note);
+    let newpath = calculatePath(tree, book, note);
 
+    // No change, no rename
     if (newpath === file.path.full) {
         return false;
     }
 
-    file.rename(newpath);
+    const newfile = File.findUniqueFile(newpath);
+
+    file.rename(newfile.path.full);
     file.on('renamed', () => {
         const cursor = tree.select('books', {id: book.id}, 'notes', {id: note.id});
         cursor.set('file', file);
@@ -155,15 +159,17 @@ export function save(tree, bookId, noteId, callback = null) {
     const note = book.get('notes', {id: noteId});
     const body = matter.stringify(note.content, note.data).trim();
 
-    let fullpath;
+    let file;
     if (note.file) {
-        fullpath = note.file.path.full;
+        // If the note already has a file, assume it's a unique name
+        file = new File(note.file.path.full);
     } else {
-        fullpath = calculatePath(tree, book.get(), note);
+        // Otherwise, try to figure out a unique name
+        const fullpath = calculatePath(tree, book.get(), note);
+        file = File.findUniqueFile(fullpath);
         console.debug("No existing file for saving note. Calculating path", fullpath);
     }
 
-    const file = new File(fullpath);
     file.write(body);
 
     file.on('written', () => {

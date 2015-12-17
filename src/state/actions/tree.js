@@ -53,12 +53,11 @@ function saveNotes(e) {
     function noteChanged(now, then) {
         if (!then) return false;
         if (now.content !== then.content) return true;
-        for (let key in now.data) {
+        return ['active', 'pinned'].some((key) => {
             if (now.data[key] !== then.data[key]) {
                 return true;
             }
-        }
-        return false;
+        });
     }
 
     let book;

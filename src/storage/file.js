@@ -20,6 +20,20 @@ export default class File extends EventEmitter {
         this.path.full = fullpath;
     }
 
+    static findUniqueFile(fullpath) {
+        let attempts = 0,
+            file = new File(fullpath);
+        const basename = file.path.name;
+        while (file.exists()) {
+            attempts++;
+            let newname = `${basename}-${attempts}${file.path.ext}`;
+            fullpath = path.join(file.path.dir, newname);
+            file = new File(fullpath);
+        }
+
+        return file;
+    }
+
     exists(fullpath = this.path.full) {
         try {
             fs.accessSync(fullpath);

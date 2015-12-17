@@ -114,8 +114,8 @@ class NotesPage extends Component {
             if (a.data.pinned && b.data.pinned) {
                 return b.data.pinOrder - a.data.pinOrder;
             }
-            const ac = a.file ? a.file.stats.birthtime : a.data.created;
-            const bc = b.file ? b.file.stats.birthtime : b.data.created;
+            const ac = a.file && a.file.stats ? a.file.stats.birthtime : a.data.created;
+            const bc = b.file && b.file.stats ? b.file.stats.birthtime : b.data.created;
             if (ac > bc) {
                 return -1;
             }
