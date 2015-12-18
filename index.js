@@ -1,7 +1,10 @@
 'use strict';
-const ipc = require('electron').ipcMain;
+const electron = require('electron');
 const menubar = require('menubar');
 const dialog = require('dialog');
+
+const ipc = electron.ipcMain;
+const Menu = electron.Menu;
 
 // report crashes to the Electron project
 require('crash-reporter').start();
@@ -18,11 +21,17 @@ const mb = menubar({
 mb.on('ready', function() {
     console.log('Ready!');
 
-    ipc.on('open-dialog', function(event, arg) {
+    ipc.on('open-dialog', function() {
         const dirPaths = dialog.showOpenDialog(
             mb.window,
             {properties: ['openDirectory']}
         );
         event.sender.send('open-dialog-reply', dirPaths);
     });
+
+    ipc.on('quit-app', function() {
+        mb.app.quit(); 
+    });
+
+    mb.tray.setToolTip('JotKick');
 });

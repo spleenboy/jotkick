@@ -4,11 +4,13 @@ import {branch} from 'baobab-react/higher-order';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 import Colors from 'material-ui/lib/styles/colors';
 import Snackbar from 'material-ui/lib/snackbar';
+
 import Themes from '../themes/';
 import * as session from '../state/actions/session';
 
 import NotesPage from './notes-page';
 import SettingsPage from './settings-page';
+import QuitButton from './quit-button';
 
 class Main extends Component {
     constructor(props, context) {
@@ -77,11 +79,12 @@ class Main extends Component {
         });
 
         return <div className="row center-xs" style={{backgroundColor: theme.palette.canvasColor}}>
-                   <div className="col-xs-12 col-sm-10 col-md-8">
+                   <div className="col-xs-12 col-sm-12 col-md-8">
                        <div className="box" style={pageStyle}>
                            {page}
                            {errors}
                            {alerts}
+                           <QuitButton/>
                        </div>
                    </div>
                </div>
