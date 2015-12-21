@@ -12,6 +12,9 @@ import Heading from './heading';
 import BookSelect from './book-select';
 import SearchBar from './search-bar';
 
+// Why bother showing search with few notes?
+const MIN_NOTES_FOR_SEARCH = 3;
+
 export default class NotesHeader extends Component {
     constructor(props, context) {
         super(props, context);
@@ -29,6 +32,7 @@ export default class NotesHeader extends Component {
 
     static get propTypes() {
         return {
+            noteCount: PropTypes.number,
             books: PropTypes.array.isRequired,
             onBookChange: PropTypes.func.isRequired,
             onBookCreate: PropTypes.func.isRequired,
@@ -82,7 +86,7 @@ export default class NotesHeader extends Component {
                          onChange={this.handleSearching.bind(this)}
                          onCancel={this.handleSearchCancel.bind(this)}
                      />
-        } else {
+        } else if (this.props.noteCount > MIN_NOTES_FOR_SEARCH) {
             search = <IconButton
                          ref="searchButton"
                          touch={true}

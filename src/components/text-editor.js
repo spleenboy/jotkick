@@ -67,10 +67,11 @@ export default class Editor extends Component {
             padding: '20px 40px',
         };
 
+        const theme = this.state.theme.rawTheme;
         let contents;
         if (this.props.active) {
             let style = {
-                fontFamily: this.state.theme.rawTheme.monoFontFamily,
+                fontFamily: theme.monoFontFamily,
             };
             const lines = this.state.value.split('\n');
             contents = <TextField
@@ -84,14 +85,16 @@ export default class Editor extends Component {
                        />
         } else {
             let style = {
-                color: this.state.theme.rawTheme.palette.textColor,
+                color: theme.palette.textColor,
                 cursor: 'text',
             };
+            const renderer = theme.renderer || new marked.Renderer();
             const markedOpts = {
                 gfm: true,
                 breaks: true,
                 tables: true,
                 smartypants: true,
+                renderer: renderer,
             };
             const markup = () => {
                 let __html = marked(this.state.value, markedOpts);
