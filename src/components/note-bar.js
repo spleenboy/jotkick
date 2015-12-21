@@ -81,12 +81,14 @@ export default class NoteBar extends Component {
         const theme = this.state.muiTheme;
         const pinAct   = note.data.pinned ? 'Unpin' : 'Pin';
         const pinClass = note.data.pinned ? 'fa fa-flag' : 'fa fa-flag-o';
-        const saveProgress = note.saving
-                             ? <LinearProgress mode="indeterminate" style={{height: 3}} />
-                             : <div style={{height: 3}}/>
-        let toolbarStyle = {
-            marginTop: theme.rawTheme.spacing.desktopGutterMore,
+        const progressStyle = {
+            height: 5,
+            backgroundColor: theme.toolbar.backgroundColor,
         };
+        const saveProgress = note.saving
+                             ? <LinearProgress mode="indeterminate" style={progressStyle} />
+                             : <div style={progressStyle}/>
+        let toolbarStyle = {};
         if (note.data.active) {
             toolbarStyle.backgroundColor = theme.rawTheme.palette.accent1Color;
             toolbarStyle.color = theme.rawTheme.palette.alternateTextColor;

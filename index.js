@@ -21,7 +21,7 @@ const mb = menubar({
 mb.on('ready', function() {
     console.log('Ready!');
 
-    ipc.on('open-dialog', function() {
+    ipc.on('open-dialog', function(event) {
         const dirPaths = dialog.showOpenDialog(
             mb.window,
             {properties: ['openDirectory']}

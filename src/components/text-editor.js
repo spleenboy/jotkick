@@ -64,11 +64,14 @@ export default class Editor extends Component {
 
     render() {
         const containerStyle = {
-            margin: 10,
+            padding: '20px',
         };
 
         let contents;
         if (this.props.active) {
+            let style = {
+                fontFamily: this.state.theme.rawTheme.monoFontFamily,
+            };
             const lines = this.state.value.split('\n');
             contents = <TextField
                            ref="content"
@@ -76,6 +79,7 @@ export default class Editor extends Component {
                            multiLine={true}
                            rows={lines.length}
                            value={this.state.value}
+                           inputStyle={style}
                            onChange={this.handleTextChange.bind(this)}
                        />
         } else {
@@ -91,7 +95,11 @@ export default class Editor extends Component {
                 }
                 return {__html}
             };
-            contents = <div ref="content" style={style} dangerouslySetInnerHTML={markup()} />
+            contents = <div
+                           ref="content"
+                           style={style}
+                           dangerouslySetInnerHTML={markup()}
+                       />
         }
 
         return <div ref="editor" style={containerStyle} onTouchTap={this.handleTextFocus.bind(this)}>

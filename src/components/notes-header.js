@@ -8,6 +8,7 @@ import ToolbarGroup from 'material-ui/lib/toolbar/toolbar-group';
 import ToolbarSeparator from 'material-ui/lib/toolbar/toolbar-separator';
 import ToolbarTitle from 'material-ui/lib/toolbar/toolbar-title';
 
+import Heading from './heading';
 import BookSelect from './book-select';
 import SearchBar from './search-bar';
 
@@ -94,8 +95,8 @@ export default class NotesHeader extends Component {
         }
 
         return <div>
-                   <h1 style={{textAlign: 'center', color: theme.rawTheme.palette.textColor}}>JotKick</h1>
-                   <Toolbar style={{backgroundColor: theme.appBar.color, marginTop: padding, marginBottom: padding, height: theme.appBar.height + padding, paddingTop: padding}}>
+                   <Heading>JotKick</Heading>
+                   <Toolbar style={{backgroundColor: theme.appBar.color, marginTop: padding, height: theme.appBar.height + padding, paddingTop: padding}}>
                         <ToolbarGroup key={0} float="left">
                            <IconButton
                                touch={true}

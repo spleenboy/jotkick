@@ -24,11 +24,14 @@ export default class NoteItem extends Component {
 
     render() {
         const note = this.props.note;
+
         if (!note) {
             return null;
         }
+
         const search = note.search || {};
         const content = note.data.active ? note.content : search.content || note.content;
+
         return <Grid.Row>
                     <NoteBar
                         note={note}

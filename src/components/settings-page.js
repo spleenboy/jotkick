@@ -9,6 +9,7 @@ import IconButton from 'material-ui/lib/icon-button';
 import List from 'material-ui/lib/lists/list';
 import ListItem from 'material-ui/lib/lists/list-item';
 
+import Heading from './heading';
 import BookEdit from './book-edit';
 import ThemeSelect from './theme-select';
 
@@ -101,7 +102,7 @@ class SettingsPage extends Component {
             backButton = <IconButton
                              iconClassName="fa fa-arrow-left"
                              tooltip="Back to Your Notes"
-                             tooltipPosition="bottom-center"
+                             tooltipPosition="bottom-right"
                              onTouchTap={this.handleBackButton.bind(this)}
                          />
         }
@@ -121,7 +122,7 @@ class SettingsPage extends Component {
                            {backButton}
                        </div></div>
                        <div className="col-xs-10"><div className="box">
-                           <h1 style={{textAlign: 'center'}}>JotKick Settings</h1>
+                           <Heading>JotKick Settings</Heading>
                        </div></div>
                    </div>
                    <hr/>
