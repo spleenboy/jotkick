@@ -11,7 +11,7 @@ const Theme = {
         primary1Color: Colors.teal500,
         primary2Color: Colors.teal700,
         primary3Color: Colors.brown900,
-        accent1Color: Colors.deepOrange800,
+        accent1Color: Colors.deepOrange900,
         accent2Color: Colors.orange900,
         accent3Color: Colors.yellow900,
         textColor: Colors.orange100,
