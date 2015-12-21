@@ -1,8 +1,83 @@
-html, body, h1, h2, h3, h4, h5, h6 {
-    padding: 0;
-    margin: 0;
-}
+@import 'reset.css';
 
 body {
     font-family: 'bitter', -apple-system, 'Helvetica Neue', Helvetica, sans-serif;
+    font-size: 120%;
+}
+
+p {
+    margin: 1em 0;
+    line-height: 1.5em;
+}
+
+br {
+    margin: 0.5em 0;
+}
+
+ol, ul {
+    margin-top: 1em;
+    margin-left: 2em;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+ul {
+    list-style-type: circle;
+}
+
+li {
+    line-height: 1.5em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+    font-size: 200%;
+}
+
+h2 {
+    font-size: 180%;
+    border-bottom: 1px solid;
+}
+
+h3 {
+    font-size: 160%;
+    font-style: italic;
+}
+
+h4 {
+    font-size: 150%;
+}
+
+h5 {
+    font-size: 130%;
+}
+
+h6 {
+    font-size: 110%;
+}
+
+a {
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+blockquote {
+    margin-left: 2em;
+    padding-left: 1em;
+    border-left: 1px solid;
+}
+
+code {
+    font-family: luxi, Courier New, Courier, serif;
 }
