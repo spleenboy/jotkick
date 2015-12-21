@@ -64,7 +64,7 @@ export default class Editor extends Component {
 
     render() {
         const containerStyle = {
-            padding: '20px',
+            padding: '20px 40px',
         };
 
         let contents;
@@ -87,8 +87,14 @@ export default class Editor extends Component {
                 color: this.state.theme.rawTheme.palette.textColor,
                 cursor: 'text',
             };
+            const markedOpts = {
+                gfm: true,
+                breaks: true,
+                tables: true,
+                smartypants: true,
+            };
             const markup = () => {
-                let __html = marked(this.state.value);
+                let __html = marked(this.state.value, markedOpts);
                 // Default to an empty line
                 if (__html.length === 0) {
                     __html = '<br>';

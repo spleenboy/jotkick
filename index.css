@@ -28,7 +28,7 @@ ul {
 }
 
 li {
-    line-height: 1.5em;
+    line-height: 1.8em;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -75,7 +75,7 @@ a:hover {
 blockquote {
     margin-left: 2em;
     padding-left: 1em;
-    border-left: 1px solid;
+    border-left: 3px solid;
 }
 
 code {
