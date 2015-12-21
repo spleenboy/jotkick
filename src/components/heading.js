@@ -15,6 +15,10 @@ export default class Heading extends Component {
         }
     }
 
+    componentWillReceiveProps(nextProps, nextContext) {
+        this.setState({theme: nextContext.muiTheme});
+    }
+
     render() {
         const theme = this.state.theme.rawTheme;
         const style = {

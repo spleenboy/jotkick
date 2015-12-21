@@ -116,7 +116,7 @@ class SettingsPage extends Component {
                    />
         });
 
-        return <div style={{padding: 10}} style={{color: colors.textColor, minHeight: window.innerHeight}}>
+        return <div style={{padding: 10}} style={{color: colors.textColor, minHeight: window.innerHeight * 2}}>
                    <div className="row">
                        <div className="col-xs-1"><div className="box">
                            {backButton}
