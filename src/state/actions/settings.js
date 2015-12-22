@@ -49,6 +49,10 @@ export function load(tree, callback = null) {
 
         tree.set('settings', data);
 
+        if (!data.basePath) {
+            return whenReady();
+        }
+
         books.clear(tree);
         books.loadBooks(tree, () => {
             const found = tree.get('books', {name: data.lastBook});

@@ -38,6 +38,13 @@ export default class BookEdit extends Component {
     }
 
 
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (nextProps.books !== this.props.books) {
+            this.setState({activeBook: this.findActiveBook()});
+        }
+    }
+
+
     findActiveBook() {
         if (!this.props.books) return null;
 

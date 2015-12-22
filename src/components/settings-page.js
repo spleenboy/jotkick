@@ -90,12 +90,12 @@ class SettingsPage extends Component {
         const colors = this.state.theme.rawTheme.palette;
 
         if (this.props.settings.basePath) {
-            startMessage  = <p>Your home is <em>{this.props.settings.basePath}</em>. If you change your home directory, your current notes may disappear.</p>
+            startMessage  = <p>Your current home is <code>{this.props.settings.basePath}</code>.</p>
         } else {
             startMessage = <p>Let's get started! I need a home. This is where all files will be saved.</p>
         }
 
-        booksMessage = <p>Books keep your notes organized. Each book is a top-level folder in your home directory.</p>
+        booksMessage = <p>Use books to keep your notes organized. Each book is a folder in your home directory.</p>
         if (this.props.books.length) {
             backButton = <IconButton
                              iconClassName="fa fa-arrow-left"

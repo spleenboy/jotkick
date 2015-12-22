@@ -12,6 +12,16 @@ import FileWalker from '../../storage/file-walker';
 import File from '../../storage/file';
 
 export function select(tree, book, callback = null) {
+    let baseDir = tree.get('settings', 'basePath');
+    const bookDir = new File(path.join(baseDir, book.name));
+
+    if (!bookDir.exists()) {
+        const err = new Error(`That book (${book.name}) doesn't exist`);
+        session.error(tree, err);
+        callback && callback(err);
+        return;
+    }
+
     const books = tree.select('books');
     books.get().forEach((b, i) => {
         var bookCursor = books.select(i);
@@ -23,8 +33,13 @@ export function select(tree, book, callback = null) {
             bookCursor.set('notes', []);
         }
     });
-    settings.setLastBook(tree, book.name);
-    loadNotes(tree, book, callback);
+
+    loadNotes(tree, book, (err) => {
+        if (!err) {
+            settings.setLastBook(tree, book.name);
+        }
+        callback && callback(err);
+    });
 };
 
 export function uniqueDir(tree, name) {
@@ -125,6 +140,11 @@ export function loadBooks(tree, callback = null) {
         books.push(found);
     });
 
+    walker.on('error', (err) => {
+        session.error(tree, err);
+        callback && callback(err);
+    });
+
     if (callback) walker.on('done', callback);
     walker.run();
 }
@@ -162,6 +182,8 @@ export function loadNotes(tree, book, callback = null) {
 
     walker.on('error', (err) => {
         session.error(tree, err);
+        settings.setLastBook(tree, null);
+        callback && callback(err);
     });
 
     if (callback) walker.on('done', callback);
