@@ -13,6 +13,19 @@ export default class Editor extends Component {
     }
 
 
+    static renderHtml(text, theme = null) {
+        const renderer = (theme && theme.renderer) || new marked.Renderer();
+        const markedOpts = {
+            gfm: true,
+            breaks: true,
+            tables: true,
+            smartypants: true,
+            renderer: renderer,
+        };
+        return marked(text, markedOpts);
+    }
+
+
     static get contextTypes() {
         return {
             muiTheme: PropTypes.object,
@@ -92,16 +105,9 @@ export default class Editor extends Component {
                 color: theme.palette.textColor,
                 cursor: 'text',
             };
-            const renderer = theme.renderer || new marked.Renderer();
-            const markedOpts = {
-                gfm: true,
-                breaks: true,
-                tables: true,
-                smartypants: true,
-                renderer: renderer,
-            };
+
             const markup = () => {
-                let __html = marked(this.state.value, markedOpts);
+                let __html = this.constructor.renderHtml(this.state.value, theme);
                 // Default to an empty line
                 if (__html.length === 0) {
                     __html = '<br>';
