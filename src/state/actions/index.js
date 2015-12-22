@@ -3,5 +3,4 @@ export default {
     books: require('./books'),
     settings: require('./settings'),
     session: require('./session'),
-    tree: require('./tree'),
 };

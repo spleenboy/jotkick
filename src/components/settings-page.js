@@ -35,9 +35,9 @@ class SettingsPage extends Component {
     }
 
     componentDidMount() {
-        ipc.on('open-dialog-reply', (dirPaths) => {
+        ipc.on('open-dialog-reply', (event, dirPaths) => {
             if (dirPaths.length) {
-                this.props.actions.updateSetting("basePath", dirPaths[0]);
+                this.props.actions.setBasePath(dirPaths[0]);
             }
         });
     }
@@ -76,7 +76,7 @@ class SettingsPage extends Component {
 
 
     handleThemeChange(theme) {
-        this.props.actions.updateSetting("theme", theme);
+        this.props.actions.setTheme(theme);
     }
 
 
@@ -96,9 +96,7 @@ class SettingsPage extends Component {
         }
 
         booksMessage = <p>Books keep your notes organized. Each book is a top-level folder in your home directory.</p>
-        if (!this.props.books.length) {
-            booksMessage += <p>Add your first book now!</p>
-        } else {
+        if (this.props.books.length) {
             backButton = <IconButton
                              iconClassName="fa fa-arrow-left"
                              tooltip="Back to Your Notes"
@@ -145,7 +143,8 @@ class SettingsPage extends Component {
                            </RaisedButton>
                        </div></div>
                    </div>
-                   <hr/>
+                   {this.props.settings.basePath ? <hr/> : ''}
+                   {this.props.settings.basePath ?
                    <div className="row">
                        <div className={leftCol}><div className="box">
                            <strong>Books</strong>
@@ -161,7 +160,7 @@ class SettingsPage extends Component {
                                onBookRemove={this.handleBookRemove.bind(this)}
                            />
                        </div></div>
-                   </div>
+                   </div> : ''}
                    <hr/>
                    <div className="row">
                        <div className={leftCol}><div className="box">
@@ -190,7 +189,8 @@ export default branch(SettingsPage, {
         books: ['books']
     },
     actions: {
-        updateSetting: actions.settings.update,
+        setBasePath: actions.settings.setBasePath,
+        setTheme: actions.settings.setTheme,
         createBook: actions.books.create,
         selectBook: actions.books.select,
         renameBook: actions.books.rename,

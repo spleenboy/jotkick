@@ -19,9 +19,8 @@ export default class BookEdit extends Component {
 
     constructor(props, context) {
         super(props, context);
-        const activeBook = this.props.books && this.props.books.find(b => b.active);
         this.state = {
-            activeBook: activeBook,
+            activeBook: this.findActiveBook(),
             mode: Mode.editing,
         };
     }
@@ -36,6 +35,16 @@ export default class BookEdit extends Component {
             onBookRename: PropTypes.func,
             onBookRemove: PropTypes.func,
         }
+    }
+
+
+    findActiveBook() {
+        if (!this.props.books) return null;
+
+        const active = this.props.books.find(b => b.active);
+        if (active) return active;
+
+        return this.props.books[0];
     }
 
     handleModeChange(mode) {

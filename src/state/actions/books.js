@@ -3,7 +3,10 @@ import slug from 'slug';
 import matter from 'gray-matter';
 import uuid from 'uuid';
 
-import * as noteActions from './notes';
+import * as settings from './settings';
+import * as notes from './notes';
+import * as session from './session';
+
 import * as Model from '../model';
 import FileWalker from '../../storage/file-walker';
 import File from '../../storage/file';
@@ -20,7 +23,7 @@ export function select(tree, book, callback = null) {
             bookCursor.set('notes', []);
         }
     });
-    tree.set(['settings', 'lastBook'], book.name);
+    settings.setLastBook(tree, book.name);
     loadNotes(tree, book, callback);
 };
 
@@ -91,9 +94,14 @@ export function create(tree, name) {
 
         book.active = true;
         books.push(book);
-        noteActions.create(tree, book);
+        notes.create(tree, book);
     });
 };
+
+
+export function clear(tree) {
+    tree.set('books', []);
+}
 
 
 /**
@@ -150,6 +158,10 @@ export function loadNotes(tree, book, callback = null) {
         } else {
             console.error("Could not parse file", file);
         }
+    });
+
+    walker.on('error', (err) => {
+        session.error(tree, err);
     });
 
     if (callback) walker.on('done', callback);

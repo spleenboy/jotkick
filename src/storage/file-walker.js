@@ -25,8 +25,16 @@ export default class FileWalker extends EventEmitter {
 
     run(read = false, stop = false) {
         const dir = new File(this.baseDir);
-        this.trace("Starting walk of", this.baseDir);
-        this.walk(dir, read, stop);
+        dir.load();
+        dir.on('error', this.emit.bind(this, 'error'));
+        dir.on('ready', () => {
+            this.trace("Starting walk of", this.baseDir);
+            if (!dir.stats.isDirectory) {
+                this.emit('error', new Error("Invalid directory"));
+                return;
+            }
+            this.walk(dir, read, stop);
+        });
     }
 
     walk(dir, read, stop, depth = 0, remain = 0) {

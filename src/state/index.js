@@ -1,6 +1,6 @@
 import Baobab from 'baobab';
 import * as Model from './model';
-import {load as loadTree} from './actions/tree';
+import * as settings from './actions/settings';
 
 export default class Tree extends Baobab {
     constructor(data = null, opts = null) {
@@ -13,6 +13,6 @@ export default class Tree extends Baobab {
     }
 
     load(callback = null) {
-        loadTree(this, callback);
+        settings.load(this, callback);
     }
 }
