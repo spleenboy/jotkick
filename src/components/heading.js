@@ -23,7 +23,10 @@ export default class Heading extends Component {
         const theme = this.state.theme.rawTheme;
         const style = {
             color: theme.palette.textColor,
+            backgroundColor: theme.palette.primary3Color,
             fontFamily: theme.alternateFontFamily,
+            margin: 0,
+            padding: '1em 0',
             textAlign: 'center',
         };
 

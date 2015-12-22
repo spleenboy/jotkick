@@ -109,7 +109,7 @@ export default class NotesHeader extends Component {
                     >
                        <FontIcon className="fa fa-cog"/>
                    </IconButton>
-                   <Toolbar style={{backgroundColor: theme.appBar.color, marginTop: padding, height: theme.appBar.height + padding, paddingTop: padding}}>
+                   <Toolbar style={{backgroundColor: theme.appBar.color, height: theme.appBar.height + padding, paddingTop: padding}}>
                        <ToolbarGroup key={1} float="left">
                            <BookSelect
                                books={this.props.books}
