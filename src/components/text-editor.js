@@ -3,6 +3,8 @@ import marked from 'marked';
 import ColorManipulator from 'material-ui/lib/utils/color-manipulator';
 import TextField from 'material-ui/lib/text-field';
 
+const TAB_TO_SPACES = 4;
+
 export default class Editor extends Component {
     constructor(props, context) {
         super(props, context);
@@ -45,6 +47,18 @@ export default class Editor extends Component {
 
     handleTextFocus() {
         this.props.onFocus && this.props.onFocus(this);
+    }
+
+
+    handleKeyDown(e) {
+        if (e.keyCode === 9) {
+            e.preventDefault();
+            const input = e.currentTarget;
+            const start = input.value.substring(0, input.selectionStart);
+            const end   = input.value.substring(input.selectionEnd);
+            const space = ' '.repeat(TAB_TO_SPACES);
+            input.value = `${start}${space}${end}`;
+        }
     }
 
 
@@ -98,6 +112,7 @@ export default class Editor extends Component {
                            rows={lines.length}
                            value={this.state.value}
                            inputStyle={style}
+                           onKeyDown={this.handleKeyDown.bind(this)}
                            onChange={this.handleTextChange.bind(this)}
                        />
         } else {

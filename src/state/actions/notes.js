@@ -105,29 +105,6 @@ export function create(tree, book, note = null) {
 };
 
 
-export function queueSave(tree, book, note) {
-    const throttle = tree.get('settings', 'throttle') || DEFAULT_THROTTLE;
-
-    // Check for an existing request. If one is found, push out the next
-    // save by the throttle value
-    const cursor = find(tree, book, note);
-
-    const method = () => {
-        save(tree, book.id, note.id, (err, file) => {
-            cursor.unset('saving');
-        });
-    }
-
-    const saving = cursor.get('saving');
-
-    // Clear out the last one
-    saving && clearTimeout(saving);
-
-    // Queue up the next save
-    cursor.set('saving', setTimeout(method, throttle));
-};
-
-
 export function calculatePath(tree, book, note) {
     const baseDir = tree.get('settings', 'basePath');
     const day = moment(note.data.created || new Date());
@@ -168,6 +145,29 @@ export function renameFile(tree, book, note, callback = null) {
 };
 
 
+export function queueSave(tree, book, note) {
+    const throttle = tree.get('settings', 'throttle') || DEFAULT_THROTTLE;
+
+    // Check for an existing request. If one is found, push out the next
+    // save by the throttle value
+    const cursor = find(tree, book, note);
+
+    const method = () => {
+        save(tree, book.id, note.id, (err, file) => {
+            cursor.unset('saving');
+        });
+    }
+
+    const saving = cursor.get('saving');
+
+    // Clear out the last one
+    saving && clearTimeout(saving);
+
+    // Queue up the next save
+    cursor.set('saving', setTimeout(method, throttle));
+};
+
+
 export function save(tree, bookId, noteId, callback = null) {
     const book = tree.select('books', {id: bookId});
     const note = book.get('notes', {id: noteId});
@@ -187,6 +187,7 @@ export function save(tree, bookId, noteId, callback = null) {
     file.write(body);
 
     file.on('written', () => {
+        book.set(['notes', {id: noteId}, 'file'], file);
         callback && callback(null, file);
     });
 
