@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import marked from 'marked';
+import ColorManipulator from 'material-ui/lib/utils/color-manipulator';
 import TextField from 'material-ui/lib/text-field';
 
 export default class Editor extends Component {
@@ -70,8 +71,11 @@ export default class Editor extends Component {
         const theme = this.state.theme.rawTheme;
         let contents;
         if (this.props.active) {
+            containerStyle.backgroundColor = ColorManipulator.lighten(theme.palette.canvasColor, 50);
             let style = {
                 fontFamily: theme.monoFontFamily,
+                fontSize: '120%',
+                lineHeight: '180%',
             };
             const lines = this.state.value.split('\n');
             contents = <TextField

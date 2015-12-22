@@ -21,29 +21,42 @@ export function active(tree) {
 
 export function deselect(tree, book) {
     const notes = tree.select('books', {id: book.id}, 'notes');
+    const save = [];
     notes.get().forEach((n, i) => {
+        if (n.data.active) save.push(n);
         notes.set([i, 'data', 'active'], false);
     });
+    save.forEach((n) => {queueSave(tree, book, n)});
 }
 
 export function select(tree, book, note) {
     const notes = tree.select('books', {id: book.id}, 'notes');
+    const save = [];
     notes.get().forEach((n, i) => {
         const active = notes.select(i, 'data', 'active');
-        active.set(n.id === note.id);
+        const wasSelected = active.get();
+        const selected = n.id === note.id;
+        active.set(selected);
+
+        if (wasSelected !== selected) {
+            save.push(n);
+        }
     });
+    save.forEach((n) => {queueSave(tree, book, n)});
 };
 
 export function pin(tree, book, note) {
     const cursor = find(tree, book, note).select('data');
     cursor.set('pinned', true);
     select(tree, book, note);
+    queueSave(tree, book, note);
 };
 
 export function unpin(tree, book, note) {
     const cursor = find(tree, book, note).select('data');
     cursor.set('pinned', false);
     deselect(tree, book);
+    queueSave(tree, book, note);
 }
 
 export function setTitle(tree, book, note, title) {
@@ -54,6 +67,7 @@ export function setTitle(tree, book, note, title) {
 export function setContent(tree, book, note, content) {
     const cursor = find(tree, book, note);
     cursor.set('content', content);
+    queueSave(tree, book, note);
 }
 
 export function remove(tree, book, note) {
