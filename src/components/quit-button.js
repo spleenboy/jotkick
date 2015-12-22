@@ -1,4 +1,4 @@
-const ipc = window.require('ipc');
+const ipc = window.require('electron').ipcRenderer;
 import React, {PropTypes, Component} from 'react';
 import IconButton from 'material-ui/lib/icon-button';
 

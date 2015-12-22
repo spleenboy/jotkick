@@ -13,7 +13,7 @@ import Heading from './heading';
 import BookEdit from './book-edit';
 import ThemeSelect from './theme-select';
 
-const ipc = window.require('ipc');
+const ipc = window.require('electron').ipcRenderer;
 
 
 class SettingsPage extends Component {

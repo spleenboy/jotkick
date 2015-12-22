@@ -1,6 +1,3 @@
-require('font-awesome/css/font-awesome.css');
-require('flexboxgrid/css/flexboxgrid.min.css');
-
 import ReactDOM from 'react-dom';
 import {root} from 'baobab-react/higher-order';
 import Tree from './state/';

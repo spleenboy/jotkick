@@ -1,4 +1,5 @@
 @import 'reset.css';
+@import 'src/themes/fonts/stylesheet.css';
 
 body {
     font-family: 'bitter', -apple-system, 'Helvetica Neue', Helvetica, sans-serif;
@@ -35,6 +36,10 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 1em;
     margin-bottom: 0.5em;
     width: 100%;
+}
+
+h1.logo {
+    font-family: 'specialelite';
 }
 
 h1 {
