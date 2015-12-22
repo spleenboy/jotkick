@@ -103,6 +103,8 @@ class SettingsPage extends Component {
                              iconClassName="fa fa-arrow-left"
                              tooltip="Back to Your Notes"
                              tooltipPosition="bottom-right"
+                             touch={true}
+                             style={{position: 'absolute', top: 10, left: 10}}
                              onTouchTap={this.handleBackButton.bind(this)}
                          />
         }
@@ -115,23 +117,23 @@ class SettingsPage extends Component {
                        onTouchTap={this.handleBookSelect.bind(this, b)}
                    />
         });
+        const leftCol = "col-xs-5 col-xs-offset-1";
+        const rightCol = "col-xs-6";
 
-        return <div style={{padding: 10}} style={{color: colors.textColor, minHeight: window.innerHeight * 2}}>
+        return <div style={{color: colors.textColor, minHeight: window.innerHeight * 2}}>
+                   {backButton}
                    <div className="row">
-                       <div className="col-xs-1"><div className="box">
-                           {backButton}
-                       </div></div>
-                       <div className="col-xs-10"><div className="box">
+                       <div className="col-xs-12"><div className="box">
                            <Heading>JotKick Settings</Heading>
                        </div></div>
                    </div>
                    <hr/>
                    <div className="row">
-                       <div className="col-xs-4"><div className="box">
+                       <div className={leftCol}><div className="box">
                            <strong>Home Directory</strong>
                            {startMessage}
                        </div></div>
-                       <div className="col-xs-8"><div className="box">
+                       <div className={rightCol}><div className="box">
                            <RaisedButton
                                label={this.props.settings.basePath ? 'Find a New Home' : 'Find a Home'}
                                labelPosition="after"
@@ -145,11 +147,11 @@ class SettingsPage extends Component {
                    </div>
                    <hr/>
                    <div className="row">
-                       <div className="col-xs-4"><div className="box">
+                       <div className={leftCol}><div className="box">
                            <strong>Books</strong>
                            {booksMessage}
                        </div></div>
-                       <div className="col-xs-8"><div className="box">
+                       <div className={rightCol}><div className="box">
                            <BookEdit
                                books={this.props.books}
                                onBookCreate={this.handleBookCreate.bind(this)}
@@ -162,10 +164,10 @@ class SettingsPage extends Component {
                    </div>
                    <hr/>
                    <div className="row">
-                       <div className="col-xs-4"><div className="box">
+                       <div className={leftCol}><div className="box">
                            <strong>Theme</strong>
                        </div></div>
-                       <div className="col-xs-8"><div className="box">
+                       <div className={rightCol}><div className="box">
                            <ThemeSelect
                                theme={this.props.settings.theme}
                                onThemeChange={this.handleThemeChange.bind(this)}

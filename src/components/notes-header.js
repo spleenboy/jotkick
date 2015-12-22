@@ -100,17 +100,16 @@ export default class NotesHeader extends Component {
 
         return <div>
                    <Heading>JotKick</Heading>
+                   <IconButton
+                       touch={true}
+                       tooltip="Edit Settings"
+                       tooltipPosition="bottom-right"
+                       style={{position: 'absolute', top: 10, left: 10}}
+                       onTouchTap={this.props.onPageChange.bind(this, 'settings')}
+                    >
+                       <FontIcon className="fa fa-cog"/>
+                   </IconButton>
                    <Toolbar style={{backgroundColor: theme.appBar.color, marginTop: padding, height: theme.appBar.height + padding, paddingTop: padding}}>
-                        <ToolbarGroup key={0} float="left">
-                           <IconButton
-                               touch={true}
-                               tooltip="Edit Settings"
-                               tooltipPosition="top-center"
-                               onTouchTap={this.props.onPageChange.bind(this, 'settings')}
-                           >
-                               <FontIcon className="fa fa-cog"/>
-                           </IconButton>
-                       </ToolbarGroup>
                        <ToolbarGroup key={1} float="left">
                            <BookSelect
                                books={this.props.books}

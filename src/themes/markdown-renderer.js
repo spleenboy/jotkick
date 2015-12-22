@@ -33,6 +33,11 @@ export default class MarkdownRenderer extends Renderer {
         return `<code style="background-color: ${bgColor}; color: ${fgColor}">${text}</code>`;
     }
 
+    codespan(text) {
+        const fgColor = this.theme.palette.disabledColor;
+        return `<code style="color: ${fgColor}">${text}</code>`;
+    }
+
     link(href, title, text) {
         const el = super.link(href, title, text);
         const fgColor = this.theme.palette.primary1Color;

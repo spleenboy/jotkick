@@ -11,6 +11,7 @@ export default class QuitButton extends Component {
         return <IconButton
                    style={{position: 'absolute', top: 10, right: 10}}
                    iconClassName="fa fa-times-circle"
+                   touch={true}
                    tooltip="Quit"
                    tooltipPosition="bottom-left"
                    onTouchTap={this.handleAppQuit.bind(this)}
