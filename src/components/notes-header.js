@@ -1,4 +1,6 @@
 import React, {PropTypes, Component} from 'react';
+import {branch} from 'baobab-react/higher-order';
+import actions from '../state/actions/';
 import Mousetrap from 'mousetrap';
 
 import IconButton from 'material-ui/lib/icon-button';
@@ -15,7 +17,7 @@ import SearchBar from './search-bar';
 // Why bother showing search with few notes?
 const MIN_NOTES_FOR_SEARCH = 3;
 
-export default class NotesHeader extends Component {
+class NotesHeader extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
@@ -34,11 +36,6 @@ export default class NotesHeader extends Component {
         return {
             noteCount: PropTypes.number,
             books: PropTypes.array.isRequired,
-            onBookChange: PropTypes.func.isRequired,
-            onBookCreate: PropTypes.func.isRequired,
-            onNoteCreate: PropTypes.func.isRequired,
-            onPageChange: PropTypes.func.isRequired,
-            onSearch: PropTypes.func.isRequired,
         };
     }
 
@@ -50,11 +47,18 @@ export default class NotesHeader extends Component {
 
     handleNoteCreate(e) {
         const book = this.props.books.find(b => b.active);
-        this.props.onNoteCreate(book);
+        this.props.actions.createNote(book);
     }
 
-    handleSearching(value) {
-        this.props.onSearch(value);
+
+    handleSearchNotes(value) {
+        this.props.actions.setQuery(value);
+    }
+
+
+    handleNoteSelect(book, note) {
+        this.refs.notesHeader && this.refs.notesHeader.cancelSearch();
+        this.props.actions.selectNote(book, note);
     }
 
     handleSearchStart() {
@@ -63,6 +67,10 @@ export default class NotesHeader extends Component {
 
     handleSearchToggle(e) {
         this.setState({searching: !this.state.searching});
+    }
+
+    handleSearch(value) {
+        this.props.actions.setQuery(value);
     }
 
     handleSearchCancel() {
@@ -82,8 +90,7 @@ export default class NotesHeader extends Component {
             search = <SearchBar
                          ref="searchBar"
                          active={this.state.searching}
-                         onSearch={this.handleSearching.bind(this)}
-                         onChange={this.handleSearching.bind(this)}
+                         onSearch={this.handleSearch.bind(this)}
                          onCancel={this.handleSearchCancel.bind(this)}
                      />
         } else if (this.props.noteCount > MIN_NOTES_FOR_SEARCH) {
@@ -105,7 +112,7 @@ export default class NotesHeader extends Component {
                        tooltip="Edit Settings"
                        tooltipPosition="bottom-right"
                        style={{position: 'absolute', top: 10, left: 10}}
-                       onTouchTap={this.props.onPageChange.bind(this, 'settings')}
+                       onTouchTap={this.props.actions.setPage.bind(this, 'settings')}
                     >
                        <FontIcon className="fa fa-cog"/>
                    </IconButton>
@@ -113,8 +120,8 @@ export default class NotesHeader extends Component {
                        <ToolbarGroup key={1} float="left">
                            <BookSelect
                                books={this.props.books}
-                               onBookChange={this.props.onBookChange.bind(this)}
-                               onBookCreate={this.props.onBookCreate.bind(this)}
+                               onBookChange={this.props.actions.selectBook}
+                               onBookCreate={this.props.actions.createBook}
                            />
                        </ToolbarGroup>
                        <ToolbarGroup key={2} float="right">
@@ -132,3 +139,16 @@ export default class NotesHeader extends Component {
                </div>
     }
 }
+
+export default branch(NotesHeader, {
+    cursors: {
+        books: ['books'],
+    },
+    actions: {
+        createBook: actions.books.create,
+        selectBook: actions.books.select,
+        createNote: actions.notes.create,
+        setQuery: actions.session.query,
+        setPage: actions.session.setPage,
+    }
+});

@@ -13,13 +13,6 @@ import SettingsPage from './settings-page';
 import QuitButton from './quit-button';
 
 class Main extends Component {
-    constructor(props, context) {
-        super(props, context);
-        this.state = {
-            page: 'home',
-        };
-    }
-
     static get childContextTypes() {
         return {
             muiTheme: PropTypes.object,
@@ -31,10 +24,6 @@ class Main extends Component {
         return {
             muiTheme: ThemeManager.getMuiTheme(theme),
         }
-    }
-
-    handlePageChange(page) {
-        this.setState({page});
     }
 
     handleDismiss(key, index) {
@@ -50,10 +39,10 @@ class Main extends Component {
         const theme = Themes[this.props.theme] || Themes.Light;
         let page;
 
-        if (!ready || this.state.page === 'settings') {
-            page = <SettingsPage onPageChange={this.handlePageChange.bind(this)}/>
+        if (!ready || this.props.page === 'settings') {
+            page = <SettingsPage/>
         } else {
-            page = <NotesPage onPageChange={this.handlePageChange.bind(this)}/>
+            page = <NotesPage/>
         }
 
         const errors = this.props.errors.map((err, i) => {
@@ -95,10 +84,11 @@ export default branch(Main, {
     cursors: {
         books: ['books'],
         theme: ['settings', 'theme'],
+        page: ['sesssion', 'page'],
         errors: ['session', 'errors'],
         alerts: ['session', 'alerts'],
     },
     actions: {
-        removeFromSession: session.remove,
+        removeFromSession: session.remove
     }
 });

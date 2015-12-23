@@ -6,14 +6,6 @@ import TextField from 'material-ui/lib/text-field';
 const TAB_TO_SPACES = 4;
 
 export default class Editor extends Component {
-    constructor(props, context) {
-        super(props, context);
-        this.state = {
-            value: this.props.value,
-            theme: this.context.muiTheme,
-        };
-    }
-
 
     static renderHtml(text, theme = null) {
         const renderer = (theme && theme.renderer) || new marked.Renderer();
@@ -27,18 +19,12 @@ export default class Editor extends Component {
         return marked(text, markedOpts);
     }
 
-
-    static get contextTypes() {
-        return {
-            muiTheme: PropTypes.object,
-        }
-    }
-
     
     static get propTypes() {
         return {
             active: PropTypes.bool,
             value: PropTypes.string,
+            theme: PropTypes.object.isRequired,
             onFocus: PropTypes.func,
             onChange: PropTypes.func,
         }
@@ -64,21 +50,13 @@ export default class Editor extends Component {
 
     handleTextChange(e) {
         this.props.onChange && this.props.onChange(e.target.value);
-        this.setState({value: e.target.value});
-    }
-
-
-    componentWillReceiveProps(nextProps, nextContext) {
-        if (nextProps.value !== this.state.value) {
-            this.setState({value: nextProps.value});
-        }
-        this.setState({theme: nextContext.muiTheme});
     }
 
 
     componentDidMount() {
         if (this.props.active) {
             this.refs.content.focus();
+            this.refs.content.setValue(this.props.value);
         }
     }
 
@@ -86,6 +64,9 @@ export default class Editor extends Component {
     componentDidUpdate(prevProps, prevState) {
         if (!prevProps.active && this.props.active) {
             this.refs.content.focus();
+        }
+        if (this.props.active && this.props.value !== this.refs.content.getValue()) {
+            this.refs.content.setValue(this.props.value);
         }
     }
 
@@ -95,7 +76,7 @@ export default class Editor extends Component {
             padding: '20px 40px',
         };
 
-        const theme = this.state.theme.rawTheme;
+        const theme = this.props.theme;
         let contents;
         if (this.props.active) {
             containerStyle.backgroundColor = ColorManipulator.lighten(theme.palette.canvasColor, 50);
@@ -104,13 +85,12 @@ export default class Editor extends Component {
                 fontSize: '120%',
                 lineHeight: '180%',
             };
-            const lines = this.state.value.split('\n');
+            const lines = this.props.value.split('\n');
             contents = <TextField
                            ref="content"
                            fullWidth={true}
                            multiLine={true}
                            rows={lines.length}
-                           value={this.state.value}
                            inputStyle={style}
                            onKeyDown={this.handleKeyDown.bind(this)}
                            onChange={this.handleTextChange.bind(this)}
@@ -122,7 +102,7 @@ export default class Editor extends Component {
             };
 
             const markup = () => {
-                let __html = this.constructor.renderHtml(this.state.value, theme);
+                let __html = this.constructor.renderHtml(this.props.value, theme);
                 // Default to an empty line
                 if (__html.length === 0) {
                     __html = '<br>';

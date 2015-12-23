@@ -1,5 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
+import _ from 'lodash';
 
 /**
  * Stores all of the persistent app-wide preferences for someone.
@@ -23,6 +24,7 @@ export function Session() {
         query: null,
         errors: [],
         alerts: [],
+        actions: [],
     };
 }
 
@@ -57,6 +59,24 @@ export function Note(title = null) {
         },
         content: '',
     };
+};
+
+
+// Performs a comparison of notes, only carrying about the things
+// that matter. Used to optimize component updates based on changes.
+export function equalNotes(a, b) {
+    const keys = ['id', 'file.path.full', 'pinned', 'loaded', 'data.title', 'data.active', 'content'];
+
+    return !keys.some((key) => {
+        const path = key.split('.');
+        const av = _.get(a, path);
+        const bv = _.get(b, path);
+
+        if (av !== bv) {
+            return true;
+        }
+        return false;
+    });
 };
 
 /**

@@ -5,6 +5,7 @@ import matter from 'gray-matter';
 
 import * as Model from '../model';
 import * as books from './books';
+import * as session from './session';
 import File from '../../storage/file';
 
 export const EXTENSION = '.md';
@@ -25,22 +26,25 @@ export function deselect(tree, book) {
     const notes = tree.select('books', {id: book.id}, 'notes');
     const save = [];
     notes.get().forEach((n, i) => {
-        if (n.data.active) save.push(n);
-        notes.set([i, 'data', 'active'], false);
+        if (n.data.active) {
+            save.push(n);
+            notes.set([i, 'data', 'active'], false);
+        }
     });
     save.forEach((n) => {queueSave(tree, book, n)});
 }
 
 export function select(tree, book, note) {
     const notes = tree.select('books', {id: book.id}, 'notes');
+    session.query(tree, '');
     const save = [];
     notes.get().forEach((n, i) => {
         const active = notes.select(i, 'data', 'active');
         const wasSelected = active.get();
         const selected = n.id === note.id;
-        active.set(selected);
 
         if (wasSelected !== selected) {
+            active.set(selected);
             save.push(n);
         }
     });

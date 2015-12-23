@@ -1,55 +1,77 @@
 import React, {Component, PropTypes} from 'react';
+import {branch} from 'baobab-react/higher-order';
+import _ from 'lodash';
+import * as notes from '../state/actions/notes';
+import * as Model from '../state/model';
 
+import Themes from '../themes/';
 import Paper from 'material-ui/lib/paper';
 import NoteBar from './note-bar';
 import Editor from './editor';
 import TextEditor from './text-editor';
 import * as Grid from './grid';
 
-export default class NoteItem extends Component {
+class NoteItem extends Component {
     static get propTypes() {
-        const handler = PropTypes.func.isRequired;
         return {
-            note            : PropTypes.object.isRequired,
-            onSelect        : handler,
-            onDeselect      : handler,
-            onTitleChange   : handler,
-            onTitleBlur     : handler,
-            onPin           : handler,
-            onUnpin         : handler,
-            onContentChange : handler,
-            onRemove        : handler,
+            book: PropTypes.object.isRequired,
+            note: PropTypes.object.isRequired,
         };
     }
 
-    render() {
-        const note = this.props.note;
 
-        if (!note) {
+    shouldComponentUpdate(nextProps, nextState) {
+        const {book, note} = this.props;
+        if (book.id !== nextProps.book.id || book.name !== nextProps.book.name) {
+            return true;
+        }
+        if (!Model.equalNotes(note, nextProps.note)) {
+            return true;
+        }
+        return false;
+    }
+
+
+    render() {
+        const {book, note} = this.props;
+
+        if (!book || !note) {
             return null;
         }
 
         const search = note.search || {};
         const content = note.data.active ? note.content : search.content || note.content;
+        const theme = Themes[this.props.theme || Themes.Light];
+
+        const setContent = (value) => {
+            this.props.actions.setNoteContent(book, note, value);
+        };
+
+        const selectNote = () => {
+            this.props.actions.selectNote(book, note);
+        };
 
         return <Grid.Row>
-                    <NoteBar
-                        note={note}
-                        onSelect={this.props.onSelect.bind(this)}
-                        onDeselect={this.props.onDeselect.bind(this)}
-                        onTitleChange={this.props.onTitleChange.bind(this)}
-                        onTitleBlur={this.props.onTitleBlur.bind(this)}
-                        onPin={this.props.onPin.bind(this)}
-                        onUnpin={this.props.onUnpin.bind(this)}
-                        onRemove={this.props.onRemove.bind(this)}
-                    />
+                    <NoteBar book={book} note={note} />
                     <TextEditor
                         active={note.data.active}
+                        id={note.id}
+                        theme={theme}
                         value={content}
-                        onChange={this.props.onContentChange.bind(this)}
-                        onFocus={this.props.onSelect.bind(this)}
+                        onChange={setContent}
+                        onFocus={selectNote}
                     />
                </Grid.Row>
     }
 };
 
+
+export default branch(NoteItem, {
+    cursors: {
+        theme: ['settings', 'theme'],
+    },
+    actions: {
+        setNoteContent: notes.setContent,
+        selectNote: notes.select,
+    }
+});
