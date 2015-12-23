@@ -105,14 +105,11 @@ class NotesPage extends Component {
 
     sortNotes(notes) {
         return notes.sort((a, b) => {
-            if (a.data.pinned && !b.data.pinned) {
+            if (a.pinned && !b.pinned) {
                 return -1;
             }
-            if (b.data.pinned && !a.data.pinned) {
+            if (b.pinned && !a.pinned) {
                 return 1;
-            }
-            if (a.data.pinned && b.data.pinned) {
-                return b.data.pinOrder - a.data.pinOrder;
             }
             const ac = a.file && a.file.stats ? a.file.stats.birthtime : a.data.created;
             const bc = b.file && b.file.stats ? b.file.stats.birthtime : b.data.created;

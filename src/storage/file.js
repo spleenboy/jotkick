@@ -110,7 +110,7 @@ export default class File extends EventEmitter {
             return false;
         }
 
-        fs.rename(this.path.full, dest.path.full, (err) => {
+        fs.move(this.path.full, dest.path.full, (err) => {
             if (err) {
                 this.emit('error', err);
                 return;

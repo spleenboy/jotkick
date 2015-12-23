@@ -60,7 +60,7 @@ export default class NoteBar extends Component {
     }
 
     handlePin(e) {
-        if (this.props.note.data.pinned) {
+        if (this.props.note.pinned) {
             this.props.onUnpin(this.props.note);
         } else {
             this.props.onPin(this.props.note);
@@ -80,8 +80,8 @@ export default class NoteBar extends Component {
     render() {
         const note = this.props.note;
         const theme = this.state.muiTheme;
-        const pinAct   = note.data.pinned ? 'Unpin' : 'Pin';
-        const pinClass = note.data.pinned ? 'fa fa-flag' : 'fa fa-flag-o';
+        const pinAct   = note.pinned ? 'Unpin' : 'Pin';
+        const pinClass = note.pinned ? 'fa fa-flag' : 'fa fa-flag-o';
         const progressStyle = {
             height: 5,
             backgroundColor: theme.toolbar.backgroundColor,

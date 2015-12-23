@@ -169,7 +169,8 @@ export function loadNotes(tree, book, callback = null) {
         }
         let note = matter(file.content || "");
         if (note) {
-            note.id   = uuid();
+            note.id = uuid();
+            note.pinned = file.path.dir === path.join(baseDir, notes.PINNED_DIR);
             note.file = file;
             if (!note.data.title) {
                 note.data.title = file.path.name;

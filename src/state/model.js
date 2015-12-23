@@ -48,10 +48,10 @@ export function Note(title = null) {
     return {
         id: uuid(),
         file: null,
+        pinned: false,
         data: {
             title: title,
             active: false,
-            pinned: false,
             created: new Date(),
         },
         content: '',

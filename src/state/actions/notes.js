@@ -8,6 +8,7 @@ import File from '../../storage/file';
 
 export const EXTENSION = '.md';
 export const DATE_FORMAT = 'YYYY-MM-DD';
+export const PINNED_DIR = 'pinned';
 export const DEFAULT_THROTTLE = 1000;
 
 export function find(tree, book, note) {
@@ -46,17 +47,17 @@ export function select(tree, book, note) {
 };
 
 export function pin(tree, book, note) {
-    const cursor = find(tree, book, note).select('data');
+    const cursor = find(tree, book, note);
     cursor.set('pinned', true);
     select(tree, book, note);
-    queueSave(tree, book, note);
+    renameFile(tree, book, cursor.get());
 };
 
 export function unpin(tree, book, note) {
-    const cursor = find(tree, book, note).select('data');
+    const cursor = find(tree, book, note);
     cursor.set('pinned', false);
     deselect(tree, book);
-    queueSave(tree, book, note);
+    renameFile(tree, book, cursor.get());
 }
 
 export function setTitle(tree, book, note, title) {
@@ -108,14 +109,22 @@ export function create(tree, book, note = null) {
 export function calculatePath(tree, book, note) {
     const baseDir = tree.get('settings', 'basePath');
     const day = moment(note.data.created || new Date());
-    return path.join(
-                baseDir,
-                book.name,
-                day.format('YYYY'),
-                day.format('MM'),
-                slug(note.data.title) + EXTENSION
-            );
-
+    if (!note.pinned) {
+        return path.join(
+                    baseDir,
+                    book.name,
+                    day.format('YYYY'),
+                    day.format('MM'),
+                    slug(note.data.title) + EXTENSION
+               );
+    } else {
+        return path.join(
+                    baseDir,
+                    book.name,
+                    PINNED_DIR,
+                    slug(note.data.title) + EXTENSION
+               );
+    }
 }
 
 
@@ -136,12 +145,18 @@ export function renameFile(tree, book, note, callback = null) {
 
     const newfile = File.findUniqueFile(newpath);
 
-    file.rename(newfile.path.full);
     file.on('renamed', () => {
         const cursor = tree.select('books', {id: book.id}, 'notes', {id: note.id});
         cursor.set('file', file);
         callback && callback(null, file);
     });
+
+    file.on('error', (err) => {
+        session.error(tree, err);
+        callback && callback(err, file);
+    });
+
+    file.rename(newfile.path.full);
 };
 
 
