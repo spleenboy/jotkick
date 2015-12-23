@@ -67,12 +67,26 @@ class Main extends Component {
                    />
         });
 
+
+        const actionables = this.props.actionables.map((action, i) => {
+            return <Snackbar
+                       key={i}
+                       message={action.message}
+                       openOnMount={true}
+                       action={action.action}
+                       onActionTouchTap={action.method}
+                       autoHideDuration={8000}
+                       onDismiss={this.handleDismiss.bind(this, 'actions', i)}
+                   />
+        });
+
         return <div className="row center-xs" style={{backgroundColor: theme.palette.canvasColor}}>
                    <div className="col-xs-12 col-sm-12 col-md-8">
                        <div className="box" style={pageStyle}>
                            {page}
                            {errors}
                            {alerts}
+                           {actionables}
                            <QuitButton/>
                        </div>
                    </div>
@@ -87,6 +101,7 @@ export default branch(Main, {
         page: ['sesssion', 'page'],
         errors: ['session', 'errors'],
         alerts: ['session', 'alerts'],
+        actionables: ['session', 'actions'],
     },
     actions: {
         removeFromSession: session.remove

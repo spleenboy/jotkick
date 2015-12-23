@@ -62,20 +62,11 @@ class NoteBar extends Component {
 
     handleRemove() {
         const {book, note} = this.props;
-        this.props.actions.deleteNote(book, note);
+        this.props.actions.removeNote(book, note);
         const undoDelete = () => {
             this.props.actions.createNote(book, note);
-            this.setState({undoDelete: null});
-            this.refs.deletedNote.dismiss();
         };
-        this.setState({undoDelete});
-        this.refs.deletedNote.show();
-    }
-
-
-    handleUndoDelete() {
-        this.state.undoDelete();
-        this.setState({undoDelete: null});
+        this.props.actions.addAction("Your note has been deleted", undoDelete);
     }
 
 
@@ -83,11 +74,13 @@ class NoteBar extends Component {
         this.props.actions.deselectNote(this.props.book);
     }
 
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.note.data.title !== this.refs.noteTitle.getValue()) {
             this.refs.noteTitle.setValue(nextProps.note.data.title);
         }
     }
+
 
     componentDidUpdate(prevProps, prevState) {
         if (!prevProps.note.data.active && this.props.note.data.active) this.focus();
@@ -160,8 +153,10 @@ export default branch(NoteBar, {
         deselectNote: notes.deselect,
         setNoteTitle: notes.setTitle,
         saveNoteTitle: notes.saveTitle,
+        removeNote: notes.remove,
+        createNote: notes.create,
         pinNote: notes.pin,
         unpinNote: notes.unpin,
-        alert: session.alert,
+        addAction: session.action,
     }
 });

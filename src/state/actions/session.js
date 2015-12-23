@@ -14,8 +14,17 @@ export function alert(tree, msg) {
     tree.push(['session', 'alerts'], msg);
 };
 
-export function action(tree, msg, action, title = "Undo") {
-    tree.push(['session', 'actions'], {msg, action, title});
+export function action(tree, message, method, action = "Undo") {
+    const actions = tree.select(['session', 'actions']);
+    const index = actions.get().length;
+
+    let innerMethod = method;
+    method = (evt) => {
+        innerMethod();
+        removeAction(tree, index);
+    };
+
+    tree.push(['session', 'actions'], {message, method, action});
 };
 
 export function remove(tree, key, index = null) {

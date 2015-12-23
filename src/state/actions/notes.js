@@ -116,6 +116,7 @@ export function create(tree, book, note = null) {
     });
 
     notes.push(note);
+    books.sortNotes(tree, book);
     return note;
 };
 
