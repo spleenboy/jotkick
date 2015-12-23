@@ -12,6 +12,7 @@ export default class FileWalker extends EventEmitter {
         this.depth = Infinity;
         this.throttle = 10;
         this.debug = true;
+        this.sorter = (filenames) => {return filenames};
         this.emits = ['error', 'file', 'dir', 'done'];
     }
 
@@ -86,7 +87,7 @@ export default class FileWalker extends EventEmitter {
         fs.readdir(dir.path.full, (err, filenames) => {
             !err || this.emit('error', err);
             remain += filenames.length;
-            queue = filenames;
+            queue = this.sorter(filenames);
             next();
         }); // fs.readdir
     }

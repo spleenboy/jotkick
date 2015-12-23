@@ -161,6 +161,12 @@ export function loadNotes(tree, book, callback = null) {
     const walker = new FileWalker(baseDir);
     walker.id = "loadNotes: " + walker.id;
     walker.throttle = 50;
+    walker.sorter = (filenames) => {
+        filenames.sort((a, b) => {
+            return b.localeCompare(a);
+        });
+        return filenames;
+    };
     const isNote = (file) => file.path.ext === '.md';
 
     walker.on('file', (file) => {
