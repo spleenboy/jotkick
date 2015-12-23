@@ -11,6 +11,7 @@ import IconButton from 'material-ui/lib/icon-button';
 import FlatButton from 'material-ui/lib/flat-button';
 import FontIcon from 'material-ui/lib/font-icon';
 import ShareButton from './share-button';
+import OpenButton from './open-button';
 
 export default class NoteBar extends Component {
     constructor(props, context) {
@@ -114,6 +115,7 @@ export default class NoteBar extends Component {
                                <IconButton tooltip="Stop Editing" onTouchTap={this.handleDeselect.bind(this)}>
                                    <FontIcon className="fa fa-eye"/>
                                </IconButton> : ''}
+                           <OpenButton note={note}/>
                            <ShareButton note={note}/>
                            <IconButton tooltip={`${pinAct} this Note`} onTouchTap={this.handlePin.bind(this)}>
                                <FontIcon className={pinClass}/>

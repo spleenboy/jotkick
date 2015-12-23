@@ -12,7 +12,7 @@ export default class FileWalker extends EventEmitter {
         this.depth = Infinity;
         this.throttle = 10;
         this.debug = true;
-        this.sorter = (filenames) => {return filenames};
+        this.filter = (filenames) => {return filenames};
         this.emits = ['error', 'file', 'dir', 'done'];
     }
 
@@ -27,7 +27,7 @@ export default class FileWalker extends EventEmitter {
     run(read = false, stop = false) {
         const dir = new File(this.baseDir);
         dir.on('error', (err) => {this.emit('error', err)});
-        dir.on('ready', () => {
+        dir.on('loaded', () => {
             this.trace("Starting walk of", this.baseDir);
             if (!dir.stats.isDirectory) {
                 this.emit('error', new Error("Invalid directory"));
@@ -66,7 +66,7 @@ export default class FileWalker extends EventEmitter {
                 stopping();
             });
 
-            file.on('ready', () => {
+            file.on('loaded', () => {
                 remain--;
 
                 if (file.stats.isDirectory) {
@@ -87,7 +87,7 @@ export default class FileWalker extends EventEmitter {
         fs.readdir(dir.path.full, (err, filenames) => {
             !err || this.emit('error', err);
             remain += filenames.length;
-            queue = this.sorter(filenames);
+            queue = this.filter(filenames);
             next();
         }); // fs.readdir
     }

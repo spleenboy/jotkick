@@ -4,12 +4,13 @@ import slug from 'slug';
 import matter from 'gray-matter';
 
 import * as Model from '../model';
+import * as books from './books';
 import File from '../../storage/file';
 
 export const EXTENSION = '.md';
 export const DATE_FORMAT = 'YYYY-MM-DD';
 export const PINNED_DIR = 'pinned';
-export const DEFAULT_THROTTLE = 1000;
+export const DEFAULT_THROTTLE = 2000;
 
 export function find(tree, book, note) {
     return tree.select('books', {id: book.id}, 'notes', {id: note.id});
@@ -51,6 +52,7 @@ export function pin(tree, book, note) {
     cursor.set('pinned', true);
     select(tree, book, note);
     renameFile(tree, book, cursor.get());
+    books.sortNotes(tree, book);
 };
 
 export function unpin(tree, book, note) {
@@ -58,11 +60,19 @@ export function unpin(tree, book, note) {
     cursor.set('pinned', false);
     deselect(tree, book);
     renameFile(tree, book, cursor.get());
+    books.sortNotes(tree, book);
 }
 
 export function setTitle(tree, book, note, title) {
     const cursor = find(tree, book, note).select('data');
     cursor.set('title', title);
+};
+
+export function saveTitle(tree, book, note, title) {
+    setTitle(tree, book, note, title);
+    save(tree, book.id, note.id, (err) => {
+        renameFile(tree, book, note);
+    });
 };
 
 export function setContent(tree, book, note, content) {
@@ -144,9 +154,9 @@ export function renameFile(tree, book, note, callback = null) {
     }
 
     const newfile = File.findUniqueFile(newpath);
+    const cursor = tree.select('books', {id: book.id}, 'notes', {id: note.id});
 
     file.on('renamed', () => {
-        const cursor = tree.select('books', {id: book.id}, 'notes', {id: note.id});
         cursor.set('file', file);
         callback && callback(null, file);
     });
@@ -156,7 +166,9 @@ export function renameFile(tree, book, note, callback = null) {
         callback && callback(err, file);
     });
 
-    file.rename(newfile.path.full);
+    save(tree, book.id, note.id, () => {
+        file.rename(newfile.path.full);
+    });
 };
 
 
@@ -209,5 +221,25 @@ export function save(tree, bookId, noteId, callback = null) {
     file.on('error', (err) => {
         console.error("Error writing note to file", note, err);
         callback && callback(err, file);
+    });
+};
+
+
+// Loads the content for a note
+export function load(tree, book, note) {
+    const cursor = tree.select('books', {id: book.id}, 'notes', {id: note.id});
+    if (!note.file) {
+        cursor.set('loaded', true);
+        return;
+    }
+    note.file.read((err) => {
+        if (err) {
+            session.error(tree, err);
+            return;
+        }
+        const parsed = matter(note.file.content);
+        cursor.set('content', parsed.content);
+        cursor.set('data', parsed.data);
+        cursor.set('loaded', true);
     });
 };

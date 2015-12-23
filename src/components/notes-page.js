@@ -58,7 +58,7 @@ class NotesPage extends Component {
 
 
     handleRenameNoteFile(book, note, value) {
-        this.props.actions.renameNoteFile(book, note);
+        this.props.actions.saveNoteTitle(book, note, value);
     }
 
 
@@ -74,13 +74,12 @@ class NotesPage extends Component {
 
 
     filteredNotes(book) {
-        let notes = book.notes.concat();
 
         if (!this.props.query) {
-            notes.forEach((n) => n.search = {});
-            return this.sortNotes(notes);
+            return book.notes;
         }
 
+        let notes = book.notes.concat();
         const options = {
             pre: '**',
             post: '**',
@@ -100,27 +99,6 @@ class NotesPage extends Component {
             return note;
         });
         return notes;
-    }
-
-
-    sortNotes(notes) {
-        return notes.sort((a, b) => {
-            if (a.pinned && !b.pinned) {
-                return -1;
-            }
-            if (b.pinned && !a.pinned) {
-                return 1;
-            }
-            const ac = a.file && a.file.stats ? a.file.stats.birthtime : a.data.created;
-            const bc = b.file && b.file.stats ? b.file.stats.birthtime : b.data.created;
-            if (ac > bc) {
-                return -1;
-            }
-            if (ac < bc) {
-                return 1;
-            }
-            return 0;
-        });
     }
 
 
@@ -214,10 +192,10 @@ export default branch(NotesPage, {
         createNote: actions.notes.create,
         selectNote: actions.notes.select,
         deselectNotes: actions.notes.deselect,
-        renameNoteFile: actions.notes.renameFile,
         pinNote: actions.notes.pin,
         unpinNote: actions.notes.unpin,
         setNoteTitle: actions.notes.setTitle,
+        saveNoteTitle: actions.notes.saveTitle,
         setNoteContent: actions.notes.setContent,
         calculateNotePath: actions.notes.calculatePath,
         deleteNote: actions.notes.remove,

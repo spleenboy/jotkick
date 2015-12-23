@@ -151,27 +151,36 @@ export default class File extends EventEmitter {
 
             if (!this.stats.isFile || read === false) {
                 callback && callback(err);
-                this.emit('ready');
+                this.emit('loaded');
                 return;
             }
 
             if (typeof read === 'function' && !read(this)) {
                 callback && callback(err);
-                this.emit('ready');
+                this.emit('loaded');
                 return;
             }
 
-            fs.readFile(this.path.full, {encoding: 'utf-8'}, (err, data) => {
-                if (err) {
-                    this.emit('error', err, this);
-                    callback && callback(err);
-                    return;
-                }
-                this.content = data;
+            this.read((err) => {
                 callback && callback(err);
-                this.emit('ready');
+                this.emit('loaded');
                 return;
             });
+        });
+    }
+
+
+    read(callback = null) {
+        fs.readFile(this.path.full, {encoding: 'utf-8'}, (err, data) => {
+            if (err) {
+                this.emit('error', err, this);
+                callback && callback(err);
+                return;
+            }
+            this.content = data;
+            callback && callback(err);
+            this.emit('read');
+            return;
         });
     }
 }

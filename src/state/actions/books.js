@@ -1,7 +1,7 @@
 import path from 'path';
 import slug from 'slug';
-import matter from 'gray-matter';
 import uuid from 'uuid';
+import _ from 'lodash';
 
 import * as settings from './settings';
 import * as notes from './notes';
@@ -150,6 +150,21 @@ export function loadBooks(tree, callback = null) {
 }
 
 
+export function sortNotes(tree, book) {
+    const bookCursor = tree.select('books', {id: book.id});
+    const notes = bookCursor.get('notes');
+    if (!notes) {
+        return;
+    }
+
+    let sorted = _.sortByOrder(notes, (n) => {
+        return n.file && n.file.path.full;
+    }, 'desc');
+
+    bookCursor.set('notes', sorted);
+}
+
+
 /**
  * Loads up the notes for the book
 **/
@@ -161,30 +176,33 @@ export function loadNotes(tree, book, callback = null) {
     const walker = new FileWalker(baseDir);
     walker.id = "loadNotes: " + walker.id;
     walker.throttle = 50;
-    walker.sorter = (filenames) => {
-        filenames.sort((a, b) => {
-            return b.localeCompare(a);
+    walker.filter = (filenames) => {
+        // Include only markdown files and folders
+        const filtered = _.filter(filenames, (filename) => {
+            const ext = path.extname(filename);
+            return ext === '.md' || ext === '';
         });
-        return filenames;
-    };
-    const isNote = (file) => file.path.ext === '.md';
 
+        filtered.sort().reverse();
+        return filtered;
+    };
+
+    const collected = [];
     walker.on('file', (file) => {
-        if (!isNote(file)) {
+        if (file.path.ext !== '.md') {
             return;
         }
-        let note = matter(file.content || "");
-        if (note) {
-            note.id = uuid();
-            note.pinned = file.path.dir === path.join(baseDir, notes.PINNED_DIR);
-            note.file = file;
-            if (!note.data.title) {
-                note.data.title = file.path.name;
-            }
-            cursor.push('notes', note);
-        } else {
-            console.error("Could not parse file", file);
-        }
+
+        // Initialize each note with basic information
+        const note = Model.Note();
+
+        note.file = file;
+        note.pinned = file.path.dir === path.join(baseDir, notes.PINNED_DIR);
+        note.data.title = file.path.name;
+
+        notes.load(tree, book, note);
+
+        cursor.push('notes', note);
     });
 
     walker.on('error', (err) => {
@@ -193,9 +211,12 @@ export function loadNotes(tree, book, callback = null) {
         callback && callback(err);
     });
 
-    if (callback) walker.on('done', callback);
+    walker.on('done', () => {
+        sortNotes(tree, book);
+        callback && callback();
+    });
 
     cursor.set('notes', []);
     tree.commit();
-    walker.run(isNote);
+    walker.run();
 };

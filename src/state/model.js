@@ -49,6 +49,7 @@ export function Note(title = null) {
         id: uuid(),
         file: null,
         pinned: false,
+        loaded: false,
         data: {
             title: title,
             active: false,
