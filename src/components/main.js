@@ -57,6 +57,6 @@ export default branch(Main, {
     cursors: {
         books: ['books'],
         theme: ['settings', 'theme'],
-        page: ['sesssion', 'page'],
+        page: ['session', 'page'],
     }
 });

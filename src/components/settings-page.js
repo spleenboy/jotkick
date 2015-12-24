@@ -66,7 +66,7 @@ class SettingsPage extends Component {
 
     handleBookSelect(book) {
         this.props.actions.selectBook(book);
-        this.props.onPageChange('book');
+        this.props.actions.setPage('book');
     }
 
 
@@ -81,7 +81,7 @@ class SettingsPage extends Component {
 
 
     handleBackButton() {
-        this.props.onPageChange('book');
+        this.props.actions.setPage('book');
     }
 
     render() {
@@ -180,7 +180,6 @@ class SettingsPage extends Component {
 
 SettingsPage.PropTypes = {
     settings: PropTypes.object.isRequired,
-    onPageChange: PropTypes.func.isRequired,
 };
 
 export default branch(SettingsPage, {
@@ -196,5 +195,6 @@ export default branch(SettingsPage, {
         renameBook: actions.books.rename,
         removeBook: actions.books.remove,
         alert: actions.session.alert,
+        setPage: actions.session.setPage,
     }
 });
