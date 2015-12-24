@@ -55,6 +55,7 @@ export default class SearchBar extends Component {
         if (this.state.searching) {
             this.refs.searchField.setErrorText("");
             this.refs.searchField.clearValue();
+            this.setState({searching: false});
         }
         this.props.onCancel();
     }

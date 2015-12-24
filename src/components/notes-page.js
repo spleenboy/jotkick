@@ -57,7 +57,16 @@ class NotesPage extends Component {
         const bookCopy = {
             id: book.id,
             name: book.name,
+            active: book.active,
         }
+
+        const shallowBooks = this.props.books.map(b => {
+            return {
+                id: b.id,
+                name: b.name,
+                active: b.active,
+            }
+        });
 
         let notesList;
 
@@ -68,7 +77,7 @@ class NotesPage extends Component {
         }
 
         return <div className="notes-page" style={{minHeight: window.innerHeight}}>
-                   <NotesHeader ref="notesHeader" />
+                   <NotesHeader ref="notesHeader" books={shallowBooks} />
                    {notesList}
                </div>
     }
