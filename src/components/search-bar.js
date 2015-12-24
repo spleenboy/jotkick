@@ -5,6 +5,14 @@ import IconButton from 'material-ui/lib/icon-button';
 import FontIcon from 'material-ui/lib/font-icon';
 
 export default class SearchBar extends Component {
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            searching: false,
+        };
+    }
+
+
     static get propTypes() {
         return {
             active: PropTypes.bool,
@@ -12,6 +20,11 @@ export default class SearchBar extends Component {
             onSearch: PropTypes.func,
             onCancel: PropTypes.func,
         };
+    }
+
+
+    handleSearchStart() {
+        this.setState({searching: true});
     }
 
 
@@ -39,24 +52,36 @@ export default class SearchBar extends Component {
 
 
     cancel() {
-        this.refs.searchField.setErrorText("");
-        this.refs.searchField.clearValue();
+        if (this.state.searching) {
+            this.refs.searchField.setErrorText("");
+            this.refs.searchField.clearValue();
+        }
         this.props.onCancel();
     }
 
 
-    componentDidUpdate(nextProps, nextState) {
-        this.refs.searchField.focus();
-    }
-
-
-    componentDidMount() {
-        this.refs.searchField.focus();
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.searching && !prevState.searching) {
+            this.refs.searchField.focus();
+        }
     }
 
 
     render() {
         const style = this.props.style || {};
+        const tooltip = this.props.tooltip || "Search";
+
+        if (!this.state.searching) {
+            return <IconButton
+                       ref="searchButton"
+                       touch={true}
+                       tooltip={tooltip}
+                       tooltipPosition="top-center"
+                       onTouchTap={this.handleSearchStart.bind(this)}
+                   >
+                       <FontIcon className="fa fa-search"/>
+                   </IconButton>
+        }
         return <span>
                     <TextField
                         ref="searchField"

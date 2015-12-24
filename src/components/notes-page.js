@@ -16,8 +16,8 @@ class NotesPage extends Component {
 
         let notes = book.notes.concat();
         const options = {
-            pre: '**',
-            post: '**',
+            pre: '',
+            post: '',
             extract: (note) => {
                 return note.content;
             }
@@ -26,7 +26,6 @@ class NotesPage extends Component {
         notes = matches.map((m) => {
             let note = m.original;
             note.search = {
-                query: this.props.query,
                 score: m.score,
                 content: m.string,
             };
@@ -69,11 +68,7 @@ class NotesPage extends Component {
         }
 
         return <div className="notes-page" style={{minHeight: window.innerHeight}}>
-                   <NotesHeader
-                       ref="notesHeader"
-                       books={this.props.books}
-                       noteCount={notes.length}
-                   />
+                   <NotesHeader ref="notesHeader" />
                    {notesList}
                </div>
     }

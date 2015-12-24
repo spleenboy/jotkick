@@ -1,7 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
 import actions from '../state/actions/';
-import Mousetrap from 'mousetrap';
 
 import IconButton from 'material-ui/lib/icon-button';
 import FontIcon from 'material-ui/lib/font-icon';
@@ -22,7 +21,6 @@ class NotesHeader extends Component {
         super(props, context);
         this.state = {
             muiTheme: this.context.muiTheme,
-            searching: false,
         };
     }
 
@@ -33,10 +31,7 @@ class NotesHeader extends Component {
     }
 
     static get propTypes() {
-        return {
-            noteCount: PropTypes.number,
-            books: PropTypes.array.isRequired,
-        };
+        return {};
     }
 
     cancelSearch() {
@@ -50,23 +45,9 @@ class NotesHeader extends Component {
         this.props.actions.createNote(book);
     }
 
-
-    handleSearchNotes(value) {
-        this.props.actions.setQuery(value);
-    }
-
-
     handleNoteSelect(book, note) {
         this.refs.notesHeader && this.refs.notesHeader.cancelSearch();
         this.props.actions.selectNote(book, note);
-    }
-
-    handleSearchStart() {
-        this.setState({searching: true});
-    }
-
-    handleSearchToggle(e) {
-        this.setState({searching: !this.state.searching});
     }
 
     handleSearch(value) {
@@ -74,36 +55,12 @@ class NotesHeader extends Component {
     }
 
     handleSearchCancel() {
-        this.props.onSearch(null);
-        this.setState({searching: false});
-    }
-
-    componentDidMount() {
-        Mousetrap.bind('command+/', this.handleSearchStart.bind(this));
+        this.props.actions.setQuery('');
     }
 
     render() {
         const theme = this.state.muiTheme;
         const padding = 10;
-        let search = null;
-        if (this.state.searching) {
-            search = <SearchBar
-                         ref="searchBar"
-                         active={this.state.searching}
-                         onSearch={this.handleSearch.bind(this)}
-                         onCancel={this.handleSearchCancel.bind(this)}
-                     />
-        } else if (this.props.noteCount > MIN_NOTES_FOR_SEARCH) {
-            search = <IconButton
-                         ref="searchButton"
-                         touch={true}
-                         tooltip="Search Notes"
-                         tooltipPosition="top-center"
-                         onTouchTap={this.handleSearchToggle.bind(this)}
-                     >
-                         <FontIcon className="fa fa-search"/>
-                     </IconButton>
-        }
 
         return <div>
                    <Heading>JotKick</Heading>
@@ -125,7 +82,11 @@ class NotesHeader extends Component {
                            />
                        </ToolbarGroup>
                        <ToolbarGroup key={2} float="right">
-                           {search}
+                           <SearchBar
+                               ref="searchBar"
+                               onChange={this.handleSearch.bind(this)}
+                               onCancel={this.handleSearchCancel.bind(this)}
+                           />
                            <IconButton
                                touch={true}
                                tooltip="Add Note"
@@ -143,6 +104,7 @@ class NotesHeader extends Component {
 export default branch(NotesHeader, {
     cursors: {
         books: ['books'],
+        query: ['session', 'query'],
     },
     actions: {
         createBook: actions.books.create,
