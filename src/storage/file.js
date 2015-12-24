@@ -106,6 +106,7 @@ export default class File extends EventEmitter {
         let dest = new File(newpath);
 
         if (dest.exists()) {
+            console.error("File exists", newpath);
             this.emit('error', new Error("File exists with name"));
             return false;
         }

@@ -66,6 +66,7 @@ export function Note(title = null) {
     return {
         id: uuid(),
         file: null,
+        saving: false,
         pinned: false,
         loaded: false,
         data: {
@@ -81,12 +82,20 @@ export function Note(title = null) {
 // Performs a comparison of notes, only carrying about the things
 // that matter. Used to optimize component updates based on changes.
 export function equalNotes(a, b) {
-    const keys = ['id', 'file.path.full', 'pinned', 'loaded', 'data.title', 'data.active', 'content'];
+    const keys = [
+        ['id'], 
+        ['file', 'path', 'full'],
+        ['pinned'],
+        ['loaded'],
+        ['saving'],
+        ['data', 'title'],
+        ['data', 'active'],
+        ['content'],
+    ];
 
-    return !keys.some((key) => {
-        const path = key.split('.');
-        const av = _.get(a, path);
-        const bv = _.get(b, path);
+    return !keys.some((keypath) => {
+        const av = _.get(a, keypath);
+        const bv = _.get(b, keypath);
 
         if (av !== bv) {
             return true;

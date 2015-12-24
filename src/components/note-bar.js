@@ -43,7 +43,7 @@ class NoteBar extends Component {
     }
 
     handleTitleBlur(e) {
-        this.props.actions.saeNoteTitle(this.props.book, this.props.note, e.target.value);
+        this.props.actions.saveNoteTitle(this.props.book, this.props.note, e.target.value);
     }
 
     handleTitleChange(e) {

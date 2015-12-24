@@ -163,7 +163,7 @@ export function renameFile(tree, book, note, callback = null) {
 
     file.on('renamed', () => {
         cursor.set('file', file);
-        callback && callback(null, file);
+        save(tree, book.id, note.id, callback);
     });
 
     file.on('error', (err) => {
@@ -171,9 +171,7 @@ export function renameFile(tree, book, note, callback = null) {
         callback && callback(err, file);
     });
 
-    save(tree, book.id, note.id, () => {
-        file.rename(newfile.path.full);
-    });
+    file.rename(newfile.path.full);
 };
 
 
@@ -185,9 +183,7 @@ export function queueSave(tree, book, note) {
     const cursor = find(tree, book, note);
 
     const method = () => {
-        save(tree, book.id, note.id, (err, file) => {
-            cursor.unset('saving');
-        });
+        save(tree, book.id, note.id);
     }
 
     const saving = cursor.get('saving');
@@ -202,7 +198,8 @@ export function queueSave(tree, book, note) {
 
 export function save(tree, bookId, noteId, callback = null) {
     const book = tree.select('books', {id: bookId});
-    const note = book.get('notes', {id: noteId});
+    const cursor = book.select('notes', {id: noteId});
+    const note = cursor.get();
     const body = matter.stringify(note.content, note.data).trim();
 
     let file;
@@ -219,12 +216,14 @@ export function save(tree, bookId, noteId, callback = null) {
     file.write(body);
 
     file.on('written', () => {
-        book.set(['notes', {id: noteId}, 'file'], file);
+        cursor.set('file', file);
+        cursor.set('saving', false);
         callback && callback(null, file);
     });
 
     file.on('error', (err) => {
         console.error("Error writing note to file", note, err);
+        cursor.set('saving', false);
         callback && callback(err, file);
     });
 };
