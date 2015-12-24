@@ -22,11 +22,27 @@ export function Settings() {
 export function Session() {
     return {
         query: null,
-        errors: [],
-        alerts: [],
-        actions: [],
+        messages: [],
     };
 }
+
+
+/**
+ * Encapsulates a message that displays onscreen
+**/
+export function Message(text = '') {
+    return {
+        id: uuid(),
+        err: null,
+        text: text,
+        type: 'alert',
+        action: 'Dismiss',
+        callback: null,
+    };
+};
+Message.Alert = 'alert';
+Message.Error = 'error';
+Message.Action = 'action';
 
 /**
  * This is a top-level container for a collection of notes.¬

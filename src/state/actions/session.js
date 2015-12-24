@@ -1,3 +1,6 @@
+import uuid from 'uuid';
+import * as Model from '../model';
+
 export function query(tree, value) {
     tree.set(['session', 'query'], value);
 };
@@ -6,46 +9,44 @@ export function setPage(tree, value) {
     tree.set(['session', 'page'], value);
 };
 
-export function error(tree, err) {
-    tree.push(['session', 'errors'], err);
+export function addMessage(tree, message) {
+    tree.push(['session', 'messages'], message);
 };
 
-export function alert(tree, msg) {
-    tree.push(['session', 'alerts'], msg);
-};
 
-export function action(tree, message, method, action = "Undo") {
-    const actions = tree.select(['session', 'actions']);
-    const index = actions.get().length;
-
-    let innerMethod = method;
-    method = (evt) => {
-        innerMethod();
-        removeAction(tree, index);
-    };
-
-    tree.push(['session', 'actions'], {message, method, action});
-};
-
-export function remove(tree, key, index = null) {
-    const cursor = tree.select('session', key);
-    if (index === null) {
-        cursor.unset();
-    } else {
-        cursor.splice([index, 1]);
+export function removeMessage(tree, id) {
+    const msgs = tree.select('session', 'messages');
+    const index = msgs.get().findIndex(m => m.id === id);
+    if (index >=0) {
+        msgs.splice([index, 1]);
     }
 }
 
-export function removeError(tree, index) {
-    remove(tree, 'errors', index);
+export function error(tree, err, text = '') {
+    const msg = Model.Message(text);
+    msg.type = Model.Message.Error;
+    msg.err = err;
+    addMessage(tree, msg);
 };
 
-export function removeAlert(tree, index) {
-    remove(tree, 'alerts', index);
+export function alert(tree, text) {
+    const msg = Model.Message(text);
+    msg.type = Model.Message.Alert;
+    addMessage(tree, msg);
 };
 
-export function removeAction(tree, index) {
-    remove(tree, 'actions', index);
+export function action(tree, text, callback, action = "Undo") {
+    const msg = Model.Message(text);
+
+    let method = (evt) => {
+        callback && callback(evt);
+        removeMessage(tree, msg.id);
+    };
+
+    msg.action = action;
+    msg.type = Model.Message.Action;
+
+    addMessage(tree, msg);
 };
 
 export function clear(tree, key) {

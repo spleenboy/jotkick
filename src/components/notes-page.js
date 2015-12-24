@@ -6,7 +6,7 @@ import fuzzy from 'fuzzy';
 import NotesHeader from './notes-header';
 import NoteList from './note-list';
 import NoteCreateButton from './note-create-button';
-import actions from '../state/actions/';
+import * as noteActions from '../state/actions/notes';
 
 class NotesPage extends Component {
     filteredNotes(book) {
@@ -65,7 +65,7 @@ class NotesPage extends Component {
         if (notes.length) {
             notesList = <NoteList book={bookCopy} notes={notes}/>
         } else {
-            notesList = <NoteCreateButton book={bookCopy}/>
+            notesList = <NoteCreateButton book={bookCopy} onCreate={this.props.actions.createNote}/>
         }
 
         return <div className="notes-page" style={{minHeight: window.innerHeight}}>
@@ -83,5 +83,8 @@ export default branch(NotesPage, {
     cursors: {
         books: ['books'],
         query: ['session', 'query'],
+    },
+    actions: {
+        createNote: noteActions.create,
     }
 });

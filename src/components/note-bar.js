@@ -158,5 +158,6 @@ export default branch(NoteBar, {
         pinNote: notes.pin,
         unpinNote: notes.unpin,
         addAction: session.action,
+        addAlert: session.alert,
     }
 });
