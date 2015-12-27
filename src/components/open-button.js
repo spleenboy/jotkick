@@ -9,7 +9,7 @@ export default class OpenButton extends Component {
     static get propTypes() {
         return {
             note: PropTypes.object,
-            menuitem: PropTypes.boolean,
+            menuitem: PropTypes.bool,
         }
     }
 

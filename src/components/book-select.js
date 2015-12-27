@@ -107,6 +107,7 @@ export default class BookSelect extends Component {
                    />
         });
         bookItems.push(<MenuItem
+                            key={bookItems.length}
                             value="new"
                             primaryText={<span><FontIcon className="fa fa-plus-square" style={{marginRight: space}}/> Add a Book</span>}
                        />
