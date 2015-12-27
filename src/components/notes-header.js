@@ -41,14 +41,9 @@ class NotesHeader extends Component {
     }
 
     handleNoteCreate(e) {
-        const book = this.props.books.find(b => b.active);
-        this.props.actions.createNote(book);
+        this.props.actions.createNote();
     }
 
-    handleNoteSelect(book, note) {
-        this.refs.notesHeader && this.refs.notesHeader.cancelSearch();
-        this.props.actions.selectNote(book, note);
-    }
 
     handleSearch(value) {
         this.props.actions.setQuery(value);

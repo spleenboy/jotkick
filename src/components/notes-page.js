@@ -48,7 +48,7 @@ class NotesPage extends Component {
         let notesList;
 
         if (notes.length) {
-            notesList = <NoteList book={book} notes={notes}/>
+            notesList = <NoteList notes={notes}/>
         } else {
             notesList = <NoteCreateButton book={book} onCreate={this.props.actions.createNote}/>
         }

@@ -97,16 +97,26 @@ export function remove(tree, note) {
     old.delete();
 }
 
-export function create(tree, note = null) {
-    if (!note) {
-        note = Model.Note();
+export function clear(tree) {
+    tree.set('notes', []);
+}
 
-        note.data.created = new Date();
-        note.data.title   = moment().format(DATE_FORMAT);
-        note.data.active  = true;
+export function create(tree, note = null) {
+    const book = tree.get('books', {active: true});
+
+    if (!book) {
+        session.error(tree, new Error("No book selected"));
+        return false;
     }
 
-    note.book = tree.get('books', {active: true});
+    if (!note) {
+        note = Model.Note();
+        note.data.created = new Date();
+        note.data.title   = moment().format(DATE_FORMAT);
+    }
+
+    note.bookName = book.name;
+    note.data.active = true;
     const notes = tree.select('notes');
     notes.get().forEach((n, i) => {
         notes.set([i, 'active'], false);

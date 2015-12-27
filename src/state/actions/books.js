@@ -103,7 +103,8 @@ export function create(tree, name) {
 
         book.active = true;
         books.push(book);
-        notes.create(tree, book);
+        notes.clear(tree);
+        notes.create(tree);
     });
 };
 
