@@ -103,7 +103,6 @@ class NotesHeader extends Component {
 
 export default branch(NotesHeader, {
     cursors: {
-        books: ['books'],
         query: ['session', 'query'],
     },
     actions: {

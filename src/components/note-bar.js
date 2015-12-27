@@ -8,6 +8,10 @@ import ToolbarGroup from 'material-ui/lib/toolbar/toolbar-group';
 import ToolbarSeparator from 'material-ui/lib/toolbar/toolbar-separator';
 import ToolbarTitle from 'material-ui/lib/toolbar/toolbar-title';
 
+import IconMenu from 'material-ui/lib/menus/icon-menu';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+import Divider from 'material-ui/lib/divider';
+
 import LinearProgress from 'material-ui/lib/linear-progress';
 import TextField from 'material-ui/lib/text-field';
 import IconButton from 'material-ui/lib/icon-button';
@@ -15,6 +19,7 @@ import FlatButton from 'material-ui/lib/flat-button';
 import FontIcon from 'material-ui/lib/font-icon';
 import ShareButton from './share-button';
 import OpenButton from './open-button';
+import DeleteButton from './delete-button';
 
 class NoteBar extends Component {
     constructor(props, context) {
@@ -57,16 +62,6 @@ class NoteBar extends Component {
         } else {
             this.props.actions.pinNote(book, note);
         }
-    }
-
-
-    handleRemove() {
-        const {book, note} = this.props;
-        this.props.actions.removeNote(book, note);
-        const undoDelete = () => {
-            this.props.actions.createNote(book, note);
-        };
-        this.props.actions.addAction("Your note has been deleted", undoDelete);
     }
 
 
@@ -131,14 +126,20 @@ class NoteBar extends Component {
                                <IconButton tooltip="Stop Editing" onTouchTap={this.handleDeselectNote.bind(this)}>
                                    <FontIcon className="fa fa-eye"/>
                                </IconButton> : ''}
-                           <OpenButton note={note}/>
-                           <ShareButton note={note}/>
                            <IconButton tooltip={`${pinAct} this Note`} onTouchTap={this.handlePin.bind(this)}>
                                <FontIcon className={pinClass}/>
                            </IconButton>
-                           <IconButton tooltip="Delete Note" onTouchTap={this.handleRemove.bind(this)}>
-                               <FontIcon className="fa fa-trash"/>
-                           </IconButton>
+
+                           <IconMenu iconButtonElement={
+                               <IconButton tooltip="More Options">
+                                   <FontIcon className="fa fa-ellipsis-v"/>
+                               </IconButton>
+                           }>
+                               <OpenButton note={note} menuitem={true}/>
+                               <ShareButton note={note} menuitem={true}/>
+                               <Divider/>
+                               <DeleteButton note={note} book={book} menuitem={true}/>
+                           </IconMenu>
                        </ToolbarGroup>
                    </Toolbar>
                    {saveProgress}
@@ -153,11 +154,7 @@ export default branch(NoteBar, {
         deselectNote: notes.deselect,
         setNoteTitle: notes.setTitle,
         saveNoteTitle: notes.saveTitle,
-        removeNote: notes.remove,
-        createNote: notes.create,
         pinNote: notes.pin,
         unpinNote: notes.unpin,
-        addAction: session.action,
-        addAlert: session.alert,
     }
 });
