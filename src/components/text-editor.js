@@ -56,7 +56,6 @@ export default class Editor extends Component {
     componentDidMount() {
         if (this.props.active) {
             this.refs.content.focus();
-            this.refs.content.setValue(this.props.value);
         }
     }
 
@@ -64,9 +63,6 @@ export default class Editor extends Component {
     componentDidUpdate(prevProps, prevState) {
         if (!prevProps.active && this.props.active) {
             this.refs.content.focus();
-        }
-        if (this.props.active && this.props.value !== this.refs.content.getValue()) {
-            this.refs.content.setValue(this.props.value);
         }
     }
 
@@ -92,6 +88,7 @@ export default class Editor extends Component {
                            multiLine={true}
                            rows={lines.length}
                            inputStyle={style}
+                           value={this.props.value}
                            onKeyDown={this.handleKeyDown.bind(this)}
                            onChange={this.handleTextChange.bind(this)}
                        />

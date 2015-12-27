@@ -70,8 +70,8 @@ export function setTitle(tree, note, title) {
 
 export function saveTitle(tree, note, title) {
     setTitle(tree, note, title);
-    save(tree, note, (err) => {
-        renameFile(tree, note);
+    renameFile(tree, note, (err) => {
+        if (!err) save(tree, note);
     });
 };
 

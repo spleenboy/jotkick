@@ -35,12 +35,12 @@ class Messaging extends Component {
             return <Snackbar
                        key={i}
                        message={text}
-                       openOnMount={true}
+                       open={true}
                        action={msg.action}
                        autoHideDuration={8000}
                        style={style}
                        onActionTouchTap={onAction}
-                       onDismiss={onDismiss}
+                       onRequestClose={onDismiss}
                    />
         });
 

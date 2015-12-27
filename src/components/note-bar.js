@@ -69,13 +69,6 @@ class NoteBar extends Component {
     }
 
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.note.data.title !== this.refs.noteTitle.getValue()) {
-            this.refs.noteTitle.setValue(nextProps.note.data.title);
-        }
-    }
-
-
     componentDidUpdate(prevProps, prevState) {
         if (!prevProps.note.data.active && this.props.note.data.active) this.focus();
     }
@@ -111,10 +104,9 @@ class NoteBar extends Component {
                    <Toolbar style={toolbarStyle}>
                        <ToolbarGroup key={0} float="left">
                            <TextField
-                               ref="noteTitle"
                                hintText="Give me a good name"
-                               defaultValue={note.data.title}
                                inputStyle={{fontSize: '1.2em'}}
+                               value={note.data.title}
                                onFocus={this.props.actions.selectNote.bind(this, note)}
                                onChange={this.handleTitleChange.bind(this)}
                                onBlur={this.handleTitleBlur.bind(this)}
