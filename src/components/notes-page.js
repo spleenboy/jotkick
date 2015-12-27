@@ -44,18 +44,10 @@ class NotesPage extends Component {
         }
 
         const notes = this.filteredNotes(this.props.notes);
-
-        let notesList;
-
-        if (notes.length) {
-            notesList = <NoteList notes={notes}/>
-        } else {
-            notesList = <NoteCreateButton book={book} onCreate={this.props.actions.createNote}/>
-        }
-
         return <div className="notes-page" style={{minHeight: window.innerHeight}}>
                    <NotesHeader ref="notesHeader" books={this.props.books} />
-                   {notesList}
+                   <NoteList notes={notes}/>
+                   <NoteCreateButton book={book} onCreate={this.props.actions.createNote}/>
                </div>
     }
 }

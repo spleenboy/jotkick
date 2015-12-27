@@ -22,13 +22,14 @@ export default class OpenButton extends Component {
 
 
     render() {
-        const filepath = this.props.note.file.path;
-        const label = `Open ${filepath.base}`;
+        const label = "Open file";
+        const disabled = !this.props.note.file;
 
         if (!this.props.menuitem) {
             return <IconButton
                        iconClassName="fa fa-folder-open"
                        tooltip={label}
+                       disabled={disabled}
                        onTouchTap={this.handleOpenClick.bind(this)}
                    />;
         }
@@ -36,6 +37,7 @@ export default class OpenButton extends Component {
         return <MenuItem
                    primaryText={label}
                    leftIcon={<FontIcon className="fa fa-folder-open"/>}
+                   disabled={disabled}
                    onTouchTap={this.handleOpenClick.bind(this)}
                />
     }
