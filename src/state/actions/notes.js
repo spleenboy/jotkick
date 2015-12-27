@@ -118,8 +118,9 @@ export function create(tree, note = null) {
     note.bookName = book.name;
     note.data.active = true;
     const notes = tree.select('notes');
+
     notes.get().forEach((n, i) => {
-        notes.set([i, 'active'], false);
+        notes.set([i, 'data', 'active'], false);
     });
 
     notes.push(note);
