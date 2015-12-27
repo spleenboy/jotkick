@@ -75,15 +75,15 @@ export function rename(tree, book, name) {
     const dirNow = new File(path.join(basePath, book.name));
     const dirNext = uniqueDir(tree, name);
 
-    // Move the directory first, then rename
-    dirNow.rename(dirNext.path.full);
     dirNow.on('renamed', () => {
         cursor.set('name', dirNext.path.name);
+        cursor.set('file', dirNow);
     });
     dirNow.on('error', (err) => {
         tree.set(['session', 'error'], err);
         console.error("Error renaming file", err);
     });
+    dirNow.rename(dirNext.path.full);
 }
 
 export function create(tree, name) {

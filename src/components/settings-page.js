@@ -47,34 +47,6 @@ class SettingsPage extends Component {
     }
 
 
-    handleBookChange(book) {
-        this.props.actions.selectBook(book);
-    }
-
-
-    handleBookRename(book, name) {
-        this.props.actions.renameBook(book, name);
-        this.props.actions.alert(`Your book was renamed to ${name}`);
-    }
-
-
-    handleBookRemove(book, name) {
-        this.props.actions.removeBook(book);
-        this.props.actions.alert(`${book.name} has been deleted completely`);
-    }
-
-
-    handleBookSelect(book) {
-        this.props.actions.selectBook(book);
-        this.props.actions.setPage('book');
-    }
-
-
-    handleBookCreate(name) {
-        this.props.actions.createBook(name);
-    }
-
-
     handleThemeChange(theme) {
         this.props.actions.setTheme(theme);
     }
@@ -85,7 +57,7 @@ class SettingsPage extends Component {
     }
 
     render() {
-        let startMessage, booksMessage, booksList, backButton;
+        let startMessage, booksMessage, backButton;
 
         const colors = this.state.theme.rawTheme.palette;
 
@@ -107,14 +79,6 @@ class SettingsPage extends Component {
                          />
         }
 
-        booksList = this.props.books.map((b, i) => {
-            return <ListItem
-                       key={i}
-                       leftIcon={<FontIcon className="fa fa-book"/>}
-                       primaryText={b.name}
-                       onTouchTap={this.handleBookSelect.bind(this, b)}
-                   />
-        });
         const leftCol = "col-xs-5 col-xs-offset-1";
         const rightCol = "col-xs-6";
 
@@ -151,14 +115,7 @@ class SettingsPage extends Component {
                            {booksMessage}
                        </div></div>
                        <div className={rightCol}><div className="box">
-                           <BookEdit
-                               books={this.props.books}
-                               onBookCreate={this.handleBookCreate.bind(this)}
-                               onBookSelect={this.handleBookSelect.bind(this)}
-                               onBookChange={this.handleBookChange.bind(this)}
-                               onBookRename={this.handleBookRename.bind(this)}
-                               onBookRemove={this.handleBookRemove.bind(this)}
-                           />
+                           <BookEdit />
                        </div></div>
                    </div> : ''}
                    <hr/>
@@ -178,10 +135,6 @@ class SettingsPage extends Component {
     }
 }
 
-SettingsPage.PropTypes = {
-    settings: PropTypes.object.isRequired,
-};
-
 export default branch(SettingsPage, {
     cursors: {
         settings: ['settings'],
@@ -190,10 +143,6 @@ export default branch(SettingsPage, {
     actions: {
         setBasePath: actions.settings.setBasePath,
         setTheme: actions.settings.setTheme,
-        createBook: actions.books.create,
-        selectBook: actions.books.select,
-        renameBook: actions.books.rename,
-        removeBook: actions.books.remove,
         alert: actions.session.alert,
         setPage: actions.session.setPage,
     }

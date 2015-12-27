@@ -1,4 +1,7 @@
 import React, {PropTypes, Component} from 'react';
+import {branch} from 'baobab-react/higher-order';
+import * as session from '../state/actions/session';
+import * as books from '../state/actions/books';
 
 import RaisedButton from 'material-ui/lib/raised-button';
 import FontIcon from 'material-ui/lib/font-icon';
@@ -15,77 +18,54 @@ const Mode = {
 };
 
 
-export default class BookEdit extends Component {
+class BookEdit extends Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
-            activeBook: this.findActiveBook(),
             mode: Mode.editing,
         };
     }
 
 
-    static get propTypes() {
-        return {
-            books: PropTypes.array,
-            onBookCreate: PropTypes.func,
-            onBookChange: PropTypes.func,
-            onBookSelect: PropTypes.func,
-            onBookRename: PropTypes.func,
-            onBookRemove: PropTypes.func,
-        }
-    }
-
-
-    componentWillReceiveProps(nextProps, nextContext) {
-        if (nextProps.books !== this.props.books) {
-            this.setState({activeBook: this.findActiveBook()});
-        }
-    }
-
-
-    findActiveBook() {
-        if (!this.props.books) return null;
-
-        const active = this.props.books.find(b => b.active);
-        if (active) return active;
-
-        return this.props.books[0];
-    }
-
     handleModeChange(mode) {
         this.setState({mode});
     }
 
-    handleBookChange(activeBook) {
-        this.setState({activeBook});
-        this.props.onBookChange && this.props.onBookChange(activeBook);
+
+    handleBookChange(book) {
+        this.props.actions.selectBook(book);
     }
 
-    handleBookSelect(activeBook) {
-        this.setState({activeBook});
-        this.props.onBookSelect && this.props.onBookSelect(activeBook);
+
+    handleBookRemove(book, name) {
+        this.props.actions.removeBook(book);
+        this.props.actions.alert(`${book.name} has been deleted completely`);
+        this.setState({mode: Mode.editing});
     }
+
+
+    handleBookSelect(book) {
+        this.props.actions.setPage('book');
+    }
+
 
     handleBookCreate(name) {
         this.setState({mode: Mode.editing});
-        this.props.onBookCreate && this.props.onBookCreate(name);
+        this.props.actions.createBook(name);
     }
+
 
     handleBookRename(book) {
         const newName = this.refs.newName.getValue();
-        this.props.onBookRename && this.props.onBookRename(book, newName);
+        this.props.actions.renameBook(book, newName);
+        this.props.actions.alert(`Your book was renamed to ${newName}`);
         this.setState({mode: Mode.editing});
     }
 
-    handleBookRemove(book) {
-        this.props.onBookRemove && this.props.onBookRemove(book);
-        this.setState({mode: Mode.editing});
-    }
 
     render() {
-        const book = this.state.activeBook;
+        const book = this.props.books.find(b => b.active);
         let buttons;
 
         if (this.state.mode === Mode.editing && book) {
@@ -95,7 +75,7 @@ export default class BookEdit extends Component {
                                label="View"
                                labelPosition="after"
                                primary={true}
-                               onTouchTap={this.handleBookSelect.bind(this, book)}
+                               onTouchTap={this.handleBookSelect.bind(this)}
                           >
                               <FontIcon className="fa fa-eye" style={iconStyle}/>
                           </RaisedButton>
@@ -120,7 +100,7 @@ export default class BookEdit extends Component {
                           <TextField
                               ref="newName"
                               hintText="Enter a new name"
-                              initialValue={book.name}
+                              defaultValue={book.name}
                               floatingLabelText="Rename book"
                               onEnterKeyDown={this.handleBookRename.bind(this, book)}
                           />
@@ -169,3 +149,17 @@ export default class BookEdit extends Component {
                </div>
        }
 }
+
+export default branch(BookEdit, {
+    cursors: {
+        books: ['books'],
+    },
+    actions: {
+        createBook: books.create,
+        selectBook: books.select,
+        renameBook: books.rename,
+        removeBook: books.remove,
+        alert: session.alert,
+        setPage: session.setPage,
+    }
+});
