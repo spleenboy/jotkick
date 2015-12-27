@@ -9,12 +9,12 @@ import NoteCreateButton from './note-create-button';
 import * as noteActions from '../state/actions/notes';
 
 class NotesPage extends Component {
-    filteredNotes(book) {
+    filteredNotes() {
         if (!this.props.query) {
-            return book.notes;
+            return this.props.notes;
         }
 
-        let notes = book.notes.concat();
+        let notes = this.props.notes.concat();
         const options = {
             pre: '',
             post: '',
@@ -36,48 +36,25 @@ class NotesPage extends Component {
     }
 
 
-    // Binds the active book as a first argument to the
-    // specified method and returns it
-    bindBook(method, ...args) {
-        return () => {
-            const book = this.props.books.find(b => b.active);
-            method.apply(this, [book, ...args]);
-        };
-    }
-
-
     render() {
-        const book = this.props.books.find(b => b.active) || this.props.books[0];
+        const book = this.props.books.find(b => b.active);
 
         if (!book) {
             return null;
         }
 
-        const notes = this.filteredNotes(book);
-        const bookCopy = {
-            id: book.id,
-            name: book.name,
-            active: book.active,
-        }
-
-        const shallowBooks = this.props.books.map(b => {
-            return {
-                id: b.id,
-                name: b.name,
-                active: b.active,
-            }
-        });
+        const notes = this.filteredNotes(this.props.notes);
 
         let notesList;
 
         if (notes.length) {
-            notesList = <NoteList book={bookCopy} notes={notes}/>
+            notesList = <NoteList book={book} notes={notes}/>
         } else {
-            notesList = <NoteCreateButton book={bookCopy} onCreate={this.props.actions.createNote}/>
+            notesList = <NoteCreateButton book={book} onCreate={this.props.actions.createNote}/>
         }
 
         return <div className="notes-page" style={{minHeight: window.innerHeight}}>
-                   <NotesHeader ref="notesHeader" books={shallowBooks} />
+                   <NotesHeader ref="notesHeader" books={this.props.books} />
                    {notesList}
                </div>
     }
@@ -86,6 +63,7 @@ class NotesPage extends Component {
 export default branch(NotesPage, {
     cursors: {
         books: ['books'],
+        notes: ['notes'],
         query: ['session', 'query'],
     },
     actions: {

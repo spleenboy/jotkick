@@ -4,8 +4,8 @@ import slug from 'slug';
 import matter from 'gray-matter';
 
 import * as Model from '../model';
-import * as books from './books';
 import * as session from './session';
+import FileWalker from '../../storage/file-walker';
 import File from '../../storage/file';
 
 export const EXTENSION = '.md';
@@ -13,31 +13,27 @@ export const DATE_FORMAT = 'YYYY-MM-DD';
 export const PINNED_DIR = 'pinned';
 export const DEFAULT_THROTTLE = 2000;
 
-export function find(tree, book, note) {
-    return tree.select('books', {id: book.id}, 'notes', {id: note.id});
-}
-
 export function active(tree) {
     const active = {active: true};
-    return tree.get('books', active, 'notes', active);
+    return tree.get('notes', active);
 };
 
-export function deselect(tree, book) {
-    const notes = tree.select('books', {id: book.id}, 'notes');
-    const save = [];
+export function deselect(tree) {
+    const notes = tree.select('notes');
+    const toSave = [];
     notes.get().forEach((n, i) => {
         if (n.data.active) {
-            save.push(n);
+            toSave.push(n);
             notes.set([i, 'data', 'active'], false);
         }
     });
-    save.forEach((n) => {queueSave(tree, book, n)});
+    toSave.forEach((n) => {queueSave(tree, n)});
 }
 
-export function select(tree, book, note) {
-    const notes = tree.select('books', {id: book.id}, 'notes');
+export function select(tree, note) {
+    const notes = tree.select('notes');
     session.query(tree, '');
-    const save = [];
+    const toSave = [];
     notes.get().forEach((n, i) => {
         const active = notes.select(i, 'data', 'active');
         const wasSelected = active.get();
@@ -45,48 +41,48 @@ export function select(tree, book, note) {
 
         if (wasSelected !== selected) {
             active.set(selected);
-            save.push(n);
+            toSave.push(n);
         }
     });
-    save.forEach((n) => {queueSave(tree, book, n)});
+    toSave.forEach((n) => {queueSave(tree, n)});
 };
 
-export function pin(tree, book, note) {
-    const cursor = find(tree, book, note);
+export function pin(tree, note) {
+    const cursor = tree.select('notes', {id: note.id});
     cursor.set('pinned', true);
-    select(tree, book, note);
-    renameFile(tree, book, cursor.get());
-    books.sortNotes(tree, book);
+    select(tree, note);
+    renameFile(tree, cursor.get());
+    sort(tree);
 };
 
-export function unpin(tree, book, note) {
-    const cursor = find(tree, book, note);
+export function unpin(tree, note) {
+    const cursor = tree.select('notes', {id: note.id});
     cursor.set('pinned', false);
-    deselect(tree, book);
-    renameFile(tree, book, cursor.get());
-    books.sortNotes(tree, book);
+    deselect(tree);
+    renameFile(tree, cursor.get());
+    sort(tree);
 }
 
-export function setTitle(tree, book, note, title) {
-    const cursor = find(tree, book, note).select('data');
+export function setTitle(tree, note, title) {
+    const cursor = tree.select('notes', {id: note.id}, 'data');
     cursor.set('title', title);
 };
 
-export function saveTitle(tree, book, note, title) {
-    setTitle(tree, book, note, title);
-    save(tree, book.id, note.id, (err) => {
-        renameFile(tree, book, note);
+export function saveTitle(tree, note, title) {
+    setTitle(tree, note, title);
+    save(tree, note, (err) => {
+        renameFile(tree, note);
     });
 };
 
-export function setContent(tree, book, note, content) {
-    const cursor = find(tree, book, note);
+export function setContent(tree, note, content) {
+    const cursor = tree.select('notes', {id: note.id});
     cursor.set('content', content);
-    queueSave(tree, book, note);
+    queueSave(tree, note);
 }
 
-export function remove(tree, book, note) {
-    const notes = tree.select('books', {id: book.id}, 'notes');
+export function remove(tree, note) {
+    const notes = tree.select('notes');
     const noteIndex  = notes.get().findIndex((n) => n.id === note.id);
 
     if (noteIndex >= 0) {
@@ -101,7 +97,7 @@ export function remove(tree, book, note) {
     old.delete();
 }
 
-export function create(tree, book, note = null) {
+export function create(tree, note = null) {
     if (!note) {
         note = Model.Note();
 
@@ -110,24 +106,105 @@ export function create(tree, book, note = null) {
         note.data.active  = true;
     }
 
-    const notes = tree.select('books', {id: book.id}, 'notes');
+    note.book = tree.get('books', {active: true});
+    const notes = tree.select('notes');
     notes.get().forEach((n, i) => {
         notes.set([i, 'active'], false);
     });
 
     notes.push(note);
-    books.sortNotes(tree, book);
+    sort(tree);
     return note;
 };
 
 
-export function calculatePath(tree, book, note) {
+export function sort(tree) {
+    const notes = tree.get('notes');
+    if (!notes) {
+        return;
+    }
+
+    let sorted = _.sortByOrder(notes, (n) => {
+        return n.file && n.file.path.full;
+    }, 'desc');
+
+    tree.set('notes', sorted);
+}
+
+
+/**
+ * Loads up the notes for the book
+**/
+export function load(tree, callback = null) {
+    const book = tree.get('books').find(b => b.active);
+
+    if (!book) {
+        tree.set('notes', []);
+        callback && callback();
+        return;
+    }
+
+    let baseDir = tree.get('settings', 'basePath');
+
+    baseDir = path.join(baseDir, book.name);
+
+    const walker = new FileWalker(baseDir);
+    walker.id = "loadNotes: " + walker.id;
+    walker.throttle = 50;
+    walker.filter = (filenames) => {
+        // Include only markdown files and folders
+        const filtered = _.filter(filenames, (filename) => {
+            const ext = path.extname(filename);
+            return ext === '.md' || ext === '';
+        });
+
+        filtered.sort().reverse();
+        return filtered;
+    };
+
+    const collected = [];
+    walker.on('file', (file) => {
+        if (file.path.ext !== '.md') {
+            return;
+        }
+
+        // Initialize each note with basic information
+        const note = Model.Note();
+
+        note.bookName = book.name;
+        note.file = file;
+        note.pinned = file.path.dir === path.join(baseDir, PINNED_DIR);
+        note.data.title = file.path.name;
+
+        loadContent(tree, note);
+
+        tree.push('notes', note);
+    });
+
+    walker.on('error', (err) => {
+        session.error(tree, err);
+        settings.setLastBook(tree, null);
+        callback && callback(err);
+    });
+
+    walker.on('done', () => {
+        sort(tree);
+        callback && callback();
+    });
+
+    tree.set('notes', []);
+    tree.commit();
+    walker.run();
+};
+
+
+export function calculatePath(tree, note) {
     const baseDir = tree.get('settings', 'basePath');
     const day = moment(note.data.created || new Date());
     if (!note.pinned) {
         return path.join(
                     baseDir,
-                    book.name,
+                    note.bookName,
                     day.format('YYYY'),
                     day.format('MM'),
                     slug(note.data.title) + EXTENSION
@@ -135,7 +212,7 @@ export function calculatePath(tree, book, note) {
     } else {
         return path.join(
                     baseDir,
-                    book.name,
+                    note.bookName,
                     PINNED_DIR,
                     slug(note.data.title) + EXTENSION
                );
@@ -143,7 +220,7 @@ export function calculatePath(tree, book, note) {
 }
 
 
-export function renameFile(tree, book, note, callback = null) {
+export function renameFile(tree, note, callback = null) {
     // Not saved yet.
     if (!note.file) {
         console.debug("Note does not have existing path");
@@ -151,7 +228,7 @@ export function renameFile(tree, book, note, callback = null) {
     }
 
     const file = new File(note.file.path.full);
-    let newpath = calculatePath(tree, book, note);
+    let newpath = calculatePath(tree, note);
 
     // No change, no rename
     if (newpath === file.path.full) {
@@ -159,11 +236,11 @@ export function renameFile(tree, book, note, callback = null) {
     }
 
     const newfile = File.findUniqueFile(newpath);
-    const cursor = tree.select('books', {id: book.id}, 'notes', {id: note.id});
+    const cursor = tree.select('notes', {id: note.id});
 
     file.on('renamed', () => {
         cursor.set('file', file);
-        save(tree, book.id, note.id, callback);
+        save(tree, note, callback);
     });
 
     file.on('error', (err) => {
@@ -175,15 +252,15 @@ export function renameFile(tree, book, note, callback = null) {
 };
 
 
-export function queueSave(tree, book, note) {
+export function queueSave(tree, note) {
     const throttle = tree.get('settings', 'throttle') || DEFAULT_THROTTLE;
 
     // Check for an existing request. If one is found, push out the next
     // save by the throttle value
-    const cursor = find(tree, book, note);
+    const cursor = tree.select('notes', {id: note.id});
 
     const method = () => {
-        save(tree, book.id, note.id);
+        save(tree, note);
     }
 
     const saving = cursor.get('saving');
@@ -196,10 +273,9 @@ export function queueSave(tree, book, note) {
 };
 
 
-export function save(tree, bookId, noteId, callback = null) {
-    const book = tree.select('books', {id: bookId});
-    const cursor = book.select('notes', {id: noteId});
-    const note = cursor.get();
+export function save(tree, note, callback = null) {
+    const cursor = tree.select('notes', {id: note.id});
+    note = cursor.get(); // Refresh the values from the tree
     const body = matter.stringify(note.content, note.data).trim();
 
     let file;
@@ -208,7 +284,7 @@ export function save(tree, bookId, noteId, callback = null) {
         file = new File(note.file.path.full);
     } else {
         // Otherwise, try to figure out a unique name
-        const fullpath = calculatePath(tree, book.get(), note);
+        const fullpath = calculatePath(tree, note);
         file = File.findUniqueFile(fullpath);
         console.debug("No existing file for saving note. Calculating path", fullpath);
     }
@@ -230,8 +306,8 @@ export function save(tree, bookId, noteId, callback = null) {
 
 
 // Loads the content for a note
-export function load(tree, book, note) {
-    const cursor = tree.select('books', {id: book.id}, 'notes', {id: note.id});
+export function loadContent(tree, note) {
+    const cursor = tree.select('notes', {id: note.id});
     if (!note.file) {
         cursor.set('loaded', true);
         return;

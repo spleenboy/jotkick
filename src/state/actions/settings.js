@@ -26,7 +26,7 @@ export function setBasePath(tree, path) {
     cursor.unset('lastBook');
 
     books.clear(tree);
-    books.loadBooks(tree);
+    books.load(tree);
 }
 
 
@@ -54,7 +54,7 @@ export function load(tree, callback = null) {
         }
 
         books.clear(tree);
-        books.loadBooks(tree, () => {
+        books.load(tree, () => {
             const found = tree.get('books', {name: data.lastBook});
             if (found) {
                 books.select(tree, found, whenReady);

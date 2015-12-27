@@ -14,17 +14,13 @@ import * as Grid from './grid';
 class NoteItem extends Component {
     static get propTypes() {
         return {
-            book: PropTypes.object.isRequired,
             note: PropTypes.object.isRequired,
         };
     }
 
 
     shouldComponentUpdate(nextProps, nextState) {
-        const {book, note} = this.props;
-        if (book.id !== nextProps.book.id || book.name !== nextProps.book.name) {
-            return true;
-        }
+        const note = this.props.note;
         if (!Model.equalNotes(note, nextProps.note)) {
             return true;
         }
@@ -33,9 +29,9 @@ class NoteItem extends Component {
 
 
     render() {
-        const {book, note} = this.props;
+        const note = this.props.note;
 
-        if (!book || !note) {
+        if (!note) {
             return null;
         }
 
@@ -44,15 +40,15 @@ class NoteItem extends Component {
         const theme = Themes[this.props.theme || Themes.Light];
 
         const setContent = (value) => {
-            this.props.actions.setNoteContent(book, note, value);
+            this.props.actions.setNoteContent(note, value);
         };
 
         const selectNote = () => {
-            this.props.actions.selectNote(book, note);
+            this.props.actions.selectNote(note);
         };
 
         return <Grid.Row>
-                    <NoteBar book={book} note={note} />
+                    <NoteBar note={note} />
                     <TextEditor
                         active={note.data.active}
                         id={note.id}

@@ -10,17 +10,16 @@ import MenuItem from 'material-ui/lib/menus/menu-item';
 export default class DeleteButton extends Component {
     static get propTypes() {
         return {
-            book: PropTypes.object,
             note: PropTypes.object,
         }
     }
 
 
     handleRemove() {
-        const {book, note} = this.props;
-        this.props.actions.removeNote(book, note);
+        const note = this.props.note;
+        this.props.actions.removeNote(note);
         const undoDelete = () => {
-            this.props.actions.createNote(book, note);
+            this.props.actions.createNote(note);
         };
         this.props.actions.addAction("Your note has been deleted", undoDelete);
     }

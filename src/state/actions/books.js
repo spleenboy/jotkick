@@ -4,8 +4,8 @@ import uuid from 'uuid';
 import _ from 'lodash';
 
 import * as settings from './settings';
-import * as notes from './notes';
 import * as session from './session';
+import * as notes from './notes';
 
 import * as Model from '../model';
 import FileWalker from '../../storage/file-walker';
@@ -25,16 +25,10 @@ export function select(tree, book, callback = null) {
     const books = tree.select('books');
     books.get().forEach((b, i) => {
         var bookCursor = books.select(i);
-        if (b.id === book.id) {
-            bookCursor.set('active', true);
-        } else {
-            // Inactive books are cleared of notes
-            bookCursor.set('active', false);
-            bookCursor.set('notes', []);
-        }
+        books.set([i, 'active'], b.id === book.id);
     });
 
-    loadNotes(tree, book, (err) => {
+    notes.load(tree, (err) => {
         if (!err) {
             settings.setLastBook(tree, book.name);
         }
@@ -122,7 +116,7 @@ export function clear(tree) {
 /**
  * Scans the basePath for directories
 **/
-export function loadBooks(tree, callback = null) {
+export function load(tree, callback = null) {
     const basePath = tree.get('settings', 'basePath');
     const books = tree.select('books');
 
@@ -136,6 +130,7 @@ export function loadBooks(tree, callback = null) {
             return;
         }
         const found = Model.Book();
+        found.file = dir;
         found.name = dir.path.name;
         books.push(found);
     });
@@ -148,75 +143,3 @@ export function loadBooks(tree, callback = null) {
     if (callback) walker.on('done', callback);
     walker.run();
 }
-
-
-export function sortNotes(tree, book) {
-    const bookCursor = tree.select('books', {id: book.id});
-    const notes = bookCursor.get('notes');
-    if (!notes) {
-        return;
-    }
-
-    let sorted = _.sortByOrder(notes, (n) => {
-        return n.file && n.file.path.full;
-    }, 'desc');
-
-    bookCursor.set('notes', sorted);
-}
-
-
-/**
- * Loads up the notes for the book
-**/
-export function loadNotes(tree, book, callback = null) {
-    const cursor = tree.select('books', {id: book.id});
-    let baseDir = tree.get('settings', 'basePath');
-    baseDir = path.join(baseDir, book.name);
-
-    const walker = new FileWalker(baseDir);
-    walker.id = "loadNotes: " + walker.id;
-    walker.throttle = 50;
-    walker.filter = (filenames) => {
-        // Include only markdown files and folders
-        const filtered = _.filter(filenames, (filename) => {
-            const ext = path.extname(filename);
-            return ext === '.md' || ext === '';
-        });
-
-        filtered.sort().reverse();
-        return filtered;
-    };
-
-    const collected = [];
-    walker.on('file', (file) => {
-        if (file.path.ext !== '.md') {
-            return;
-        }
-
-        // Initialize each note with basic information
-        const note = Model.Note();
-
-        note.file = file;
-        note.pinned = file.path.dir === path.join(baseDir, notes.PINNED_DIR);
-        note.data.title = file.path.name;
-
-        notes.load(tree, book, note);
-
-        cursor.push('notes', note);
-    });
-
-    walker.on('error', (err) => {
-        session.error(tree, err);
-        settings.setLastBook(tree, null);
-        callback && callback(err);
-    });
-
-    walker.on('done', () => {
-        sortNotes(tree, book);
-        callback && callback();
-    });
-
-    cursor.set('notes', []);
-    tree.commit();
-    walker.run();
-};

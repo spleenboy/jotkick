@@ -38,7 +38,6 @@ class NoteBar extends Component {
 
     static get propTypes() {
         return {
-            book: PropTypes.object.isRequired,
             note: PropTypes.object.isRequired,
         };
     }
@@ -48,25 +47,25 @@ class NoteBar extends Component {
     }
 
     handleTitleBlur(e) {
-        this.props.actions.saveNoteTitle(this.props.book, this.props.note, e.target.value);
+        this.props.actions.saveNoteTitle(this.props.note, e.target.value);
     }
 
     handleTitleChange(e) {
-        this.props.actions.setNoteTitle(this.props.book, this.props.note, e.target.value);
+        this.props.actions.setNoteTitle(this.props.note, e.target.value);
     }
 
     handlePin(e) {
-        const {book, note} = this.props;
+        const note = this.props.note;
         if (note.pinned) {
-            this.props.actions.unpinNote(book, note);
+            this.props.actions.unpinNote(note);
         } else {
-            this.props.actions.pinNote(book, note);
+            this.props.actions.pinNote(note);
         }
     }
 
 
     handleDeselectNote() {
-        this.props.actions.deselectNote(this.props.book);
+        this.props.actions.deselectNote();
     }
 
 
@@ -82,9 +81,9 @@ class NoteBar extends Component {
     }
 
     render() {
-        const {book, note} = this.props;
+        const note = this.props.note;
 
-        if (!book || !note) return null;
+        if (!note) return null;
 
         const theme = this.state.muiTheme;
         const pinAct   = note.pinned ? 'Unpin' : 'Pin';
@@ -116,7 +115,7 @@ class NoteBar extends Component {
                                hintText="Give me a good name"
                                defaultValue={note.data.title}
                                inputStyle={{fontSize: '1.2em'}}
-                               onFocus={this.props.actions.selectNote.bind(this, book, note)}
+                               onFocus={this.props.actions.selectNote.bind(this, note)}
                                onChange={this.handleTitleChange.bind(this)}
                                onBlur={this.handleTitleBlur.bind(this)}
                            />
@@ -138,7 +137,7 @@ class NoteBar extends Component {
                                <OpenButton note={note} menuitem={true}/>
                                <ShareButton note={note} menuitem={true}/>
                                <Divider/>
-                               <DeleteButton note={note} book={book} menuitem={true}/>
+                               <DeleteButton note={note} menuitem={true}/>
                            </IconMenu>
                        </ToolbarGroup>
                    </Toolbar>

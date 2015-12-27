@@ -21,7 +21,6 @@ export default class NoteCreateButton extends Component {
 
     static get propTypes() {
         return {
-            book: PropTypes.object.isRequired,
             onCreate: PropTypes.func.isRequired,
         }
     }

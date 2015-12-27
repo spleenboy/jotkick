@@ -53,7 +53,7 @@ export function Book(name = null) {
         id: uuid(),
         name: 'home',
         active: false,
-        notes: [],
+        file: null,
     };
 };
 
@@ -65,6 +65,7 @@ export function Note(title = null) {
     title = title || moment().format('YYYY-MM-DD');
     return {
         id: uuid(),
+        bookName: null,
         file: null,
         saving: false,
         pinned: false,
@@ -112,5 +113,6 @@ export function Tree() {
         settings: Settings(),
         session: Session(),
         books: [],
+        notes: [],
     };
 };
