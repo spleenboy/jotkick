@@ -4,6 +4,7 @@ import Mousetrap from 'mousetrap';
 import RaisedButton from 'material-ui/lib/raised-button';
 import FontIcon from 'material-ui/lib/font-icon';
 import DropDownMenu from 'material-ui/lib/drop-down-menu';
+import MenuItem from 'material-ui/lib/menus/menu-item';
 import TextField from 'material-ui/lib/text-field';
 
 export default class BookSelect extends Component {
@@ -90,7 +91,7 @@ export default class BookSelect extends Component {
     render() {
         let books,
             bookAdd,
-            bookIndex,
+            activeBook,
             bookMenu,
             bookItems;
 
@@ -98,18 +99,27 @@ export default class BookSelect extends Component {
         books = this.props.books.concat();
         books.sort((a, b) => {a.name < b.name ? -1 : 1});
         bookItems= books.map((b, i) => {
-            if (b.active) bookIndex = i;
-            return { payload: b, text: <span><FontIcon className="fa fa-book" style={{marginRight: space}}/> {b.name}</span> }
+            if (b.active) activeBook = b;
+            return <MenuItem
+                       key={i}
+                       value={b}
+                       primaryText={<span><FontIcon className="fa fa-book" style={{marginRight: space}}/> {b.name}</span>}
+                   />
         });
-        bookItems.push({payload: 'new', text: <span><FontIcon className="fa fa-plus-square" style={{marginRight: space}}/> Add a Book</span>});
+        bookItems.push(<MenuItem
+                            value="new"
+                            primaryText={<span><FontIcon className="fa fa-plus-square" style={{marginRight: space}}/> Add a Book</span>}
+                       />
+                     );
         if (this.props.books.length && !this.state.adding) {
             return <span ref="anchor">
                        <DropDownMenu
                            ref="bookList"
-                           menuItems={bookItems}
-                           selectedIndex={bookIndex}
+                           value={activeBook}
                            onChange={this.handleBookChange.bind(this)}
-                       />
+                       >
+                       {bookItems}
+                       </DropDownMenu>
                    </span>
         } else {
             return <span>
