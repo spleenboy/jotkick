@@ -85,3 +85,11 @@ blockquote {
 code {
     font-family: luxi, Courier New, Courier, serif;
 }
+
+strong, b {
+    font-weight: bold;
+}
+
+em, i {
+    font-style: italic;
+}

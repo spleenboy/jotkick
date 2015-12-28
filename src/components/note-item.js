@@ -7,7 +7,6 @@ import * as Model from '../state/model';
 import Themes from '../themes/';
 import Paper from 'material-ui/lib/paper';
 import NoteBar from './note-bar';
-import Editor from './editor';
 import TextEditor from './text-editor';
 import * as Grid from './grid';
 

@@ -20,7 +20,7 @@ function addFonts(theme) {
 Object.keys(Themes).forEach((key) => {
     let theme = Themes[key];
     addFonts(theme);
-    theme.renderer = new MarkdownRenderer(theme);
+    theme.renderer = MarkdownRenderer;
 });
 
 export default Themes;

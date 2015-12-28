@@ -78,6 +78,8 @@ export default class Editor extends Component {
         };
 
         const theme = this.props.theme;
+        const renderer = new theme.renderer(theme);
+
         let contents;
         if (this.props.active) {
             containerStyle.backgroundColor = ColorManipulator.lighten(theme.palette.canvasColor, 50);
@@ -104,7 +106,7 @@ export default class Editor extends Component {
             };
 
             const markup = () => {
-                let __html = this.constructor.renderHtml(this.props.value, theme.renderer);
+                let __html = this.constructor.renderHtml(this.props.value, renderer);
                 // Default to an empty line
                 if (__html.length === 0) {
                     __html = '<br>';
