@@ -6,6 +6,10 @@ import TextField from 'material-ui/lib/text-field';
 const TAB_TO_SPACES = 4;
 
 export default class Editor extends Component {
+    constructor(props, context) {
+        super(props, context);
+    }
+
 
     static renderHtml(text, theme = null) {
         const renderer = (theme && theme.renderer) || new marked.Renderer();
@@ -44,6 +48,7 @@ export default class Editor extends Component {
             const end   = input.value.substring(input.selectionEnd);
             const space = ' '.repeat(TAB_TO_SPACES);
             input.value = `${start}${space}${end}`;
+            this.props.onChange && this.props.onChange(input.value);
         }
     }
 

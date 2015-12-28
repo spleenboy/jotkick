@@ -126,6 +126,11 @@ class NoteBar extends Component {
                                    <FontIcon className="fa fa-ellipsis-v"/>
                                </IconButton>
                            }>
+                               <MenuItem
+                                   primaryText={note.file ? note.file.path.base : note.data.title}
+                                   disabled={true}
+                               />
+                               <Divider/>
                                <OpenButton note={note} menuitem={true}/>
                                <ShareButton note={note} menuitem={true}/>
                                <Divider/>
