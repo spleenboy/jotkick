@@ -102,8 +102,9 @@ class NoteBar extends Component {
 
         return <div ref="wrapper">
                    <Toolbar style={toolbarStyle}>
-                       <ToolbarGroup key={0} float="left">
+                       <ToolbarGroup key={0} float="left" style={{width: '70%'}}>
                            <TextField
+                               fullWidth={true}
                                hintText="Give me a good name"
                                inputStyle={{fontSize: '1.2em'}}
                                value={note.data.title}
