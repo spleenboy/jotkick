@@ -8,6 +8,9 @@ const TAB_TO_SPACES = 4;
 export default class Editor extends Component {
     constructor(props, context) {
         super(props, context);
+        this.state = {
+            selection: null,
+        };
     }
 
 
@@ -35,7 +38,7 @@ export default class Editor extends Component {
     }
 
 
-    handleTextFocus() {
+    handleTextFocus(e) {
         this.props.onFocus && this.props.onFocus(this);
     }
 
@@ -49,6 +52,19 @@ export default class Editor extends Component {
             const space = ' '.repeat(TAB_TO_SPACES);
             input.value = `${start}${space}${end}`;
             this.props.onChange && this.props.onChange(input.value);
+            this.setState({
+                selection: {
+                    start: start.length + space.length,
+                    end: start.length + space.length,
+               }
+            });
+        }
+    }
+
+
+    handleKeyUp(e) {
+        if (this.state.selection) {
+            this.setState({selection: null});
         }
     }
 
@@ -60,14 +76,19 @@ export default class Editor extends Component {
 
     componentDidMount() {
         if (this.props.active) {
-            this.refs.content.focus();
+            this.refs.textarea.focus();
         }
     }
 
 
     componentDidUpdate(prevProps, prevState) {
         if (!prevProps.active && this.props.active) {
-            this.refs.content.focus();
+            this.refs.textarea.focus();
+        }
+        if (this.props.active && this.state.selection) {
+            const textarea = this.refs.textarea._getInputNode();
+            textarea.selectionStart = this.state.selection.start;
+            textarea.selectionEnd = this.state.selection.end;
         }
     }
 
@@ -90,13 +111,14 @@ export default class Editor extends Component {
             };
             const lines = this.props.value.split('\n');
             contents = <TextField
-                           ref="content"
+                           ref="textarea"
                            fullWidth={true}
                            multiLine={true}
                            rows={lines.length}
                            inputStyle={style}
                            value={this.props.value}
                            onKeyDown={this.handleKeyDown.bind(this)}
+                           onKeyUp={this.handleKeyUp.bind(this)}
                            onChange={this.handleTextChange.bind(this)}
                        />
         } else {
@@ -114,7 +136,7 @@ export default class Editor extends Component {
                 return {__html}
             };
             contents = <div
-                           ref="content"
+                           ref="markup"
                            style={style}
                            dangerouslySetInnerHTML={markup()}
                        />
