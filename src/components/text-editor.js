@@ -11,8 +11,8 @@ export default class Editor extends Component {
     }
 
 
-    static renderHtml(text, theme = null) {
-        const renderer = (theme && theme.renderer) || new marked.Renderer();
+    static renderHtml(text, renderer = null) {
+        renderer = renderer || new marked.Renderer();
         const markedOpts = {
             gfm: true,
             breaks: true,
@@ -104,7 +104,7 @@ export default class Editor extends Component {
             };
 
             const markup = () => {
-                let __html = this.constructor.renderHtml(this.props.value, theme);
+                let __html = this.constructor.renderHtml(this.props.value, theme.renderer);
                 // Default to an empty line
                 if (__html.length === 0) {
                     __html = '<br>';
