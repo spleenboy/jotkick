@@ -42,10 +42,6 @@ class NoteBar extends Component {
         };
     }
 
-    focus() {
-        this.refs.wrapper.scrollIntoView({behavior: 'smooth'});
-    }
-
     handleTitleBlur(e) {
         this.props.actions.saveNoteTitle(this.props.note, e.target.value);
     }
@@ -66,11 +62,6 @@ class NoteBar extends Component {
 
     handleDeselectNote() {
         this.props.actions.deselectNote();
-    }
-
-
-    componentDidUpdate(prevProps, prevState) {
-        if (!prevProps.note.data.active && this.props.note.data.active) this.focus();
     }
 
     render() {

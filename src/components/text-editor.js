@@ -5,7 +5,7 @@ import TextField from 'material-ui/lib/text-field';
 
 const TAB_TO_SPACES = 4;
 
-export default class Editor extends Component {
+export default class TextEditor extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
@@ -39,6 +39,20 @@ export default class Editor extends Component {
 
 
     handleTextFocus(e) {
+        if (this.refs.markup) {
+            // Calculate where the click occured and move the selection.
+            const target = e.target;
+            const text = target.innerText;
+            const index = this.props.value.indexOf(target.innerText);
+            if (index >= 0) {
+                this.setState({
+                    selection: {
+                        start: index,
+                        end: index + target.innerText.length,
+                    }
+                });
+            }
+        }
         this.props.onFocus && this.props.onFocus(this);
     }
 
@@ -47,8 +61,9 @@ export default class Editor extends Component {
         if (e.keyCode === 9) {
             e.preventDefault();
             const input = e.currentTarget;
-            const start = input.value.substring(0, input.selectionStart);
-            const end   = input.value.substring(input.selectionEnd);
+            const value = this.refs.textarea.getValue();
+            const start = value.substring(0, input.selectionStart);
+            const end   = value.substring(input.selectionEnd);
             const space = ' '.repeat(TAB_TO_SPACES);
             input.value = `${start}${space}${end}`;
             this.props.onChange && this.props.onChange(input.value);
@@ -70,7 +85,7 @@ export default class Editor extends Component {
 
 
     handleTextChange(e) {
-        this.props.onChange && this.props.onChange(e.target.value);
+        this.props.onChange && this.props.onChange(e.currentTarget.value);
     }
 
 
@@ -82,13 +97,30 @@ export default class Editor extends Component {
 
 
     componentDidUpdate(prevProps, prevState) {
-        if (!prevProps.active && this.props.active) {
-            this.refs.textarea.focus();
+        if (!this.props.active) {
+            return;
         }
-        if (this.props.active && this.state.selection) {
-            const textarea = this.refs.textarea._getInputNode();
-            textarea.selectionStart = this.state.selection.start;
-            textarea.selectionEnd = this.state.selection.end;
+
+        const textarea = this.refs.textarea._getInputNode();
+
+        if (this.state.selection) {
+            const selection = this.state.selection;
+
+            // Set the selection
+            textarea.setSelectionRange(selection.start, selection.end);
+
+            // Scroll to it
+            const row = (selection.start - (selection.start % textarea.cols)) / textarea.cols;
+            const rowHeight = textarea.clientHeight / textarea.rows;
+
+            const offset = textarea.getBoundingClientRect().top;
+            window.scrollTo(0, offset + (rowHeight * row));
+
+        } else if (!prevProps.active) {
+
+            textarea.focus();
+            textarea.scrollIntoView({behavior: 'smooth'});
+
         }
     }
 
