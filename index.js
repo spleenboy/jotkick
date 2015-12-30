@@ -15,6 +15,7 @@ require('electron-debug')();
 const mb = menubar({
     width: 800,
     height: 800,
+    'always-on-top': true,
     preloadWindow: true
 });
 
