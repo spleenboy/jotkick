@@ -38,11 +38,12 @@ export function alert(tree, text) {
 export function action(tree, text, callback, action = "Undo") {
     const msg = Model.Message(text);
 
-    let method = (evt) => {
-        callback && callback(evt);
+    let outerCallback = () => {
+        callback && callback();
         removeMessage(tree, msg.id);
     };
 
+    msg.callback = outerCallback;
     msg.action = action;
     msg.type = Model.Message.Action;
 

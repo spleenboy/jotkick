@@ -14,22 +14,25 @@ class Messaging extends Component {
         }
 
         const snacks = this.props.messages.map((msg, i) => {
-            let text, onDismiss, onAction, style = {};
-            const remove = this.props.actions.removeMessage.bind(this, msg.id);
+            let text, style = {};
+
+            const onDismiss = () => {
+                this.props.actions.removeMessage(msg.id);
+            };
+
+            const onAction = (e) => {
+                if (msg.callback) {
+                    msg.callback();
+                } else {
+                    this.props.actions.removeMessage(msg.id);
+                }
+            };
 
             if (msg.type === Model.Message.Error) {
                 text = `${msg.err}`;
                 style = {backgroundColor: Colors.red, color: Colors.white}
-                onDismiss = remove;
-                onAction = remove;
-            } else if (msg.type === Model.Message.Action) {
-                text = msg.text;
-                onAction = remove;
-                onDismiss = remove;
             } else {
                 text = msg.text;
-                onAction = msg.callback;
-                onDismiss = remove;
             }
 
             return <Snackbar
