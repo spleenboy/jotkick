@@ -5,7 +5,6 @@ import * as notes from '../state/actions/notes';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 import FontIcon from 'material-ui/lib/font-icon';
 import IconButton from 'material-ui/lib/icon-button';
-import Dialog from 'material-ui/lib/dialog';
 
 import BookSelect from './book-select';
 
@@ -55,7 +54,7 @@ class MoveNoteButton extends Component {
         }
 
         return <MenuItem
-                   primaryText="Move"
+                   primaryText="Move To..."
                    leftIcon={<FontIcon className="fa fa-book"/>}
                    onTouchTap={this.handleMoveClick.bind(this)}
                />

@@ -102,6 +102,16 @@ export function clear(tree) {
     tree.set('notes', []);
 }
 
+export function copy(tree, note) {
+    const clone = Model.Note(`${note.data.title} Copy`);
+
+    clone.data.created = new Date();
+    clone.content = note.content;
+    clone.pinned  = note.pinned;
+
+    return create(tree, clone);
+}
+
 export function create(tree, note = null) {
     const book = tree.get('books', {active: true});
 

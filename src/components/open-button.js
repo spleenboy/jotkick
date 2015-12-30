@@ -16,13 +16,13 @@ export default class OpenButton extends Component {
 
     handleOpenClick() {
         const note = this.props.note;
-        const link = `file:///${note.file.path.full}`;
+        const link = `file:///${note.file.path.dir}`;
         shell.openExternal(link);
     }
 
 
     render() {
-        const label = "Open file";
+        const label = "Open Folder";
         const disabled = !this.props.note.file;
 
         if (!this.props.menuitem) {

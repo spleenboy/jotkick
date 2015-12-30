@@ -15,11 +15,12 @@ import Divider from 'material-ui/lib/divider';
 import LinearProgress from 'material-ui/lib/linear-progress';
 import TextField from 'material-ui/lib/text-field';
 import IconButton from 'material-ui/lib/icon-button';
-import FlatButton from 'material-ui/lib/flat-button';
 import FontIcon from 'material-ui/lib/font-icon';
+
 import ShareButton from './share-button';
 import OpenButton from './open-button';
 import DeleteButton from './delete-button';
+import CopyNoteButton from './copy-note-button';
 import MoveNoteButton from './move-note-button';
 
 class NoteBar extends Component {
@@ -124,9 +125,10 @@ class NoteBar extends Component {
                                    disabled={true}
                                />
                                <Divider/>
+                               <ShareButton note={note} menuitem={true}/>
+                               <CopyNoteButton note={note}/>
                                <OpenButton note={note} menuitem={true}/>
                                <MoveNoteButton note={note} />
-                               <ShareButton note={note} menuitem={true}/>
                                <Divider/>
                                <DeleteButton note={note} menuitem={true}/>
                            </IconMenu>
