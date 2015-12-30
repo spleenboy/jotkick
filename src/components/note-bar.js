@@ -20,6 +20,7 @@ import FontIcon from 'material-ui/lib/font-icon';
 import ShareButton from './share-button';
 import OpenButton from './open-button';
 import DeleteButton from './delete-button';
+import MoveNoteButton from './move-note-button';
 
 class NoteBar extends Component {
     constructor(props, context) {
@@ -124,6 +125,7 @@ class NoteBar extends Component {
                                />
                                <Divider/>
                                <OpenButton note={note} menuitem={true}/>
+                               <MoveNoteButton note={note} />
                                <ShareButton note={note} menuitem={true}/>
                                <Divider/>
                                <DeleteButton note={note} menuitem={true}/>

@@ -5,6 +5,7 @@ import matter from 'gray-matter';
 
 import * as Model from '../model';
 import * as session from './session';
+import * as books from './books';
 import FileWalker from '../../storage/file-walker';
 import File from '../../storage/file';
 
@@ -231,6 +232,20 @@ export function calculatePath(tree, note) {
 }
 
 
+export function setBook(tree, note, book) {
+    const cursor = tree.select('notes', {id: note.id});
+
+    cursor.set('bookName', book.name);
+    note.bookName = book.name;
+
+    renameFile(tree, note, (err) => {
+        if (!err) {
+            books.select(tree, book);
+        }
+    });
+}
+
+
 export function renameFile(tree, note, callback = null) {
     // Not saved yet.
     if (!note.file) {
@@ -247,11 +262,11 @@ export function renameFile(tree, note, callback = null) {
     }
 
     const newfile = File.findUniqueFile(newpath);
-    const cursor = tree.select('notes', {id: note.id});
 
     file.on('renamed', () => {
+        const cursor = tree.select('notes', {id: note.id});
         cursor.set('file', file);
-        save(tree, note, callback);
+        callback && callback();
     });
 
     file.on('error', (err) => {
@@ -300,11 +315,11 @@ export function save(tree, note, callback = null) {
         console.debug("No existing file for saving note. Calculating path", fullpath);
     }
 
-    file.write(body);
-
     file.on('written', () => {
-        cursor.set('file', file);
-        cursor.set('saving', false);
+        if (cursor.exists()) {
+            cursor.set('file', file);
+            cursor.set('saving', false);
+        }
         callback && callback(null, file);
     });
 
@@ -313,6 +328,8 @@ export function save(tree, note, callback = null) {
         cursor.set('saving', false);
         callback && callback(err, file);
     });
+
+    file.write(body);
 };
 
 

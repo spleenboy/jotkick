@@ -106,15 +106,15 @@ export default class TextEditor extends Component {
         if (this.state.selection) {
             const selection = this.state.selection;
 
-            // Set the selection
-            textarea.setSelectionRange(selection.start, selection.end);
-
             // Scroll to it
             const row = (selection.start - (selection.start % textarea.cols)) / textarea.cols;
             const rowHeight = textarea.clientHeight / textarea.rows;
 
             const offset = textarea.getBoundingClientRect().top;
             window.scrollTo(0, offset + (rowHeight * row));
+
+            // Set the selection
+            textarea.setSelectionRange(selection.start, selection.end);
 
         } else if (!prevProps.active) {
 
