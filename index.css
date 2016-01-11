@@ -24,11 +24,26 @@ ol {
 }
 
 ul {
-    list-style-type: circle;
+    list-style-type: disc;
 }
 
 li {
     line-height: 1.8em;
+}
+
+li.task-item {
+    list-style: none;
+}
+li.task-item:before {
+    content: "\2610";
+    margin-left: -25px;
+}
+
+li.task-item.task-item-checked {
+    text-decoration: line-through;
+}
+li.task-item.task-item-checked:before {
+    content: "\2611";
 }
 
 h1, h2, h3, h4, h5, h6 {
