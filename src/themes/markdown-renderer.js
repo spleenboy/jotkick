@@ -86,7 +86,7 @@ export default class MarkdownRenderer extends Renderer {
     }
 
     listitem(text) {
-        const checkbox = /(\[(\s|x|\*)?\])/;
+        const checkbox = /^(\[(\s|x|\*)?\])/;
         const matches = text.match(checkbox);
         if (matches && matches.length > 1) {
             const checked = matches[1].match(/(x|\*)/) ? " task-item-checked" : "";
