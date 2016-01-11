@@ -97,7 +97,7 @@ export default class TextEditor extends Component {
 
 
     componentDidUpdate(prevProps, prevState) {
-        if (!this.props.active) {
+        if (!this.props.active || prevProps.active) {
             return;
         }
 
