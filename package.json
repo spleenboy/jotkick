@@ -1,7 +1,8 @@
 {
   "name": "jotkick",
   "productName": "JotKick",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "latest": "https://raw.githubusercontent.com/spleenboy/jotkick/master/package.json",
   "description": "Quickly jot down notes using Markdown syntax",
   "license": "MIT",
   "repository": "spleenboy/jotkick",

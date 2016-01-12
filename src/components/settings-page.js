@@ -12,6 +12,7 @@ import ListItem from 'material-ui/lib/lists/list-item';
 import Heading from './heading';
 import BookEdit from './book-edit';
 import ThemeSelect from './theme-select';
+import VersionChecker from './version-checker';
 
 const ipc = window.require('electron').ipcRenderer;
 
@@ -87,6 +88,15 @@ class SettingsPage extends Component {
                    <div className="row">
                        <div className="col-xs-12"><div className="box">
                            <Heading>JotKick Settings</Heading>
+                       </div></div>
+                   </div>
+                   <hr/>
+                   <div className="row">
+                       <div className={leftCol}><div className="box">
+                           <strong>Version Info</strong>
+                       </div></div>
+                       <div className={rightCol}><div className="box">
+                           <VersionChecker/>
                        </div></div>
                    </div>
                    <hr/>
