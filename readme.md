@@ -1,6 +1,6 @@
 # jotkick
 
-> My sublime app
+> Jot down quick notes. A cross-platform application that supports Markdown-formatted text editing.
 
 
 ## Dev
