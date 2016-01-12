@@ -15,11 +15,13 @@ import Divider from 'material-ui/lib/divider';
 import LinearProgress from 'material-ui/lib/linear-progress';
 import TextField from 'material-ui/lib/text-field';
 import IconButton from 'material-ui/lib/icon-button';
-import FlatButton from 'material-ui/lib/flat-button';
 import FontIcon from 'material-ui/lib/font-icon';
+
 import ShareButton from './share-button';
 import OpenButton from './open-button';
 import DeleteButton from './delete-button';
+import CopyNoteButton from './copy-note-button';
+import MoveNoteButton from './move-note-button';
 
 class NoteBar extends Component {
     constructor(props, context) {
@@ -42,10 +44,6 @@ class NoteBar extends Component {
         };
     }
 
-    focus() {
-        this.refs.wrapper.scrollIntoView({behavior: 'smooth'});
-    }
-
     handleTitleBlur(e) {
         this.props.actions.saveNoteTitle(this.props.note, e.target.value);
     }
@@ -66,11 +64,6 @@ class NoteBar extends Component {
 
     handleDeselectNote() {
         this.props.actions.deselectNote();
-    }
-
-
-    componentDidUpdate(prevProps, prevState) {
-        if (!prevProps.note.data.active && this.props.note.data.active) this.focus();
     }
 
     render() {
@@ -132,8 +125,10 @@ class NoteBar extends Component {
                                    disabled={true}
                                />
                                <Divider/>
-                               <OpenButton note={note} menuitem={true}/>
                                <ShareButton note={note} menuitem={true}/>
+                               <CopyNoteButton note={note}/>
+                               <OpenButton note={note} menuitem={true}/>
+                               <MoveNoteButton note={note} />
                                <Divider/>
                                <DeleteButton note={note} menuitem={true}/>
                            </IconMenu>

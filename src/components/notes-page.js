@@ -9,6 +9,14 @@ import NoteCreateButton from './note-create-button';
 import * as noteActions from '../state/actions/notes';
 
 class NotesPage extends Component {
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            dragging: false,
+        };
+    }
+
+
     filteredNotes() {
         if (!this.props.query) {
             return this.props.notes;
@@ -36,6 +44,24 @@ class NotesPage extends Component {
     }
 
 
+    handleDragStart(e) {
+        e.preventDefault();
+        this.setState({dragging: true});
+    }
+
+
+    handleDragStop(e) {
+        this.setState({dragging: false});
+    }
+
+
+    handleDragDrop(e) {
+        e.preventDefault();
+        const files = e.dataTransfer && e.dataTransfer.files;
+        console.debug("You dropped files!", files);
+    }
+
+
     render() {
         const book = this.props.books.find(b => b.active);
 
@@ -44,7 +70,14 @@ class NotesPage extends Component {
         }
 
         const notes = this.filteredNotes(this.props.notes);
-        return <div className="notes-page" style={{minHeight: window.innerHeight}}>
+        return <div className="notes-page" style={{minHeight: window.innerHeight}}
+                   onDragEnter={this.handleDragStart.bind(this)}
+                   onDragOver={this.handleDragStart.bind(this)}
+                   onDragLeave={this.handleDragStop.bind(this)}
+                   onDragEnd={this.handleDragStop.bind(this)}
+                   onDragDrop={this.handleDragDrop.bind(this)}
+                   onDrop={this.handleDragDrop.bind(this)}
+               >
                    <NotesHeader ref="notesHeader" books={this.props.books} />
                    <NoteList notes={notes}/>
                    <NoteCreateButton book={book} onCreate={this.props.actions.createNote}/>

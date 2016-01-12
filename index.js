@@ -15,6 +15,7 @@ require('electron-debug')();
 const mb = menubar({
     width: 800,
     height: 800,
+    'always-on-top': true,
     preloadWindow: true
 });
 
@@ -41,7 +42,7 @@ mb.on('ready', function() {
             {
                 label: "Edit",
                 submenu: [
-                    {label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo"},
+                    {label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:"},
                     {label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:"},
                     {type: "separator"},
                     {label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:"},

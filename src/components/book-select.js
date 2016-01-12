@@ -26,8 +26,9 @@ export default class BookSelect extends Component {
     static get propTypes() {
         return {
             books: PropTypes.array.isRequired,
+            hideCreate: PropTypes.bool,
             onBookChange: PropTypes.func.isRequired,
-            onBookCreate: PropTypes.func.isRequired,
+            onBookCreate: PropTypes.func,
             onBookCreating: PropTypes.func,
             onBookCreateCancel: PropTypes.func,
         };
@@ -50,7 +51,7 @@ export default class BookSelect extends Component {
     handleBookCreate(event) {
         const name = this.refs.bookName.getValue();
         if (name) {
-            this.props.onBookCreate(name);
+            this.props.onBookCreate && this.props.onBookCreate(name);
             this.clear();
         } else {
             this.warn();
@@ -106,12 +107,16 @@ export default class BookSelect extends Component {
                        primaryText={<span><FontIcon className="fa fa-book" style={{marginRight: space}}/> {b.name}</span>}
                    />
         });
-        bookItems.push(<MenuItem
-                            key={bookItems.length}
-                            value="new"
-                            primaryText={<span><FontIcon className="fa fa-plus-square" style={{marginRight: space}}/> Add a Book</span>}
-                       />
-                     );
+
+        if (!this.props.hideCreate) {
+            bookItems.push(<MenuItem
+                                key={bookItems.length}
+                                value="new"
+                                primaryText={<span><FontIcon className="fa fa-plus-square" style={{marginRight: space}}/> Add a Book</span>}
+                           />
+                         );
+        }
+
         if (this.props.books.length && !this.state.adding) {
             return <span ref="anchor">
                        <DropDownMenu

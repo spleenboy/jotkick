@@ -5,9 +5,12 @@ import TextField from 'material-ui/lib/text-field';
 
 const TAB_TO_SPACES = 4;
 
-export default class Editor extends Component {
+export default class TextEditor extends Component {
     constructor(props, context) {
         super(props, context);
+        this.state = {
+            selection: null,
+        };
     }
 
 
@@ -35,7 +38,21 @@ export default class Editor extends Component {
     }
 
 
-    handleTextFocus() {
+    handleTextFocus(e) {
+        if (this.refs.markup) {
+            // Calculate where the click occured and move the selection.
+            const target = e.target;
+            const text = target.innerText;
+            const index = this.props.value.indexOf(target.innerText);
+            if (index >= 0) {
+                this.setState({
+                    selection: {
+                        start: index,
+                        end: index + target.innerText.length,
+                    }
+                });
+            }
+        }
         this.props.onFocus && this.props.onFocus(this);
     }
 
@@ -44,30 +61,66 @@ export default class Editor extends Component {
         if (e.keyCode === 9) {
             e.preventDefault();
             const input = e.currentTarget;
-            const start = input.value.substring(0, input.selectionStart);
-            const end   = input.value.substring(input.selectionEnd);
+            const value = this.refs.textarea.getValue();
+            const start = value.substring(0, input.selectionStart);
+            const end   = value.substring(input.selectionEnd);
             const space = ' '.repeat(TAB_TO_SPACES);
             input.value = `${start}${space}${end}`;
             this.props.onChange && this.props.onChange(input.value);
+            this.setState({
+                selection: {
+                    start: start.length + space.length,
+                    end: start.length + space.length,
+               }
+            });
+        }
+    }
+
+
+    handleKeyUp(e) {
+        if (this.state.selection) {
+            this.setState({selection: null});
         }
     }
 
 
     handleTextChange(e) {
-        this.props.onChange && this.props.onChange(e.target.value);
+        this.props.onChange && this.props.onChange(e.currentTarget.value);
     }
 
 
     componentDidMount() {
         if (this.props.active) {
-            this.refs.content.focus();
+            this.refs.textarea.focus();
         }
     }
 
 
     componentDidUpdate(prevProps, prevState) {
-        if (!prevProps.active && this.props.active) {
-            this.refs.content.focus();
+        if (!this.props.active || prevProps.active) {
+            return;
+        }
+
+        const textarea = this.refs.textarea._getInputNode();
+
+        if (this.state.selection) {
+            const selection = this.state.selection;
+
+            // Scroll to it
+            const row = (selection.start - (selection.start % textarea.cols)) / textarea.cols;
+            const rowHeight = textarea.clientHeight / textarea.rows;
+
+            const offset = textarea.getBoundingClientRect().top;
+            window.scrollTo(0, offset + (rowHeight * row));
+
+            // Set the selection
+            textarea.setSelectionRange(selection.start, selection.end);
+
+        } else if (!prevProps.active) {
+
+            textarea.focus();
+            textarea.scrollIntoView({behavior: 'smooth'});
+
         }
     }
 
@@ -78,6 +131,8 @@ export default class Editor extends Component {
         };
 
         const theme = this.props.theme;
+        const renderer = new theme.renderer(theme);
+
         let contents;
         if (this.props.active) {
             containerStyle.backgroundColor = ColorManipulator.lighten(theme.palette.canvasColor, 50);
@@ -88,13 +143,14 @@ export default class Editor extends Component {
             };
             const lines = this.props.value.split('\n');
             contents = <TextField
-                           ref="content"
+                           ref="textarea"
                            fullWidth={true}
                            multiLine={true}
                            rows={lines.length}
                            inputStyle={style}
                            value={this.props.value}
                            onKeyDown={this.handleKeyDown.bind(this)}
+                           onKeyUp={this.handleKeyUp.bind(this)}
                            onChange={this.handleTextChange.bind(this)}
                        />
         } else {
@@ -104,7 +160,7 @@ export default class Editor extends Component {
             };
 
             const markup = () => {
-                let __html = this.constructor.renderHtml(this.props.value, theme.renderer);
+                let __html = this.constructor.renderHtml(this.props.value, renderer);
                 // Default to an empty line
                 if (__html.length === 0) {
                     __html = '<br>';
@@ -112,7 +168,7 @@ export default class Editor extends Component {
                 return {__html}
             };
             contents = <div
-                           ref="content"
+                           ref="markup"
                            style={style}
                            dangerouslySetInnerHTML={markup()}
                        />

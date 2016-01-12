@@ -9,6 +9,7 @@ export default class SearchBar extends Component {
         super(props, context);
         this.state = {
             searching: false,
+            warning: null,
         };
     }
 
@@ -32,9 +33,9 @@ export default class SearchBar extends Component {
         const field = this.refs.searchField;
         const value = field.getValue();
         if (!value.length) {
-            this.refs.search.setErrorText("Searching for nothing? How existential.");
+            this.setState({warning: "Searching for nothing? How existential."});
         } else {
-            this.refs.search.setErrorText("");
+            this.setState({warning: null});
             this.props.onSearch && this.props.onSearch(value);
         }
     }
@@ -53,9 +54,11 @@ export default class SearchBar extends Component {
 
     cancel() {
         if (this.state.searching) {
-            this.refs.searchField.setErrorText("");
             this.refs.searchField.clearValue();
-            this.setState({searching: false});
+            this.setState({
+                searching: false,
+                warning: null,
+            });
         }
         this.props.onCancel();
     }
@@ -89,6 +92,7 @@ export default class SearchBar extends Component {
                         hintText="Enter search terms"
                         onChange={this.handleChange.bind(this)}
                         onKeyEnterDown={this.handleSearch.bind(this)}
+                        errorText={this.state.warning}
                     />
                     <IconButton
                         onTouchTap={this.handleCancel.bind(this)}
