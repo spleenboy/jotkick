@@ -6,9 +6,6 @@ const dialog = require('dialog');
 const ipc = electron.ipcMain;
 const Menu = electron.Menu;
 
-// report crashes to the Electron project
-require('crash-reporter').start();
-
 // adds debug features like hotkeys for triggering dev tools and reload
 require('electron-debug')();
 
@@ -32,6 +29,10 @@ mb.on('ready', function() {
 
     ipc.on('quit-app', function() {
         mb.app.quit();
+    });
+
+    ipc.on('minimize', function() {
+        mb.window.minimize();
     });
 
     mb.tray.setToolTip('JotKick');

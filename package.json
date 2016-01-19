@@ -11,7 +11,7 @@
     "email": "barrett@clockwork.net",
     "url": "spleenboy.com"
   },
-  "electronVersion": "0.35.0",
+  "electronVersion": "0.36.0",
   "scripts": {
     "test": "xo",
     "start": "webpack && electron .",
@@ -44,7 +44,7 @@
     "baobab-react": "^1.0.0",
     "css-loader": "^0.23.0",
     "electron-packager": "^5.0.0",
-    "electron-prebuilt": "^0.35.0",
+    "electron-prebuilt": "^0.36.0",
     "expose-loader": "^0.7.1",
     "file-loader": "^0.8.5",
     "font-awesome": "^4.5.0",

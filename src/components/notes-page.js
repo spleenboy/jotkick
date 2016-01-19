@@ -78,7 +78,7 @@ class NotesPage extends Component {
                    onDragDrop={this.handleDragDrop.bind(this)}
                    onDrop={this.handleDragDrop.bind(this)}
                >
-                   <NotesHeader ref="notesHeader" books={this.props.books} />
+                   <NotesHeader ref="notesHeader" books={this.props.books} book={book} />
                    <NoteList notes={notes}/>
                    <NoteCreateButton book={book} onCreate={this.props.actions.createNote}/>
                </div>

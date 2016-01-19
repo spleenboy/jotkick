@@ -5,7 +5,7 @@ import MenuItem from 'material-ui/lib/menus/menu-item';
 import FontIcon from 'material-ui/lib/font-icon';
 import IconButton from 'material-ui/lib/icon-button';
 
-export default class OpenButton extends Component {
+export default class OpenNoteButton extends Component {
     static get propTypes() {
         return {
             note: PropTypes.object,

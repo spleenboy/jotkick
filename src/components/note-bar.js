@@ -18,7 +18,7 @@ import IconButton from 'material-ui/lib/icon-button';
 import FontIcon from 'material-ui/lib/font-icon';
 
 import ShareButton from './share-button';
-import OpenButton from './open-button';
+import OpenNoteButton from './open-note-button';
 import DeleteButton from './delete-button';
 import CopyNoteButton from './copy-note-button';
 import MoveNoteButton from './move-note-button';
@@ -127,7 +127,7 @@ class NoteBar extends Component {
                                <Divider/>
                                <ShareButton note={note} menuitem={true}/>
                                <CopyNoteButton note={note}/>
-                               <OpenButton note={note} menuitem={true}/>
+                               <OpenNoteButton note={note} menuitem={true}/>
                                <MoveNoteButton note={note} />
                                <Divider/>
                                <DeleteButton note={note} menuitem={true}/>

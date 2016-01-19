@@ -11,6 +11,7 @@ import ToolbarTitle from 'material-ui/lib/toolbar/toolbar-title';
 
 import Heading from './heading';
 import BookSelect from './book-select';
+import OpenBookButton from './open-book-button';
 import SearchBar from './search-bar';
 
 // Why bother showing search with few notes?
@@ -31,7 +32,10 @@ class NotesHeader extends Component {
     }
 
     static get propTypes() {
-        return {};
+        return {
+            books: PropTypes.array,
+            book: PropTypes.object,
+        };
     }
 
     cancelSearch() {
@@ -75,6 +79,7 @@ class NotesHeader extends Component {
                                onBookChange={this.props.actions.selectBook}
                                onBookCreate={this.props.actions.createBook}
                            />
+                           <OpenBookButton book={this.props.book}/>
                        </ToolbarGroup>
                        <ToolbarGroup key={2} float="right">
                            <SearchBar
