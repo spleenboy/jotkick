@@ -289,23 +289,25 @@ export function renameFile(tree, note, callback = null) {
 
 
 export function queueSave(tree, note) {
-    const throttle = tree.get('settings', 'throttle') || DEFAULT_THROTTLE;
+    process.nextTick(() => {
+        const throttle = tree.get('settings', 'throttle') || DEFAULT_THROTTLE;
 
-    // Check for an existing request. If one is found, push out the next
-    // save by the throttle value
-    const cursor = tree.select('notes', {id: note.id});
+        // Check for an existing request. If one is found, push out the next
+        // save by the throttle value
+        const cursor = tree.select('notes', {id: note.id});
 
-    const method = () => {
-        save(tree, note);
-    }
+        const method = () => {
+            save(tree, note);
+        }
 
-    const saving = cursor.get('saving');
+        const saving = cursor.get('saving');
 
-    // Clear out the last one
-    saving && clearTimeout(saving);
+        // Clear out the last one
+        saving && clearTimeout(saving);
 
-    // Queue up the next save
-    cursor.set('saving', setTimeout(method, throttle));
+        // Queue up the next save
+        cursor.set('saving', setTimeout(method, throttle));
+    });
 };
 
 
