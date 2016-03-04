@@ -1,6 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
-import * as notes from '../state/actions/notes';
+import * as notes from '../actions/notes';
 
 import MenuItem from 'material-ui/lib/menus/menu-item';
 import FontIcon from 'material-ui/lib/font-icon';

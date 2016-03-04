@@ -1,6 +1,6 @@
 import Baobab from 'baobab';
 import * as Model from './model';
-import * as settings from './actions/settings';
+import * as settings from '../actions/settings';
 
 export default class Tree extends Baobab {
     constructor(data = null, opts = null) {

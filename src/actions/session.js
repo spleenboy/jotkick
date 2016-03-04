@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import * as Model from '../model';
+import * as Model from '../state/model';
 
 export function query(tree, value) {
     tree.set(['session', 'query'], value);

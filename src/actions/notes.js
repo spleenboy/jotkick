@@ -3,11 +3,11 @@ import moment from 'moment';
 import slug from 'slug';
 import matter from 'gray-matter';
 
-import * as Model from '../model';
+import * as Model from '../state/model';
 import * as session from './session';
 import * as books from './books';
-import FileWalker from '../../storage/file-walker';
-import File from '../../storage/file';
+import FileWalker from '../storage/file-walker';
+import File from '../storage/file';
 
 export const EXTENSION = '.md';
 export const DATE_FORMAT = 'YYYY-MM-DD';

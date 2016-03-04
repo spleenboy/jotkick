@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {branch} from 'baobab-react/higher-order';
-import * as notes from '../state/actions/notes';
-import * as session from '../state/actions/session';
+import * as notes from '../actions/notes';
+import * as session from '../actions/session';
 
 import Toolbar from 'material-ui/lib/toolbar/toolbar';
 import ToolbarGroup from 'material-ui/lib/toolbar/toolbar-group';

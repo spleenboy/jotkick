@@ -7,9 +7,9 @@ import * as settings from './settings';
 import * as session from './session';
 import * as notes from './notes';
 
-import * as Model from '../model';
-import FileWalker from '../../storage/file-walker';
-import File from '../../storage/file';
+import * as Model from '../state/model';
+import FileWalker from '../storage/file-walker';
+import File from '../storage/file';
 
 export function select(tree, book, callback = null) {
     let baseDir = tree.get('settings', 'basePath');

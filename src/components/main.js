@@ -5,7 +5,7 @@ import ThemeManager from 'material-ui/lib/styles/theme-manager';
 import Snackbar from 'material-ui/lib/snackbar';
 
 import Themes from '../themes/';
-import * as session from '../state/actions/session';
+import * as session from '../actions/session';
 
 import NotesPage from './notes-page';
 import SettingsPage from './settings-page';

@@ -1,5 +1,5 @@
 import * as books from './books';
-import LocalStorage from '../../storage/local';
+import LocalStorage from '../storage/local';
 
 const storage = new LocalStorage();
 

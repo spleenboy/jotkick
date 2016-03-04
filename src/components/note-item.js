@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {branch} from 'baobab-react/higher-order';
 import _ from 'lodash';
-import * as notes from '../state/actions/notes';
+import * as notes from '../actions/notes';
 import * as Model from '../state/model';
 
 import Themes from '../themes/';

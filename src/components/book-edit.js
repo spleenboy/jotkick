@@ -1,7 +1,7 @@
 import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
-import * as session from '../state/actions/session';
-import * as books from '../state/actions/books';
+import * as session from '../actions/session';
+import * as books from '../actions/books';
 
 import RaisedButton from 'material-ui/lib/raised-button';
 import FontIcon from 'material-ui/lib/font-icon';

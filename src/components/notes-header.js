@@ -1,6 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
-import actions from '../state/actions/';
+import actions from '../actions/';
 
 import IconButton from 'material-ui/lib/icon-button';
 import FontIcon from 'material-ui/lib/font-icon';

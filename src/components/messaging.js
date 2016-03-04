@@ -1,7 +1,7 @@
 import React, {PropTypes, Component} from 'react';
 import {branch} from 'baobab-react/higher-order';
 import * as Model from '../state/model';
-import * as session from '../state/actions/session';
+import * as session from '../actions/session';
 
 import Colors from 'material-ui/lib/styles/colors';
 import Snackbar from 'material-ui/lib/snackbar';

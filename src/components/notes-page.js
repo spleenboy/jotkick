@@ -6,7 +6,7 @@ import fuzzy from 'fuzzy';
 import NotesHeader from './notes-header';
 import NoteList from './note-list';
 import NoteCreateButton from './note-create-button';
-import * as noteActions from '../state/actions/notes';
+import * as noteActions from '../actions/notes';
 
 class NotesPage extends Component {
     constructor(props, context) {
